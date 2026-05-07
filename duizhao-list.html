@@ -1,0 +1,671 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>古今对照 · 药物通考 - 本草万象</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ========== DESIGN SYSTEM ========== */
+:root {
+  --bg-deep: #0a0c0f; --bg-surface: #141820; --bg-card: #1a1e28; --bg-hover: #222838;
+  --cyan: #00d4aa; --cyan-dim: #00a884; --cyan-glow: rgba(0,212,170,0.2);
+  --gold: #c9b037; --gold-dim: #a8942b;
+  --red: #e63946;
+  --txt: #e8e4dc; --txt2: #9a9588; --txt3: #6b6560;
+  --glass: rgba(20,24,32,0.8); --glass-border: rgba(0,212,170,0.15);
+  --serif: 'Noto Serif SC',serif; --sans: 'Noto Sans SC',sans-serif;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg-deep);color:var(--txt);min-height:100vh}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+
+/* ========== NAVIGATION ========== */
+.nav-bar{position:fixed;top:0;left:0;right:0;z-index:100;height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;background:var(--glass);backdrop-filter:blur(20px);border-bottom:1px solid var(--glass-border)}
+.nav-brand{display:flex;align-items:center;gap:10px;font-family:var(--serif);font-size:20px;font-weight:700;color:var(--gold)}
+.nav-logo{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,var(--cyan),#008f6b);display:flex;align-items:center;justify-content:center}
+.nav-links{display:flex;gap:8px}
+.nav-link{padding:8px 16px;border-radius:6px;font-size:14px;color:var(--txt2);transition:all 0.3s}
+.nav-link:hover,.nav-link.active{color:var(--cyan);background:rgba(0,212,170,0.08)}
+.nav-link.active{box-shadow:0 0 0 1px var(--cyan-glow)}
+
+/* User Menu */
+.user-menu{position:relative;display:flex;align-items:center;gap:16px}
+.user-avatar{width:42px;height:42px;border-radius:50%;border:2px solid rgba(0,212,170,0.4);cursor:pointer;overflow:hidden;transition:all 0.3s}
+.user-avatar:hover{border-color:var(--cyan);box-shadow:0 0 20px rgba(0,212,170,0.4)}
+.user-avatar img{width:100%;height:100%;object-fit:cover}
+.login-btn{padding:10px 24px;background:rgba(0,212,170,0.1);border:1px solid rgba(0,212,170,0.3);border-radius:6px;color:var(--cyan);font-size:14px;cursor:pointer;transition:all 0.3s;font-family:var(--serif);letter-spacing:1px}
+.login-btn:hover{background:rgba(0,212,170,0.2);border-color:var(--cyan);box-shadow:0 0 15px rgba(0,212,170,0.3)}
+.user-dropdown{position:absolute;top:55px;right:0;width:180px;background:rgba(20,24,32,0.95);border:1px solid var(--glass-border);border-radius:8px;backdrop-filter:blur(10px);opacity:0;visibility:hidden;transform:translateY(-10px);transition:all 0.3s;z-index:200}
+.user-dropdown.show{opacity:1;visibility:visible;transform:translateY(0)}
+.user-dropdown-item{padding:12px 20px;font-size:14px;color:rgba(255,255,255,0.8);cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:10px}
+.user-dropdown-item:first-child{border-radius:8px 8px 0 0}
+.user-dropdown-item:last-child{border-radius:0 0 8px 8px}
+.user-dropdown-item:hover{background:rgba(0,212,170,0.1);color:var(--cyan)}
+.user-dropdown-divider{height:1px;background:var(--glass-border);margin:4px 0}
+
+/* ========== PAGE HEADER ========== */
+.page-header{padding:100px 40px 40px;background:linear-gradient(180deg,rgba(0,212,170,0.05) 0%,transparent 100%)}
+.header-content{max-width:1400px;margin:0 auto}
+.page-title{font-family:var(--serif);font-size:42px;font-weight:700;color:var(--gold);margin-bottom:12px}
+.page-subtitle{font-size:16px;color:var(--txt2);max-width:600px;line-height:1.8}
+
+/* ========== FILTER BAR ========== */
+.filter-bar{position:sticky;top:70px;z-index:90;padding:20px 40px;background:var(--bg-surface);border-bottom:1px solid var(--glass-border);backdrop-filter:blur(10px)}
+.filter-content{max-width:1400px;margin:0 auto;display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.filter-group{display:flex;gap:12px;align-items:center}
+.filter-label{font-size:13px;color:var(--txt3);white-space:nowrap}
+.filter-options{display:flex;gap:8px}
+.filter-btn{padding:8px 16px;border-radius:6px;font-size:13px;color:var(--txt2);border:1px solid var(--glass-border);background:transparent;transition:all 0.3s;cursor:pointer}
+.filter-btn:hover{border-color:var(--cyan);color:var(--txt)}
+.filter-btn.active{background:rgba(0,212,170,0.1);border-color:var(--cyan);color:var(--cyan)}
+
+/* Search */
+.search-wrap{flex:1;max-width:400px}
+.search-box{position:relative;width:100%}
+.search-input{width:100%;height:44px;padding:0 44px 0 16px;border-radius:6px;border:1px solid var(--glass-border);background:rgba(0,0,0,0.3);color:var(--txt);font-size:14px;outline:none;transition:all 0.3s}
+.search-input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,212,170,0.1)}
+.search-input::placeholder{color:var(--txt3)}
+.search-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--txt3)}
+
+/* Confidence Filter */
+.confidence-filter{display:flex;gap:6px}
+.conf-btn{padding:6px 12px;border-radius:4px;font-size:12px;border:1px solid var(--glass-border);background:transparent;color:var(--txt2);cursor:pointer;transition:all 0.3s;display:flex;align-items:center;gap:6px}
+.conf-btn::before{content:'';width:8px;height:8px;border-radius:50%}
+.conf-btn.high::before{background:var(--cyan);box-shadow:0 0 6px var(--cyan)}
+.conf-btn.medium::before{background:var(--gold)}
+.conf-btn.low::before{background:var(--txt3)}
+.conf-btn.active.high{background:rgba(0,212,170,0.1);border-color:var(--cyan);color:var(--cyan)}
+.conf-btn.active.medium{background:rgba(201,176,55,0.1);border-color:var(--gold);color:var(--gold)}
+.conf-btn.active.low{background:rgba(107,101,96,0.2);border-color:var(--txt3);color:var(--txt)}
+
+/* ========== GRID LAYOUT ========== */
+.grid-container{padding:40px;max-width:1400px;margin:0 auto}
+.grid-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.grid-count{font-size:14px;color:var(--txt2)}
+.grid-count span{color:var(--cyan);font-weight:600}
+.sort-select{padding:8px 32px 8px 12px;border-radius:6px;border:1px solid var(--glass-border);background:var(--bg-card);color:var(--txt);font-size:13px;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6560' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+
+/* Grid */
+.herb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px}
+
+/* Herb Card */
+.herb-card{background:var(--bg-card);border:1px solid var(--glass-border);border-radius:12px;overflow:hidden;transition:all 0.4s;cursor:pointer;position:relative}
+.herb-card:hover{transform:translateY(-8px);border-color:rgba(0,212,170,0.4);box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 40px rgba(0,212,170,0.1)}
+.herb-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--cyan),transparent);opacity:0;transition:opacity 0.3s}
+.herb-card:hover::before{opacity:1}
+
+/* Card Images */
+.card-images{position:relative;height:200px;display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--bg-deep)}
+.card-img{position:relative;overflow:hidden}
+.card-img.ancient{background:linear-gradient(135deg,#2a2520,#1a1510)}
+.card-img.modern{background:linear-gradient(135deg,#1a2520,#0d1510)}
+.card-img-placeholder{display:flex;align-items:center;justify-content:center;height:100%;color:var(--txt3);font-size:13px}
+.img-label{position:absolute;bottom:8px;left:8px;padding:4px 10px;border-radius:4px;font-size:11px;font-weight:500;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px)}
+.img-label.ancient{color:var(--gold);border:1px solid rgba(201,176,55,0.3)}
+.img-label.modern{color:var(--cyan);border:1px solid rgba(0,212,170,0.3)}
+
+/* VS Badge */
+.vs-badge{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:32px;height:32px;border-radius:50%;background:var(--bg-card);border:2px solid var(--glass-border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--txt2);z-index:10}
+
+/* Card Content */
+.card-content{padding:20px}
+.card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.card-titles{flex:1}
+.card-name{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--txt);margin-bottom:4px}
+.card-latin{font-size:12px;color:var(--cyan);font-style:italic;font-family:'SF Mono',monospace}
+.card-category{padding:4px 10px;border-radius:4px;font-size:11px;background:rgba(0,212,170,0.1);color:var(--cyan);border:1px solid var(--cyan-glow);white-space:nowrap}
+
+/* Conclusion */
+.card-conclusion{display:flex;align-items:center;gap:8px;padding:12px;background:rgba(0,0,0,0.2);border-radius:6px;margin-bottom:16px}
+.conclusion-icon{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px}
+.conclusion-icon.match{background:rgba(0,212,170,0.2);color:var(--cyan)}
+.conclusion-icon.migrate{background:rgba(201,176,55,0.2);color:var(--gold)}
+.conclusion-icon.doubt{background:rgba(230,57,70,0.15);color:var(--red)}
+.conclusion-text{font-size:13px;color:var(--txt2)}
+
+/* Card Meta */
+.card-meta{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--txt3)}
+.meta-item{display:flex;align-items:center;gap:6px}
+.confidence-stars{color:var(--gold);letter-spacing:2px}
+
+/* Pagination */
+.pagination{display:flex;justify-content:center;align-items:center;gap:8px;padding:40px}
+.page-btn{width:40px;height:40px;border-radius:6px;border:1px solid var(--glass-border);background:transparent;color:var(--txt2);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;transition:all 0.3s}
+.page-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.page-btn.active{background:rgba(0,212,170,0.1);border-color:var(--cyan);color:var(--cyan)}
+.page-btn:disabled{opacity:0.3;cursor:not-allowed}
+.page-ellipsis{color:var(--txt3);padding:0 8px}
+
+/* ========== RESPONSIVE ========== */
+@media(max-width:768px){.filter-content{flex-direction:column;align-items:stretch}.filter-group{flex-wrap:wrap}.search-wrap{max-width:100%}.herb-grid{grid-template-columns:1fr}.page-title{font-size:32px}}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav-bar">
+  <div class="nav-brand">
+    <div class="nav-logo">🌿</div>
+    <span>本草万象</span>
+  </div>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">首页</a>
+    <a href="wanxiang.html" class="nav-link">万象阅览</a>
+    <a href="duizhao-list.html" class="nav-link active">古今对照</a>
+    <a href="ditu2.html" class="nav-link">时空地图</a>
+    <a href="wenwu.html" class="nav-link">文物佐证</a>
+  </div>
+  <div class="user-menu" id="userMenu">
+    <button class="login-btn" id="loginBtn" onclick="goToLogin()">登录 / 注册</button>
+    <div class="user-avatar" id="userAvatar" style="display:none;" onclick="toggleUserDropdown()">
+      <img src="" alt="头像" id="navUserAvatar">
+    </div>
+    <div class="user-dropdown" id="userDropdown">
+      <div class="user-dropdown-item" onclick="goToProfile()">👤 个人中心</div>
+      <div class="user-dropdown-item" onclick="goToSettings()">⚙️ 账号设置</div>
+      <div class="user-dropdown-divider"></div>
+      <div class="user-dropdown-item" onclick="logout()">🚪 退出登录</div>
+    </div>
+  </div>
+</nav>
+
+<!-- Page Header -->
+<header class="page-header">
+  <div class="header-content">
+    <h1 class="page-title">古今对照 · 药物通考</h1>
+    <p class="page-subtitle">以《本草图经》为核心，将古图、今照、考证文字并置呈现，构建"古本草→今生药"的证据链</p>
+  </div>
+</header>
+
+<!-- Filter Bar -->
+<div class="filter-bar">
+  <div class="filter-content">
+    <!-- Category Filter -->
+    <div class="filter-group">
+      <span class="filter-label">分类筛选</span>
+      <div class="filter-options">
+        <button class="filter-btn active">全部</button>
+        <button class="filter-btn">草部</button>
+        <button class="filter-btn">木部</button>
+        <button class="filter-btn">虫部</button>
+        <button class="filter-btn">鳞部</button>
+      </div>
+    </div>
+
+    <!-- Confidence Filter -->
+    <div class="filter-group">
+      <span class="filter-label">置信度</span>
+      <div class="confidence-filter">
+        <button class="conf-btn high active">高</button>
+        <button class="conf-btn medium active">中</button>
+        <button class="conf-btn low">低</button>
+      </div>
+    </div>
+
+    <!-- Search -->
+    <div class="search-wrap">
+      <div class="search-box">
+        <input type="text" class="search-input" placeholder="搜索药物名、拉丁名、古名...">
+        <span class="search-icon">🔍</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Grid Container -->
+<div class="grid-container">
+  <div class="grid-header">
+    <div class="grid-count">共 <span>1,892</span> 种药物</div>
+    <select class="sort-select">
+      <option>默认排序</option>
+      <option>置信度从高到低</option>
+      <option>名称 A-Z</option>
+      <option>考证完成度</option>
+    </select>
+  </div>
+
+  <div class="herb-grid">
+    <!-- Card 1 -->
+    <div class="herb-card" onclick="location.href='duizhao-detail.html?herb=人参'">
+      <div class="card-images">
+        <div class="card-img ancient">
+          <div class="card-img-placeholder">古图</div>
+          <span class="img-label ancient">《图经》原图</span>
+        </div>
+        <div class="card-img modern">
+          <div class="card-img-placeholder">今照</div>
+          <span class="img-label modern">现代实拍</span>
+        </div>
+        <div class="vs-badge">VS</div>
+      </div>
+      <div class="card-content">
+        <div class="card-header">
+          <div class="card-titles">
+            <h3 class="card-name">人参</h3>
+            <div class="card-latin">Panax ginseng</div>
+          </div>
+          <span class="card-category">草部</span>
+        </div>
+        <div class="card-conclusion">
+          <span class="conclusion-icon match">✓</span>
+          <span class="conclusion-text">形态一致 · 古今对应</span>
+        </div>
+        <div class="card-meta">
+          <div class="meta-item">
+            <span>考证置信度</span>
+            <span class="confidence-stars">★★★★★</span>
+          </div>
+          <span class="meta-item">1892 字</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="herb-card" onclick="location.href='duizhao-detail.html?herb=黄芪'">
+      <div class="card-images">
+        <div class="card-img ancient">
+          <div class="card-img-placeholder">古图</div>
+          <span class="img-label ancient">《图经》原图</span>
+        </div>
+        <div class="card-img modern">
+          <div class="card-img-placeholder">今照</div>
+          <span class="img-label modern">现代实拍</span>
+        </div>
+        <div class="vs-badge">VS</div>
+      </div>
+      <div class="card-content">
+        <div class="card-header">
+          <div class="card-titles">
+            <h3 class="card-name">黄芪</h3>
+            <div class="card-latin">Astragalus mongholicus</div>
+          </div>
+          <span class="card-category">草部</span>
+        </div>
+        <div class="card-conclusion">
+          <span class="conclusion-icon match">✓</span>
+          <span class="conclusion-text">产地变迁 · 山西→甘肃</span>
+        </div>
+        <div class="card-meta">
+          <div class="meta-item">
+            <span>考证置信度</span>
+            <span class="confidence-stars">★★★★☆</span>
+          </div>
+          <span class="meta-item">1654 字</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="herb-card" onclick="location.href='duizhao-detail.html?herb=当归'">
+      <div class="card-images">
+        <div class="card-img ancient">
+          <div class="card-img-placeholder">古图</div>
+          <span class="img-label ancient">《图经》原图</span>
+        </div>
+        <div class="card-img modern">
+          <div class="card-img-placeholder">今照</div>
+          <span class="img-label modern">现代实拍</span>
+        </div>
+        <div class="vs-badge">VS</div>
+      </div>
+      <div class="card-content">
+        <div class="card-header">
+          <div class="card-titles">
+            <h3 class="card-name">当归</h3>
+            <div class="card-latin">Angelica sinensis</div>
+          </div>
+          <span class="card-category">草部</span>
+        </div>
+        <div class="card-conclusion">
+          <span class="conclusion-icon match">✓</span>
+          <span class="conclusion-text">形态一致 · 产地延续</span>
+        </div>
+        <div class="card-meta">
+          <div class="meta-item">
+            <span>考证置信度</span>
+            <span class="confidence-stars">★★★★★</span>
+          </div>
+          <span class="meta-item">2103 字</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="herb-card">
+      <div class="card-images">
+        <div class="card-img ancient">
+          <div class="card-img-placeholder">古图</div>
+          <span class="img-label ancient">《图经》原图</span>
+        </div>
+        <div class="card-img modern">
+          <div class="card-img-placeholder">今照</div>
+          <span class="img-label modern">现代实拍</span>
+        </div>
+        <div class="vs-badge">VS</div>
+      </div>
+      <div class="card-content">
+        <div class="card-header">
+          <div class="card-titles">
+            <h3 class="card-name">丹参</h3>
+            <div class="card-latin">Salvia miltiorrhiza</div>
+          </div>
+          <span class="card-category">草部</span>
+        </div>
+        <div class="card-conclusion">
+          <span class="conclusion-icon migrate">~</span>
+          <span class="conclusion-text">形态存疑 · 需进一步考证</span>
+        </div>
+        <div class="card-meta">
+          <div class="meta-item">
+            <span>考证置信度</span>
+            <span class="confidence-stars">★★★☆☆</span>
+          </div>
+          <span class="meta-item">892 字</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="herb-card">
+      <div class="card-images">
+        <div class="card-img ancient">
+          <div class="card-img-placeholder">古图</div>
+          <span class="img-label ancient">《图经》原图</span>
+        </div>
+        <div class="card-img modern">
+          <div class="card-img-placeholder">今照</div>
+          <span class="img-label modern">现代实拍</span>
+        </div>
+        <div class="vs-badge">VS</div>
+      </div>
+      <div class="card-content">
+        <div class="card-header">
+          <div class="card-titles">
+            <h3 class="card-name">白术</h3>
+            <div class="card-latin">Atractylodes macrocephala</div>
+          </div>
+          <span class="card-category">草部</span>
+        </div>
+        <div class="card-conclusion">
+          <span class="conclusion-icon match">✓</span>
+          <span class="conclusion-text">形态一致 · 古今对应</span>
+        </div>
+        <div class="card-meta">
+          <div class="meta-item">
+            <span>考证置信度</span>
+            <span class="confidence-stars">★★★★☆</span>
+          </div>
+          <span class="meta-item">1245 字</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="herb-card">
+      <div class="card-images">
+        <div class="card-img ancient">
+          <div class="card-img-placeholder">古图</div>
+          <span class="img-label ancient">《图经》原图</span>
+        </div>
+        <div class="card-img modern">
+          <div class="card-img-placeholder">今照</div>
+          <span class="img-label modern">现代实拍</span>
+        </div>
+        <div class="vs-badge">VS</div>
+      </div>
+      <div class="card-content">
+        <div class="card-header">
+          <div class="card-titles">
+            <h3 class="card-name">茯苓</h3>
+            <div class="card-latin">Poria cocos</div>
+          </div>
+          <span class="card-category">木部</span>
+        </div>
+        <div class="card-conclusion">
+          <span class="conclusion-icon doubt">?</span>
+          <span class="conclusion-text">仅文献记载 · 无实物佐证</span>
+        </div>
+        <div class="card-meta">
+          <div class="meta-item">
+            <span>考证置信度</span>
+            <span class="confidence-stars">★★☆☆☆</span>
+          </div>
+          <span class="meta-item">567 字</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination">
+    <button class="page-btn" disabled>◀</button>
+    <button class="page-btn active">1</button>
+    <button class="page-btn">2</button>
+    <button class="page-btn">3</button>
+    <span class="page-ellipsis">...</span>
+    <button class="page-btn">63</button>
+    <button class="page-btn">▶</button>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script>
+// ========== STATE ==========
+let currentCategory = '全部';
+let activeConfidences = new Set(['高', '中']);
+let searchQuery = '';
+let sortMode = '默认排序';
+const ITEMS_PER_PAGE = 6;
+let currentPage = 1;
+
+// ========== RENDER HERB GRID ==========
+function getFilteredHerbs() {
+  let herbs = [...HERB_DATA];
+  
+  // Category filter
+  if (currentCategory !== '全部') {
+    herbs = herbs.filter(h => h.category === currentCategory);
+  }
+  
+  // Confidence filter
+  herbs = herbs.filter(h => {
+    const conf = h.confidence >= 4 ? '高' : h.confidence >= 3 ? '中' : '低';
+    return activeConfidences.has(conf);
+  });
+  
+  // Search filter
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    herbs = herbs.filter(h => 
+      h.name.includes(q) || 
+      h.latin.toLowerCase().includes(q) || 
+      h.ancientNames.includes(q)
+    );
+  }
+  
+  // Sort
+  if (sortMode === '置信度从高到低') {
+    herbs.sort((a, b) => b.confidence - a.confidence);
+  } else if (sortMode === '名称 A-Z') {
+    herbs.sort((a, b) => a.name.localeCompare(b.name, 'zh'));
+  } else if (sortMode === '考证完成度') {
+    herbs.sort((a, b) => b.wordCount - a.wordCount);
+  }
+  
+  return herbs;
+}
+
+function renderGrid() {
+  const herbs = getFilteredHerbs();
+  const grid = document.querySelector('.herb-grid');
+  const countEl = document.querySelector('.grid-count span');
+  countEl.textContent = herbs.length;
+  
+  const start = (currentPage - 1) * ITEMS_PER_PAGE;
+  const pageHerbs = herbs.slice(start, start + ITEMS_PER_PAGE);
+  
+  grid.innerHTML = pageHerbs.map(h => {
+    const conf = h.confidence >= 4 ? '高' : h.confidence >= 3 ? '中' : '低';
+    const stars = '★'.repeat(h.confidence) + '☆'.repeat(5 - h.confidence);
+    const confIcon = h.conclusionType === 'match' ? '✓' : h.conclusionType === 'migrate' ? '~' : '?';
+    const confClass = h.conclusionType === 'match' ? 'match' : h.conclusionType === 'migrate' ? 'migrate' : 'doubt';
+    
+    return `
+      <div class="herb-card" onclick="location.href='duizhao-detail.html?herb=${h.id}'">
+        <div class="card-images">
+          <div class="card-img ancient">
+            <div class="card-img-placeholder">古图</div>
+            <span class="img-label ancient">《图经》原图</span>
+          </div>
+          <div class="card-img modern">
+            <div class="card-img-placeholder">今照</div>
+            <span class="img-label modern">现代实拍</span>
+          </div>
+          <div class="vs-badge">VS</div>
+        </div>
+        <div class="card-content">
+          <div class="card-header">
+            <div class="card-titles">
+              <h3 class="card-name">${h.name}</h3>
+              <div class="card-latin">${h.latin}</div>
+            </div>
+            <span class="card-category">${h.category}</span>
+          </div>
+          <div class="card-conclusion">
+            <span class="conclusion-icon ${confClass}">${confIcon}</span>
+            <span class="conclusion-text">${h.conclusionText}</span>
+          </div>
+          <div class="card-meta">
+            <div class="meta-item">
+              <span>考证置信度</span>
+              <span class="confidence-stars">${stars}</span>
+            </div>
+            <span class="meta-item">${h.wordCount} 字</span>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+  
+  renderPagination(herbs.length);
+}
+
+function renderPagination(total) {
+  const totalPages = Math.max(1, Math.ceil(total / ITEMS_PER_PAGE));
+  if (currentPage > totalPages) currentPage = totalPages;
+  
+  const pagination = document.querySelector('.pagination');
+  let html = `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goToPage(${currentPage - 1})">◀</button>`;
+  
+  for (let i = 1; i <= totalPages; i++) {
+    if (totalPages > 7 && i > 3 && i < totalPages - 1 && Math.abs(i - currentPage) > 1) {
+      if (i === 4) html += '<span class="page-ellipsis">...</span>';
+      continue;
+    }
+    html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+  }
+  
+  html += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="goToPage(${currentPage + 1})">▶</button>`;
+  pagination.innerHTML = html;
+}
+
+function goToPage(page) {
+  const totalPages = Math.ceil(getFilteredHerbs().length / ITEMS_PER_PAGE);
+  if (page < 1 || page > totalPages) return;
+  currentPage = page;
+  renderGrid();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ========== FILTER BUTTONS (real logic) ==========
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    this.parentElement.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    currentCategory = this.textContent.trim();
+    currentPage = 1;
+    renderGrid();
+  });
+});
+
+// ========== CONFIDENCE BUTTONS (real logic) ==========
+document.querySelectorAll('.conf-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    this.classList.toggle('active');
+    const confMap = { '高': '高', '中': '中', '低': '低' };
+    const label = this.textContent.trim();
+    if (activeConfidences.has(label)) {
+      activeConfidences.delete(label);
+    } else {
+      activeConfidences.add(label);
+    }
+    currentPage = 1;
+    renderGrid();
+  });
+});
+
+// ========== SEARCH (P0) ==========
+const searchInput = document.querySelector('.search-input');
+let searchTimeout;
+searchInput.addEventListener('input', function() {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    searchQuery = this.value.trim();
+    currentPage = 1;
+    renderGrid();
+  }, 300);
+});
+
+// ========== SORT ==========
+document.querySelector('.sort-select').addEventListener('change', function() {
+  sortMode = this.value;
+  currentPage = 1;
+  renderGrid();
+});
+
+// ========== INIT ==========
+renderGrid();
+
+// ========== USER AUTH ==========
+function checkLoginStatus() {
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
+  const loginBtn = document.getElementById('loginBtn');
+  const userAvatar = document.getElementById('userAvatar');
+  const navUserAvatar = document.getElementById('navUserAvatar');
+  if (isLoggedIn) {
+    const userData = JSON.parse(localStorage.getItem('benCaoUser') || '{}');
+    if (userData.avatar && navUserAvatar) navUserAvatar.src = userData.avatar;
+    if (loginBtn) loginBtn.style.display = 'none';
+    if (userAvatar) userAvatar.style.display = 'block';
+  } else {
+    if (loginBtn) loginBtn.style.display = 'block';
+    if (userAvatar) userAvatar.style.display = 'none';
+  }
+}
+function goToLogin() { window.location.href = 'login.html'; }
+function goToProfile() { window.location.href = 'profile.html'; }
+function goToSettings() { showToast('账号设置功能开发中...', 'info'); }
+function logout() {
+  if (confirm('确定要退出登录吗？')) {
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('benCaoUser');
+    location.reload();
+  }
+}
+function toggleUserDropdown() {
+  document.getElementById('userDropdown').classList.toggle('show');
+}
+document.addEventListener('click', (e) => {
+  const userMenu = document.getElementById('userMenu');
+  if (userMenu && !userMenu.contains(e.target)) {
+    const dropdown = document.getElementById('userDropdown');
+    if (dropdown) dropdown.classList.remove('show');
+  }
+});
+checkLoginStatus();
+</script>
+
+</body>
+</html>

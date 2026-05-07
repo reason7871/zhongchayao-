@@ -1,0 +1,15 @@
+.claude/
+.workbuddy/
+docx_temp/
+__full_syntax.js
+__full_test.js
+__merge_now.js
+__runtime_test.js
+__test_syntax.js
+__verify.js
+_merge_pages.ps1
+*.ps1
+7a061d299144b0de00d293488e6104e9.png
+ca73dfc0f179bd23d8e9c1007420a3cf.png
+北宋地图.jpg
+南宋地图.jpg

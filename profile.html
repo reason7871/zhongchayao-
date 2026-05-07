@@ -1,0 +1,1356 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>个人中心 · 本草万象</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ========== RESET & BASE ========== */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{height:100%;font-size:16px}
+body{font-family:'Noto Sans SC',sans-serif;min-height:100%;background:#0a0c0f;color:#fff;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+input,textarea{font-family:inherit}
+img{max-width:100%}
+
+/* ========== BACKGROUND ========== */
+.page-bg{position:fixed;inset:0;z-index:0;background:#0a0c0f}
+.page-bg::before{content:'';position:absolute;inset:0;background:url('ca73dfc0f179bd23d8e9c1007420a3cf.png') center/cover;opacity:0.08}
+.paper-texture{position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");opacity:0.03;pointer-events:none}
+
+/* ========== NAVIGATION ========== */
+.nav-bar{position:fixed;top:0;left:0;right:0;z-index:100;height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 60px;background:linear-gradient(180deg,rgba(10,12,15,0.95) 0%,rgba(10,12,15,0.8) 50%,transparent 100%);backdrop-filter:blur(10px)}
+.nav-logo{display:flex;align-items:center;gap:12px;font-family:'Noto Serif SC',serif;font-size:22px;font-weight:700;color:#c9b037;letter-spacing:2px}
+.nav-logo-icon{width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,#00d4aa,#008f6b);display:flex;align-items:center;justify-content:center;font-size:18px}
+.nav-links{display:flex;gap:40px}
+.nav-link{font-size:15px;color:rgba(255,255,255,0.6);transition:all 0.3s;position:relative}
+.nav-link:hover,.nav-link.active{color:#00d4aa}
+.nav-link.active::after{content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:20px;height:2px;background:#00d4aa;border-radius:1px;box-shadow:0 0 8px #00d4aa}
+
+/* 用户菜单 */
+.user-menu{position:relative;display:flex;align-items:center;gap:12px}
+.user-avatar{width:40px;height:40px;border-radius:50%;border:2px solid #00d4aa;cursor:pointer;overflow:hidden;transition:all 0.3s}
+.user-avatar:hover{box-shadow:0 0 20px rgba(0,212,170,0.4)}
+.user-avatar img{width:100%;height:100%;object-fit:cover}
+.login-btn{padding:10px 24px;background:rgba(0,212,170,0.1);border:1px solid rgba(0,212,170,0.3);border-radius:6px;color:#00d4aa;font-size:14px;cursor:pointer;transition:all 0.3s;font-family:'Noto Serif SC',serif;letter-spacing:1px}
+.login-btn:hover{background:rgba(0,212,170,0.2);border-color:#00d4aa;box-shadow:0 0 15px rgba(0,212,170,0.3)}
+.user-dropdown{position:absolute;top:55px;right:0;width:180px;background:rgba(20,24,32,0.95);border:1px solid rgba(0,212,170,0.2);border-radius:8px;backdrop-filter:blur(10px);opacity:0;visibility:hidden;transform:translateY(-10px);transition:all 0.3s}
+.user-dropdown.show{opacity:1;visibility:visible;transform:translateY(0)}
+.user-dropdown-item{padding:12px 20px;font-size:14px;color:rgba(255,255,255,0.8);cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:10px}
+.user-dropdown-item:first-child{border-radius:8px 8px 0 0}
+.user-dropdown-item:last-child{border-radius:0 0 8px 8px}
+.user-dropdown-item:hover{background:rgba(0,212,170,0.1);color:#00d4aa}
+.user-dropdown-divider{height:1px;background:rgba(0,212,170,0.1);margin:4px 0}
+
+/* ========== MAIN CONTAINER ========== */
+.main-container{position:relative;z-index:10;padding-top:90px;padding-bottom:60px;min-height:100vh}
+.profile-wrapper{max-width:1200px;margin:0 auto;padding:0 40px}
+
+/* ========== PROFILE HEADER ========== */
+.profile-header{background:rgba(20,24,32,0.6);border:1px solid rgba(0,212,170,0.2);border-radius:16px;backdrop-filter:blur(10px);padding:40px;margin-bottom:24px;position:relative;overflow:hidden}
+.profile-header::before{content:'';position:absolute;top:0;left:0;right:0;height:120px;background:linear-gradient(180deg,rgba(0,212,170,0.1) 0%,transparent 100%)}
+
+/* 装饰边框 - 卷轴风格 */
+.header-decoration{position:absolute;top:10px;bottom:10px;left:10px;width:4px;background:linear-gradient(180deg,transparent,#c9b037,transparent);opacity:0.5}
+.header-decoration.right{left:auto;right:10px}
+
+.profile-header-content{position:relative;display:flex;gap:40px;align-items:flex-start}
+
+/* 头像区 */
+.avatar-section{position:relative}
+.avatar-frame{width:140px;height:140px;border-radius:50%;padding:6px;background:linear-gradient(135deg,#c9b037,#8b6914);position:relative;box-shadow:0 0 30px rgba(201,176,55,0.3)}
+.avatar-frame::before{content:'';position:absolute;inset:-3px;border-radius:50%;border:2px dashed rgba(201,176,55,0.3);animation:rotate 20s linear infinite}
+.avatar-frame img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:4px solid #0a0c0f}
+.avatar-edit{position:absolute;bottom:5px;right:5px;width:36px;height:36px;background:#00d4aa;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;transition:all 0.3s;box-shadow:0 0 15px rgba(0,212,170,0.4)}
+.avatar-edit:hover{transform:scale(1.1);background:#00f5c4}
+
+/* 徽章 */
+.badge-section{position:absolute;top:0;right:0;display:flex;gap:10px}
+.level-badge{padding:6px 16px;background:linear-gradient(135deg,#c9b037,#8b6914);border-radius:20px;font-size:13px;color:#000;font-weight:600;display:flex;align-items:center;gap:6px}
+.level-badge.scholar{background:linear-gradient(135deg,#00d4aa,#008f6b);color:#fff}
+.level-badge.expert{background:linear-gradient(135deg,#ff6b6b,#ee5a5a);color:#fff}
+
+/* 用户信息 */
+.user-info{flex:1}
+.user-nickname{font-family:'Noto Serif SC',serif;font-size:32px;font-weight:700;margin-bottom:10px;letter-spacing:2px}
+.user-bio{font-size:15px;color:rgba(255,255,255,0.6);margin-bottom:24px;padding:10px 16px;background:rgba(0,212,170,0.05);border-left:3px solid #00d4aa;border-radius:0 8px 8px 0;display:inline-block}
+
+/* 社交数据 */
+.social-stats{display:flex;gap:40px}
+.stat-item{text-align:center;cursor:pointer;transition:all 0.3s}
+.stat-item:hover{transform:translateY(-2px)}
+.stat-value{font-family:'SF Mono','Consolas',monospace;font-size:28px;font-weight:700;color:#00d4aa;text-shadow:0 0 10px rgba(0,212,170,0.3)}
+.stat-label{font-size:13px;color:rgba(255,255,255,0.5);margin-top:4px}
+
+/* 操作按钮 */
+.header-actions{display:flex;gap:12px;margin-top:20px}
+.action-btn{padding:10px 24px;border-radius:6px;font-size:14px;transition:all 0.3s;display:flex;align-items:center;gap:8px}
+.action-btn.primary{background:linear-gradient(135deg,#00d4aa,#008f6b);color:#000;font-weight:500}
+.action-btn.primary:hover{box-shadow:0 0 20px rgba(0,212,170,0.4);transform:translateY(-2px)}
+.action-btn.secondary{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff}
+.action-btn.secondary:hover{background:rgba(255,255,255,0.15);border-color:#00d4aa;color:#00d4aa}
+
+/* ========== TAB NAVIGATION ========== */
+.tab-bar{background:rgba(20,24,32,0.6);border:1px solid rgba(0,212,170,0.2);border-radius:12px;backdrop-filter:blur(10px);padding:8px;margin-bottom:24px;position:sticky;top:80px;z-index:50}
+.tab-list{display:flex;gap:8px}
+.tab-item{flex:1;padding:14px 24px;text-align:center;font-size:15px;color:rgba(255,255,255,0.6);cursor:pointer;transition:all 0.3s;border-radius:8px;position:relative;font-family:'Noto Serif SC',serif;letter-spacing:1px}
+.tab-item:hover{color:rgba(255,255,255,0.9);background:rgba(0,212,170,0.05)}
+.tab-item.active{background:rgba(0,212,170,0.15);color:#00d4aa}
+.tab-item.active::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:30px;height:2px;background:#00d4aa;border-radius:1px;box-shadow:0 0 8px #00d4aa}
+.tab-badge{position:absolute;top:8px;right:8px;min-width:18px;height:18px;padding:0 6px;background:#ff6b6b;border-radius:9px;font-size:11px;color:#fff;display:flex;align-items:center;justify-content:center}
+
+/* ========== CONTENT AREA ========== */
+.tab-content{display:none}
+.tab-content.active{display:block}
+.content-area{background:rgba(20,24,32,0.4);border:1px solid rgba(0,212,170,0.15);border-radius:16px;backdrop-filter:blur(10px);min-height:500px;padding:30px}
+
+/* ========== NOTES TAB ========== */
+.notes-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.section-title{font-family:'Noto Serif SC',serif;font-size:24px;font-weight:600;letter-spacing:2px}
+.section-title::before{content:'◆';color:#00d4aa;margin-right:10px;font-size:18px}
+.create-note-btn{padding:12px 24px;background:linear-gradient(135deg,#00d4aa,#008f6b);border-radius:8px;color:#000;font-size:14px;font-weight:500;display:flex;align-items:center;gap:8px;transition:all 0.3s}
+.create-note-btn:hover{box-shadow:0 0 20px rgba(0,212,170,0.4);transform:translateY(-2px)}
+
+/* 笔记网格 */
+.notes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px}
+.note-card{background:rgba(0,0,0,0.3);border:1px solid rgba(0,212,170,0.2);border-radius:12px;overflow:hidden;transition:all 0.3s;cursor:pointer}
+.note-card:hover{transform:translateY(-5px);border-color:rgba(0,212,170,0.4);box-shadow:0 10px 40px rgba(0,212,170,0.15)}
+.note-cover{height:160px;background:linear-gradient(135deg,rgba(0,212,170,0.2),rgba(0,143,107,0.2));display:flex;align-items:center;justify-content:center;font-size:48px;position:relative;overflow:hidden}
+.note-cover img{width:100%;height:100%;object-fit:cover}
+.note-cover-overlay{position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,0.8) 100%)}
+.note-content{padding:20px}
+.note-title{font-size:16px;font-weight:600;margin-bottom:10px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.note-excerpt{font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:16px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.note-meta{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:rgba(255,255,255,0.4)}
+.note-date{display:flex;align-items:center;gap:6px}
+.note-stats{display:flex;gap:16px}
+.note-stat{display:flex;align-items:center;gap:4px}
+.note-stat.liked{color:#ff6b6b}
+
+/* 药物引用卡片 */
+.note-herbs{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.herb-tag{padding:4px 10px;background:rgba(0,212,170,0.1);border:1px solid rgba(0,212,170,0.2);border-radius:4px;font-size:12px;color:#00d4aa;display:flex;align-items:center;gap:4px}
+.herb-tag::before{content:'🌿'}
+
+/* ========== COLLECTIONS TAB ========== */
+.collections-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px}
+.collection-card{background:rgba(0,0,0,0.3);border:1px solid rgba(0,212,170,0.2);border-radius:12px;overflow:hidden;transition:all 0.3s;position:relative}
+.collection-card:hover{transform:scale(1.03);border-color:rgba(0,212,170,0.4)}
+.collection-img{height:200px;background:linear-gradient(135deg,rgba(201,176,55,0.1),rgba(139,105,20,0.1));display:flex;align-items:center;justify-content:center;font-size:64px}
+.collection-img img{width:100%;height:100%;object-fit:cover}
+.collection-info{padding:16px}
+.collection-name{font-family:'Noto Serif SC',serif;font-size:16px;font-weight:600;margin-bottom:6px}
+.collection-latin{font-size:12px;color:#00d4aa;font-style:italic;margin-bottom:8px}
+.collection-note{font-size:12px;color:rgba(255,255,255,0.5);padding:8px;background:rgba(0,212,170,0.05);border-radius:6px;border-left:2px solid #00d4aa}
+.collection-time{font-size:11px;color:rgba(255,255,255,0.3);margin-top:10px}
+.collection-actions{position:absolute;top:10px;right:10px;display:flex;gap:8px;opacity:0;transition:all 0.3s}
+.collection-card:hover .collection-actions{opacity:1}
+.collection-action{width:32px;height:32px;background:rgba(0,0,0,0.6);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;cursor:pointer;transition:all 0.3s}
+.collection-action:hover{background:#ff6b6b}
+
+/* ========== BOOKMARKS TAB ========== */
+.bookmarks-list{display:flex;flex-direction:column;gap:16px}
+.bookmark-item{background:rgba(0,0,0,0.3);border:1px solid rgba(0,212,170,0.2);border-radius:12px;padding:20px;display:flex;gap:20px;transition:all 0.3s}
+.bookmark-item:hover{border-color:rgba(0,212,170,0.4);background:rgba(0,212,170,0.05)}
+.bookmark-icon{width:60px;height:60px;background:linear-gradient(135deg,rgba(201,176,55,0.2),rgba(139,105,20,0.2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
+.bookmark-content{flex:1}
+.bookmark-source{font-size:13px;color:#c9b037;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.bookmark-source::before{content:'📚'}
+.bookmark-preview{font-family:'Noto Serif SC',serif;font-size:15px;color:rgba(255,255,255,0.8);line-height:1.6;margin-bottom:12px;padding-left:16px;border-left:3px solid rgba(0,212,170,0.3)}
+.bookmark-note{background:rgba(0,212,170,0.05);padding:12px;border-radius:8px;font-size:13px;color:rgba(255,255,255,0.6);font-style:italic}
+.bookmark-note::before{content:'💭 ';color:#00d4aa}
+.bookmark-actions{display:flex;flex-direction:column;justify-content:center;gap:12px}
+.bookmark-action{padding:8px 16px;background:rgba(0,212,170,0.1);border:1px solid rgba(0,212,170,0.2);border-radius:6px;font-size:13px;color:#00d4aa;cursor:pointer;transition:all 0.3s}
+.bookmark-action:hover{background:#00d4aa;color:#000}
+
+/* ========== COMMENTS TAB ========== */
+.comments-list{display:flex;flex-direction:column;gap:20px}
+.comment-item{background:rgba(0,0,0,0.3);border:1px solid rgba(0,212,170,0.2);border-radius:12px;padding:20px}
+.comment-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.comment-author{display:flex;align-items:center;gap:12px}
+.comment-avatar{width:40px;height:40px;border-radius:50%;border:2px solid rgba(0,212,170,0.3)}
+.comment-info{display:flex;flex-direction:column}
+.comment-name{font-size:14px;font-weight:600}
+.comment-target{font-size:12px;color:rgba(255,255,255,0.5);margin-top:2px}
+.comment-target a{color:#00d4aa}
+.comment-time{font-size:12px;color:rgba(255,255,255,0.4)}
+.comment-content{font-size:14px;color:rgba(255,255,255,0.8);line-height:1.8;margin-left:52px;margin-bottom:12px}
+.comment-actions{margin-left:52px;display:flex;gap:20px}
+.comment-action{font-size:13px;color:rgba(255,255,255,0.5);cursor:pointer;transition:all 0.3s;display:flex;align-items:center;gap:6px}
+.comment-action:hover{color:#00d4aa}
+
+/* 回复嵌套 */
+.replies{margin-left:52px;margin-top:16px;padding-top:16px;border-top:1px solid rgba(0,212,170,0.1)}
+.reply-item{display:flex;gap:12px;margin-bottom:12px}
+.reply-item:last-child{margin-bottom:0}
+.reply-avatar{width:32px;height:32px;border-radius:50%;border:1px solid rgba(0,212,170,0.2)}
+.reply-content{flex:1;background:rgba(0,212,170,0.05);padding:12px;border-radius:8px}
+.reply-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.reply-name{font-size:13px;font-weight:600}
+.reply-to{font-size:12px;color:rgba(255,255,255,0.4)}
+.reply-to span{color:#00d4aa}
+.reply-text{font-size:13px;color:rgba(255,255,255,0.7);line-height:1.6}
+
+/* ========== CREATE NOTE MODAL ========== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(10px);z-index:1000;display:none;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s}
+.modal-overlay.show{display:flex;opacity:1}
+.modal-container{width:90%;max-width:800px;max-height:90vh;background:rgba(20,24,32,0.95);border:1px solid rgba(0,212,170,0.3);border-radius:16px;backdrop-filter:blur(20px);display:flex;flex-direction:column;overflow:hidden;transform:scale(0.95);transition:transform 0.3s}
+.modal-overlay.show .modal-container{transform:scale(1)}
+.modal-header{padding:24px;border-bottom:1px solid rgba(0,212,170,0.1);display:flex;justify-content:space-between;align-items:center}
+.modal-title{font-family:'Noto Serif SC',serif;font-size:20px;font-weight:600;letter-spacing:1px}
+.modal-close{width:36px;height:36px;background:rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;color:rgba(255,255,255,0.6);cursor:pointer;transition:all 0.3s}
+.modal-close:hover{background:#ff6b6b;color:#fff}
+.modal-body{padding:24px;overflow-y:auto;flex:1}
+
+/* 表单样式 */
+.form-group{margin-bottom:20px}
+.form-label{display:block;font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:8px;letter-spacing:1px}
+.form-label span{color:#ff6b6b;margin-left:4px}
+.form-input,.form-textarea{width:100%;padding:12px 16px;background:rgba(0,0,0,0.3);border:1px solid rgba(0,212,170,0.2);border-radius:8px;color:#fff;font-size:14px;outline:none;transition:all 0.3s}
+.form-input:focus,.form-textarea:focus{border-color:#00d4aa;box-shadow:0 0 15px rgba(0,212,170,0.2)}
+.form-textarea{resize:vertical;min-height:200px;line-height:1.8}
+
+/* 封面选择 */
+.cover-selector{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.cover-option{aspect-ratio:16/10;border-radius:8px;overflow:hidden;border:2px solid transparent;cursor:pointer;transition:all 0.3s;position:relative;background:linear-gradient(135deg,rgba(0,212,170,0.1),rgba(0,143,107,0.1));display:flex;align-items:center;justify-content:center;font-size:32px}
+.cover-option.selected{border-color:#00d4aa;box-shadow:0 0 20px rgba(0,212,170,0.3)}
+.cover-option img{width:100%;height:100%;object-fit:cover}
+.cover-option.upload{flex-direction:column;gap:8px;font-size:14px;color:rgba(255,255,255,0.6)}
+
+/* 标签输入 */
+.tag-input-wrapper{display:flex;flex-wrap:wrap;gap:8px;padding:8px;background:rgba(0,0,0,0.3);border:1px solid rgba(0,212,170,0.2);border-radius:8px}
+.tag-input-wrapper:focus-within{border-color:#00d4aa}
+.tag-item{padding:4px 12px;background:rgba(0,212,170,0.15);border-radius:4px;font-size:13px;color:#00d4aa;display:flex;align-items:center;gap:6px}
+.tag-remove{cursor:pointer;opacity:0.6;transition:all 0.2s}
+.tag-remove:hover{opacity:1}
+.tag-input{flex:1;min-width:100px;padding:4px;border:none;background:transparent;color:#fff;outline:none;font-size:13px}
+.tag-input::placeholder{color:rgba(255,255,255,0.4)}
+
+/* 可见范围 */
+.visibility-options{display:flex;gap:16px}
+.visibility-option{flex:1;padding:16px;border:1px solid rgba(0,212,170,0.2);border-radius:8px;cursor:pointer;transition:all 0.3s;text-align:center}
+.visibility-option:hover{border-color:rgba(0,212,170,0.4);background:rgba(0,212,170,0.05)}
+.visibility-option.selected{border-color:#00d4aa;background:rgba(0,212,170,0.1)}
+.visibility-icon{font-size:24px;margin-bottom:8px}
+.visibility-label{font-size:14px;color:rgba(255,255,255,0.8)}
+.visibility-desc{font-size:12px;color:rgba(255,255,255,0.4);margin-top:4px}
+
+/* 引用药物 */
+.herb-reference-box{padding:16px;background:rgba(0,212,170,0.05);border:1px dashed rgba(0,212,170,0.3);border-radius:8px;margin-top:16px}
+.herb-reference-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.herb-reference-title{font-size:14px;color:#00d4aa}
+.add-herb-btn{padding:6px 12px;background:rgba(0,212,170,0.1);border:1px solid rgba(0,212,170,0.2);border-radius:6px;font-size:12px;color:#00d4aa;cursor:pointer;transition:all 0.3s}
+.add-herb-btn:hover{background:#00d4aa;color:#000}
+.selected-herbs{display:flex;flex-wrap:wrap;gap:8px}
+.selected-herb{padding:8px 12px;background:rgba(0,0,0,0.3);border:1px solid rgba(0,212,170,0.2);border-radius:8px;display:flex;align-items:center;gap:10px;font-size:13px}
+.selected-herb img{width:32px;height:32px;border-radius:4px;object-fit:cover}
+.selected-herb-info{flex:1}
+.selected-herb-name{font-weight:600}
+.selected-herb-latin{font-size:11px;color:#00d4aa}
+.selected-herb-remove{cursor:pointer;color:rgba(255,255,255,0.4);transition:all 0.2s}
+.selected-herb-remove:hover{color:#ff6b6b}
+
+/* 底部按钮 */
+.modal-footer{padding:24px;border-top:1px solid rgba(0,212,170,0.1);display:flex;justify-content:flex-end;gap:12px}
+.btn{padding:12px 24px;border-radius:8px;font-size:14px;transition:all 0.3s;cursor:pointer}
+.btn-secondary{background:rgba(255,255,255,0.1);color:#fff}
+.btn-secondary:hover{background:rgba(255,255,255,0.2)}
+.btn-primary{background:linear-gradient(135deg,#00d4aa,#008f6b);color:#000;font-weight:500}
+.btn-primary:hover{box-shadow:0 0 20px rgba(0,212,170,0.4)}
+
+/* ========== NOTE DETAIL MODAL ========== */
+.note-detail-content{max-width:700px;margin:0 auto}
+.note-detail-header{text-align:center;margin-bottom:30px;padding-bottom:24px;border-bottom:1px solid rgba(0,212,170,0.1)}
+.note-detail-author{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:20px}
+.note-detail-avatar{width:50px;height:50px;border-radius:50%;border:2px solid #00d4aa}
+.note-detail-info{text-align:left}
+.note-detail-name{font-size:16px;font-weight:600}
+.note-detail-meta{font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px}
+.follow-btn{padding:8px 20px;background:rgba(0,212,170,0.1);border:1px solid #00d4aa;border-radius:20px;font-size:13px;color:#00d4aa;cursor:pointer;transition:all 0.3s}
+.follow-btn:hover,.follow-btn.following{background:#00d4aa;color:#000}
+.note-detail-title{font-family:'Noto Serif SC',serif;font-size:28px;font-weight:700;margin-bottom:20px;line-height:1.4}
+.note-detail-cover{width:100%;max-height:400px;object-fit:cover;border-radius:12px;margin-bottom:24px}
+.note-detail-body{font-size:16px;line-height:2;color:rgba(255,255,255,0.9)}
+.note-detail-body p{margin-bottom:16px}
+
+/* 引用药物卡片（详情页） */
+.herb-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:24px 0}
+.herb-card{background:rgba(0,0,0,0.3);border:1px solid rgba(0,212,170,0.2);border-radius:12px;overflow:hidden;cursor:pointer;transition:all 0.3s}
+.herb-card:hover{border-color:#00d4aa;transform:translateY(-3px)}
+.herb-card-img{height:120px;background:linear-gradient(135deg,rgba(0,212,170,0.1),rgba(0,143,107,0.1));display:flex;align-items:center;justify-content:center;font-size:48px}
+.herb-card-img img{width:100%;height:100%;object-fit:cover}
+.herb-card-info{padding:16px}
+.herb-card-name{font-family:'Noto Serif SC',serif;font-size:16px;font-weight:600;margin-bottom:4px}
+.herb-card-latin{font-size:12px;color:#00d4aa;font-style:italic}
+
+/* 互动栏 */
+.interaction-bar{position:sticky;bottom:0;background:rgba(20,24,32,0.95);backdrop-filter:blur(10px);border-top:1px solid rgba(0,212,170,0.2);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;margin-top:40px}
+.interaction-left{display:flex;gap:30px}
+.interaction-item{display:flex;align-items:center;gap:8px;font-size:14px;color:rgba(255,255,255,0.6);cursor:pointer;transition:all 0.3s}
+.interaction-item:hover{color:#00d4aa}
+.interaction-item.liked{color:#ff6b6b}
+.interaction-item.collected{color:#c9b037}
+.interaction-item span{font-size:20px}
+
+/* ========== EMPTY STATE ========== */
+.empty-state{text-align:center;padding:60px 20px}
+.empty-icon{font-size:64px;margin-bottom:20px;opacity:0.5}
+.empty-title{font-family:'Noto Serif SC',serif;font-size:20px;color:rgba(255,255,255,0.8);margin-bottom:12px}
+.empty-desc{font-size:14px;color:rgba(255,255,255,0.5);margin-bottom:24px}
+.empty-btn{padding:12px 32px;background:linear-gradient(135deg,#00d4aa,#008f6b);border-radius:8px;color:#000;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.3s;display:inline-block}
+.empty-btn:hover{box-shadow:0 0 20px rgba(0,212,170,0.4)}
+
+/* ========== HERB SELECTOR MODAL ========== */
+.herb-search-box{position:relative;margin-bottom:20px}
+.herb-search-input{width:100%;padding:14px 20px;padding-left:48px;background:rgba(0,0,0,0.3);border:1px solid rgba(0,212,170,0.2);border-radius:8px;color:#fff;font-size:14px;outline:none}
+.herb-search-input:focus{border-color:#00d4aa}
+.herb-search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:18px;color:rgba(255,255,255,0.4)}
+.herb-results{max-height:400px;overflow-y:auto}
+.herb-result-item{display:flex;align-items:center;gap:16px;padding:16px;background:rgba(0,0,0,0.2);border-radius:8px;margin-bottom:12px;cursor:pointer;transition:all 0.3s}
+.herb-result-item:hover{background:rgba(0,212,170,0.1);border-color:#00d4aa}
+.herb-result-img{width:60px;height:60px;border-radius:8px;background:linear-gradient(135deg,rgba(0,212,170,0.1),rgba(0,143,107,0.1));display:flex;align-items:center;justify-content:center;font-size:28px;overflow:hidden}
+.herb-result-img img{width:100%;height:100%;object-fit:cover}
+.herb-result-info{flex:1}
+.herb-result-name{font-size:15px;font-weight:600;margin-bottom:4px}
+.herb-result-latin{font-size:12px;color:#00d4aa;font-style:italic}
+.herb-result-desc{font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px}
+.herb-result-add{padding:8px 16px;background:rgba(0,212,170,0.1);border:1px solid rgba(0,212,170,0.2);border-radius:6px;color:#00d4aa;font-size:13px;transition:all 0.3s}
+.herb-result-item:hover .herb-result-add{background:#00d4aa;color:#000}
+
+/* ========== ANIMATIONS ========== */
+@keyframes rotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:0.5}50%{opacity:1}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+
+/* ========== RESPONSIVE ========== */
+@media(max-width:768px){
+.nav-bar{padding:0 20px}
+.nav-links{display:none}
+.profile-wrapper{padding:0 20px}
+.profile-header{padding:24px}
+.profile-header-content{flex-direction:center;gap:20px;text-align:center}
+.avatar-section{margin:0 auto}
+.badge-section{position:relative;justify-content:center;margin-bottom:16px}
+.user-bio{display:block}
+.social-stats{justify-content:center}
+.header-actions{justify-content:center}
+.notes-grid{grid-template-columns:1fr}
+.collections-grid{grid-template-columns:repeat(2,1fr)}
+.bookmark-item{flex-direction:column}
+.bookmark-actions{flex-direction:row;justify-content:flex-start}
+.herb-cards{grid-template-columns:1fr}
+.modal-container{width:95%;max-height:95vh}
+}
+
+/* ========== PARTICLES ========== */
+.particles-container{position:fixed;inset:0;pointer-events:none;z-index:5;overflow:hidden}
+.particle{position:absolute;width:2px;height:2px;background:#00d4aa;border-radius:50%;opacity:0.4;animation:particle linear infinite}
+.particle:nth-child(1){left:10%;animation-duration:15s;animation-delay:0s}
+.particle:nth-child(2){left:30%;animation-duration:18s;animation-delay:2s}
+.particle:nth-child(3){left:50%;animation-duration:12s;animation-delay:1s}
+.particle:nth-child(4){left:70%;animation-duration:20s;animation-delay:3s}
+.particle:nth-child(5){left:90%;animation-duration:16s;animation-delay:0s}
+@keyframes particle{0%{transform:translateY(100vh) translateX(0);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-100vh) translateX(50px);opacity:0}}
+</style>
+</head>
+<body>
+
+<!-- Background -->
+<div class="page-bg">
+  <div class="paper-texture"></div>
+</div>
+
+<!-- Particles -->
+<div class="particles-container">
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+</div>
+
+<!-- Navigation -->
+<nav class="nav-bar">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon">🌿</div>
+    <span>本草万象</span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">首页</a>
+    <a href="wanxiang.html" class="nav-link">万象阅览</a>
+    <a href="duizhao-list.html" class="nav-link">古今对照</a>
+    <a href="ditu2.html" class="nav-link">时空地图</a>
+    <a href="wenwu.html" class="nav-link">文物佐证</a>
+  </div>
+  <div class="user-menu" id="userMenu">
+    <button class="login-btn" id="loginBtn" onclick="goToLogin()" style="display:none;">登录 / 注册</button>
+    <div class="user-avatar" id="userAvatar" onclick="toggleUserDropdown()">
+      <img src="" alt="头像" id="navUserAvatar">
+    </div>
+    <div class="user-dropdown" id="userDropdown">
+      <div class="user-dropdown-item" onclick="goToProfile()">👤 个人中心</div>
+      <div class="user-dropdown-item" onclick="goToSettings()">⚙️ 账号设置</div>
+      <div class="user-dropdown-divider"></div>
+      <div class="user-dropdown-item" onclick="logout()">🚪 退出登录</div>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Container -->
+<div class="main-container">
+  <div class="profile-wrapper">
+
+    <!-- Profile Header -->
+    <div class="profile-header">
+      <div class="header-decoration"></div>
+      <div class="header-decoration right"></div>
+
+      <div class="badge-section">
+        <div class="level-badge scholar" id="userLevel">🏅 认证学者</div>
+      </div>
+
+      <div class="profile-header-content">
+        <div class="avatar-section">
+          <div class="avatar-frame">
+            <img src="" alt="用户头像" id="profileAvatar">
+          </div>
+          <div class="avatar-edit" onclick="uploadAvatar()">📷</div>
+        </div>
+
+        <div class="user-info">
+          <h1 class="user-nickname" id="profileNickname">本草学者</h1>
+          <p class="user-bio" id="profileBio">宋代本草考据爱好者</p>
+
+          <div class="social-stats">
+            <div class="stat-item" onclick="showFollows()">
+              <div class="stat-value" id="followCount">128</div>
+              <div class="stat-label">关注</div>
+            </div>
+            <div class="stat-item" onclick="showFans()">
+              <div class="stat-value" id="fanCount">256</div>
+              <div class="stat-label">粉丝</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="likeCount">1,024</div>
+              <div class="stat-label">获赞</div>
+            </div>
+          </div>
+
+          <div class="header-actions">
+            <button class="action-btn primary" onclick="openCreateNote()">✍️ 写笔记</button>
+            <button class="action-btn secondary" onclick="editProfile()">✏️ 编辑资料</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+      <div class="tab-list">
+        <div class="tab-item active" data-tab="notes" onclick="switchTab('notes')">
+          📝 笔记
+          <span class="tab-badge" id="noteCount">12</span>
+        </div>
+        <div class="tab-item" data-tab="collections" onclick="switchTab('collections')">
+          📚 收藏
+          <span class="tab-badge" id="collectionCount">48</span>
+        </div>
+        <div class="tab-item" data-tab="bookmarks" onclick="switchTab('bookmarks')">
+          🔖 书签
+          <span class="tab-badge" id="bookmarkCount">23</span>
+        </div>
+        <div class="tab-item" data-tab="comments" onclick="switchTab('comments')">
+          💬 评论
+          <span class="tab-badge" id="commentCount">56</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content-area">
+
+      <!-- Notes Tab -->
+      <div class="tab-content active" id="notesTab">
+        <div class="notes-header">
+          <h2 class="section-title">我的笔记</h2>
+          <button class="create-note-btn" onclick="openCreateNote()">✍️ 写笔记</button>
+        </div>
+        <div class="notes-grid" id="notesGrid">
+          <!-- Notes will be loaded here -->
+        </div>
+      </div>
+
+      <!-- Collections Tab -->
+      <div class="tab-content" id="collectionsTab">
+        <div class="notes-header">
+          <h2 class="section-title">我的收藏</h2>
+        </div>
+        <div class="collections-grid" id="collectionsGrid">
+          <!-- Collections will be loaded here -->
+        </div>
+      </div>
+
+      <!-- Bookmarks Tab -->
+      <div class="tab-content" id="bookmarksTab">
+        <div class="notes-header">
+          <h2 class="section-title">阅读书签</h2>
+        </div>
+        <div class="bookmarks-list" id="bookmarksList">
+          <!-- Bookmarks will be loaded here -->
+        </div>
+      </div>
+
+      <!-- Comments Tab -->
+      <div class="tab-content" id="commentsTab">
+        <div class="notes-header">
+          <h2 class="section-title">我的评论</h2>
+        </div>
+        <div class="comments-list" id="commentsList">
+          <!-- Comments will be loaded here -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Create Note Modal -->
+<div class="modal-overlay" id="createNoteModal">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h3 class="modal-title">✍️ 撰写考据笔记</h3>
+      <div class="modal-close" onclick="closeModal('createNoteModal')">✕</div>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">封面图 <span>*</span></label>
+        <div class="cover-selector">
+          <div class="cover-option selected" data-cover="default">📜</div>
+          <div class="cover-option" data-cover="herb1">🌿</div>
+          <div class="cover-option" data-cover="herb2">🌱</div>
+          <div class="cover-option upload">📤<br>上传</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">标题 <span>*</span></label>
+        <input type="text" class="form-input" placeholder="请输入笔记标题，如：关于《图经》中'独活'与'羌活'的形态辨析" id="noteTitle">
+      </div>
+      <div class="form-group">
+        <label class="form-label">正文 <span>*</span></label>
+        <textarea class="form-textarea" placeholder="撰写您的本草考据心得..." id="noteContent"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">引用药物</label>
+        <div class="herb-reference-box">
+          <div class="herb-reference-header">
+            <span class="herb-reference-title">🌿 已引用药物</span>
+            <button class="add-herb-btn" onclick="openHerbSelector()">+ 添加引用</button>
+          </div>
+          <div class="selected-herbs" id="selectedHerbs">
+            <!-- Selected herbs will appear here -->
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">标签</label>
+        <div class="tag-input-wrapper" id="tagInputWrapper">
+          <input type="text" class="tag-input" placeholder="添加标签，回车确认" id="tagInput">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">可见范围</label>
+        <div class="visibility-options">
+          <div class="visibility-option selected" data-visibility="public">
+            <div class="visibility-icon">🌐</div>
+            <div class="visibility-label">公开</div>
+            <div class="visibility-desc">所有人可见</div>
+          </div>
+          <div class="visibility-option" data-visibility="friends">
+            <div class="visibility-icon">👥</div>
+            <div class="visibility-label">好友</div>
+            <div class="visibility-desc">仅关注者可见</div>
+          </div>
+          <div class="visibility-option" data-visibility="private">
+            <div class="visibility-icon">🔒</div>
+            <div class="visibility-label">私密</div>
+            <div class="visibility-desc">仅自己可见</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('createNoteModal')">取消</button>
+      <button class="btn btn-primary" onclick="publishNote()">发布笔记</button>
+    </div>
+  </div>
+</div>
+
+<!-- Note Detail Modal -->
+<div class="modal-overlay" id="noteDetailModal">
+  <div class="modal-container" style="max-width:800px;">
+    <div class="modal-header">
+      <h3 class="modal-title">笔记详情</h3>
+      <div class="modal-close" onclick="closeModal('noteDetailModal')">✕</div>
+    </div>
+    <div class="modal-body">
+      <div class="note-detail-content" id="noteDetailContent">
+        <!-- Note detail will be loaded here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Herb Selector Modal -->
+<div class="modal-overlay" id="herbSelectorModal">
+  <div class="modal-container" style="max-width:600px;">
+    <div class="modal-header">
+      <h3 class="modal-title">🌿 引用药物</h3>
+      <div class="modal-close" onclick="closeModal('herbSelectorModal')">✕</div>
+    </div>
+    <div class="modal-body">
+      <div class="herb-search-box">
+        <span class="herb-search-icon">🔍</span>
+        <input type="text" class="herb-search-input" placeholder="搜索药物名称..." id="herbSearchInput" oninput="searchHerbs()">
+      </div>
+      <div class="herb-results" id="herbResults">
+        <!-- Herb search results will appear here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ========== USER DATA ==========
+let currentUser = null;
+let notes = [];
+let collections = [];
+let bookmarks = [];
+let comments = [];
+let selectedHerbsInNote = [];
+let currentTags = [];
+
+// ========== INITIALIZATION ==========
+document.addEventListener('DOMContentLoaded', () => {
+  checkAuthAndLoad();
+  loadMockData();
+  renderAllData();
+  setupEventListeners();
+});
+
+function checkAuthAndLoad() {
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
+  if (!isLoggedIn || isLoggedIn !== 'true') {
+    window.location.href = 'login.html';
+    return;
+  }
+  currentUser = JSON.parse(localStorage.getItem('benCaoUser') || '{}');
+  loadUserData();
+}
+
+function loadUserData() {
+  if (currentUser) {
+    const navUserAvatar = document.getElementById('navUserAvatar');
+    if (navUserAvatar) navUserAvatar.src = currentUser.avatar;
+    document.getElementById('profileAvatar').src = currentUser.avatar;
+    document.getElementById('profileNickname').textContent = currentUser.nickname;
+    document.getElementById('profileBio').textContent = currentUser.bio;
+    document.getElementById('followCount').textContent = formatNumber(currentUser.follow_count);
+    document.getElementById('fanCount').textContent = formatNumber(currentUser.fan_count);
+    document.getElementById('likeCount').textContent = formatNumber(currentUser.like_count);
+    document.getElementById('userLevel').textContent = getLevelBadge(currentUser.level);
+  }
+}
+
+function getLevelBadge(level) {
+  const badges = {
+    '认证学者': '🏅 认证学者',
+    '项目专家': '⭐ 项目专家',
+    '游客': '👤 游客'
+  };
+  return badges[level] || '👤 用户';
+}
+
+function formatNumber(num) {
+  if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+  return num.toString();
+}
+
+// ========== MOCK DATA ==========
+function loadMockData() {
+  // Mock Notes
+  notes = [
+    {
+      id: 1,
+      title: '关于《图经》中"独活"与"羌活"的形态辨析',
+      excerpt: '《本草图经》所载独活与羌活，虽同属伞形科，然形态有别。独活茎高一米有余，叶大而厚...',
+      content: '《本草图经》所载独活与羌活，虽同属伞形科，然形态有别。独活茎高一米有余，叶大而厚，花色黄白相间；羌活则茎短叶小，花色偏紫。二者功效亦异，独活偏于下部风湿，羌活偏于上部风寒。',
+      cover: '📜',
+      date: '2026-05-01',
+      likes: 128,
+      comments: 23,
+      collects: 45,
+      isLiked: false,
+      isCollected: true,
+      herbs: [{id: 1, name: '独活', latin: 'Angelica pubescens'}, {id: 2, name: '羌活', latin: 'Notopterygium incisum'}],
+      tags: ['本草考证', '宋代药学', '形态学'],
+      author: currentUser
+    },
+    {
+      id: 2,
+      title: '《本草纲目》人参条目校勘记',
+      excerpt: '检核金陵本、江西本、合肥本三版《本草纲目》，人参条目存在多处异文，兹逐一考辨...',
+      content: '检核金陵本、江西本、合肥本三版《本草纲目》，人参条目存在多处异文。金陵本"味甘微寒"，江西本作"味甘微苦"，合肥本则作"味甘苦平"。据《神农本草经》原文，当作"味甘微寒"为是。',
+      cover: '🌿',
+      date: '2026-04-28',
+      likes: 256,
+      comments: 42,
+      collects: 89,
+      isLiked: true,
+      isCollected: false,
+      herbs: [{id: 3, name: '人参', latin: 'Panax ginseng'}],
+      tags: ['本草纲目', '文献校勘', '人参'],
+      author: currentUser
+    },
+    {
+      id: 3,
+      title: '宋代本草学中的外来药物考',
+      excerpt: '通过对《证类本草》外来药物的梳理，可见宋代海上丝绸之路对药物交流的影响...',
+      content: '通过对《证类本草》外来药物的梳理，可见宋代海上丝绸之路对药物交流的影响。乳香、没药、血竭等香药大量输入，不仅丰富了本草学内容，也推动了宋代医学理论的发展。',
+      cover: '📖',
+      date: '2026-04-20',
+      likes: 189,
+      comments: 31,
+      collects: 67,
+      isLiked: false,
+      isCollected: false,
+      herbs: [{id: 4, name: '乳香', latin: 'Boswellia carterii'}, {id: 5, name: '没药', latin: 'Commiphora myrrha'}],
+      tags: ['外来药物', '海上丝路', '证类本草'],
+      author: currentUser
+    }
+  ];
+
+  // Mock Collections
+  collections = [
+    {id: 1, name: '人参', latin: 'Panax ginseng', image: '🌿', note: '补气之王，需进一步研究其栽培历史', time: '2026-05-02'},
+    {id: 2, name: '当归', latin: 'Angelica sinensis', image: '🌱', note: '女性圣药，甘肃产地最佳', time: '2026-04-30'},
+    {id: 3, name: '黄芪', latin: 'Astragalus membranaceus', image: '🍃', note: '补气固表，常与防风配伍', time: '2026-04-25'},
+    {id: 4, name: '白术', latin: 'Atractylodes macrocephala', image: '🌾', note: '健脾要药，浙产者为道地', time: '2026-04-20'},
+    {id: 5, name: '茯苓', latin: 'Poria cocos', image: '🍄', note: '利水渗湿，云南茯苓品质上乘', time: '2026-04-15'},
+    {id: 6, name: '甘草', latin: 'Glycyrrhiza uralensis', image: '🌿', note: '国老之称，调和诸药', time: '2026-04-10'}
+  ];
+
+  // Mock Bookmarks
+  bookmarks = [
+    {
+      id: 1,
+      book: '《本草图经》',
+      juan: '卷三 · 草部上品',
+      preview: '人参，生上党山谷及辽东，二月、四月、八月上旬采根...',
+      note: '此处所述产地与今之东北人参产区吻合，可见宋代已有明确道地概念。',
+      time: '2026-05-01'
+    },
+    {
+      id: 2,
+      book: '《本草纲目》',
+      juan: '卷十二 · 草部',
+      preview: '黄连，苦寒，主热气目痛，眦伤泣出，明目...',
+      note: '黄连苦寒之性与今之药理研究相符，确有抗菌消炎之效。',
+      time: '2026-04-28'
+    },
+    {
+      id: 3,
+      book: '《证类本草》',
+      juan: '卷六 · 草部中品',
+      preview: '芎藭，味辛温，主中风入脑头痛，寒痹筋挛缓急...',
+      note: '芎藭即川芎，活血行气，为血中气药。',
+      time: '2026-04-25'
+    }
+  ];
+
+  // Mock Comments
+  comments = [
+    {
+      id: 1,
+      targetType: 'note',
+      targetTitle: '《本草纲目》人参条目校勘记',
+      content: '考证详尽，对三版异文的梳理很有价值。金陵本确实更接近原始文本。',
+      time: '2026-05-02',
+      likes: 12,
+      replies: [
+        {author: '本草研究者', avatar: '🧑‍🔬', content: '同意，我也认为金陵本更可靠', time: '2小时前'}
+      ]
+    },
+    {
+      id: 2,
+      targetType: 'herb',
+      targetTitle: '人参',
+      content: '请问关于人参的栽培历史，有无更多文献可以参考？特别是清代的部分。',
+      time: '2026-04-30',
+      likes: 8,
+      replies: []
+    },
+    {
+      id: 3,
+      targetType: 'book',
+      targetTitle: '《本草图经》',
+      content: '苏颂的绘图确实有很高的科学价值，很多植物形态至今仍然可以作为鉴定依据。',
+      time: '2026-04-28',
+      likes: 23,
+      replies: [
+        {author: '古籍爱好者', avatar: '📚', content: '确实，宋代本草绘图的水平令人惊叹', time: '1天前'},
+        {author: '中药师', avatar: '💊', content: '我们鉴定药材时经常会参考这些古图', time: '5小时前'}
+      ]
+    }
+  ];
+
+  // Update counts
+  document.getElementById('noteCount').textContent = notes.length;
+  document.getElementById('collectionCount').textContent = collections.length;
+  document.getElementById('bookmarkCount').textContent = bookmarks.length;
+  document.getElementById('commentCount').textContent = comments.length;
+}
+
+// ========== RENDER FUNCTIONS ==========
+function renderAllData() {
+  renderNotes();
+  renderCollections();
+  renderBookmarks();
+  renderComments();
+}
+
+function renderNotes() {
+  const container = document.getElementById('notesGrid');
+  if (notes.length === 0) {
+    container.innerHTML = getEmptyState('笔记', '写下您的第一篇本草考据笔记');
+    return;
+  }
+
+  container.innerHTML = notes.map(note => `
+    <div class="note-card" onclick="openNoteDetail(${note.id})">
+      <div class="note-cover">
+        <div class="note-cover-overlay"></div>
+        ${note.cover.startsWith('http') ? `<img src="${note.cover}" alt="">` : `<span>${note.cover}</span>`}
+      </div>
+      <div class="note-content">
+        <h3 class="note-title">${note.title}</h3>
+        <p class="note-excerpt">${note.excerpt}</p>
+        <div class="note-herbs">
+          ${note.herbs.map(h => `<span class="herb-tag">${h.name}</span>`).join('')}
+        </div>
+        <div class="note-meta">
+          <span class="note-date">📅 ${note.date}</span>
+          <div class="note-stats">
+            <span class="note-stat ${note.isLiked ? 'liked' : ''}">❤️ ${note.likes}</span>
+            <span class="note-stat">💬 ${note.comments}</span>
+            <span class="note-stat ${note.isCollected ? 'collected' : ''}">⭐ ${note.collects}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderCollections() {
+  const container = document.getElementById('collectionsGrid');
+  if (collections.length === 0) {
+    container.innerHTML = getEmptyState('收藏', '开始收藏您感兴趣的本草药物');
+    return;
+  }
+
+  container.innerHTML = collections.map(item => `
+    <div class="collection-card">
+      <div class="collection-img">${item.image}</div>
+      <div class="collection-actions">
+        <div class="collection-action" onclick="removeCollection(${item.id}, event)">🗑️</div>
+      </div>
+      <div class="collection-info">
+        <div class="collection-name">${item.name}</div>
+        <div class="collection-latin">${item.latin}</div>
+        ${item.note ? `<div class="collection-note">${item.note}</div>` : ''}
+        <div class="collection-time">收藏于 ${item.time}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderBookmarks() {
+  const container = document.getElementById('bookmarksList');
+  if (bookmarks.length === 0) {
+    container.innerHTML = getEmptyState('书签', '在阅读古籍时添加书签，记录您的思考');
+    return;
+  }
+
+  container.innerHTML = bookmarks.map(item => `
+    <div class="bookmark-item">
+      <div class="bookmark-icon">📜</div>
+      <div class="bookmark-content">
+        <div class="bookmark-source">${item.book} · ${item.juan}</div>
+        <div class="bookmark-preview">"${item.preview}"</div>
+        ${item.note ? `<div class="bookmark-note">${item.note}</div>` : ''}
+      </div>
+      <div class="bookmark-actions">
+        <button class="bookmark-action" onclick="readBookmark(${item.id})">继续阅读</button>
+        <button class="bookmark-action" onclick="deleteBookmark(${item.id})" style="background:rgba(255,107,107,0.1);color:#ff6b6b;border-color:rgba(255,107,107,0.2);">删除</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderComments() {
+  const container = document.getElementById('commentsList');
+  if (comments.length === 0) {
+    container.innerHTML = getEmptyState('评论', '参与讨论，分享您的见解');
+    return;
+  }
+
+  container.innerHTML = comments.map(comment => `
+    <div class="comment-item">
+      <div class="comment-header">
+        <div class="comment-author">
+          <img src="${currentUser.avatar}" alt="" class="comment-avatar">
+          <div class="comment-info">
+            <span class="comment-name">${currentUser.nickname}</span>
+            <span class="comment-target">评论了 ${comment.targetType === 'note' ? '📝' : comment.targetType === 'herb' ? '🌿' : '📚'} <a href="#">${comment.targetTitle}</a></span>
+          </div>
+        </div>
+        <span class="comment-time">${comment.time}</span>
+      </div>
+      <div class="comment-content">${comment.content}</div>
+      <div class="comment-actions">
+        <span class="comment-action">❤️ ${comment.likes}</span>
+        <span class="comment-action">💬 回复</span>
+        <span class="comment-action">🔗 查看原文</span>
+      </div>
+      ${comment.replies.length > 0 ? `
+        <div class="replies">
+          ${comment.replies.map(reply => `
+            <div class="reply-item">
+              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${reply.author}" alt="" class="reply-avatar">
+              <div class="reply-content">
+                <div class="reply-header">
+                  <span class="reply-name">${reply.author}</span>
+                  <span class="reply-time">${reply.time}</span>
+                </div>
+                <div class="reply-text">${reply.content}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+    </div>
+  `).join('');
+}
+
+function getEmptyState(type, desc) {
+  return `
+    <div class="empty-state">
+      <div class="empty-icon">📭</div>
+      <div class="empty-title">暂无${type}</div>
+      <div class="empty-desc">${desc}</div>
+      <button class="empty-btn" onclick="${type === '笔记' ? 'openCreateNote()' : type === '收藏' ? 'goToBrowse()' : 'goToRead()'}">${type === '笔记' ? '写笔记' : type === '收藏' ? '去探索' : '去阅读'}</button>
+    </div>
+  `;
+}
+
+// ========== TAB SWITCHING ==========
+function switchTab(tabName) {
+  document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+  document.querySelector(`.tab-item[data-tab="${tabName}"]`).classList.add('active');
+  document.getElementById(tabName + 'Tab').classList.add('active');
+}
+
+// ========== MODAL FUNCTIONS ==========
+function openModal(modalId) {
+  const modal = document.getElementById(modalId);
+  modal.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(modalId) {
+  const modal = document.getElementById(modalId);
+  modal.classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+// Close modal when clicking overlay
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) {
+      overlay.classList.remove('show');
+      document.body.style.overflow = '';
+    }
+  });
+});
+
+// ========== NOTE FUNCTIONS ==========
+function openCreateNote() {
+  selectedHerbsInNote = [];
+  currentTags = [];
+  document.getElementById('noteTitle').value = '';
+  document.getElementById('noteContent').value = '';
+  document.getElementById('selectedHerbs').innerHTML = '';
+  document.getElementById('tagInputWrapper').innerHTML = '<input type="text" class="tag-input" placeholder="添加标签，回车确认" id="tagInput">';
+  setupTagInput();
+  openModal('createNoteModal');
+}
+
+function openNoteDetail(noteId) {
+  const note = notes.find(n => n.id === noteId);
+  if (!note) return;
+
+  const content = document.getElementById('noteDetailContent');
+  content.innerHTML = `
+    <div class="note-detail-header">
+      <div class="note-detail-author">
+        <img src="${note.author.avatar}" alt="" class="note-detail-avatar">
+        <div class="note-detail-info">
+          <div class="note-detail-name">${note.author.nickname}</div>
+          <div class="note-detail-meta">${note.date} · ${note.author.level}</div>
+        </div>
+        <button class="follow-btn" onclick="this.classList.toggle('following'); this.textContent = this.classList.contains('following') ? '已关注' : '+ 关注'">+ 关注</button>
+      </div>
+      <h1 class="note-detail-title">${note.title}</h1>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+        ${note.tags.map(tag => `<span style="padding:4px 12px;background:rgba(0,212,170,0.1);border-radius:4px;font-size:13px;color:#00d4aa;">#${tag}</span>`).join('')}
+      </div>
+    </div>
+
+    <div class="note-cover" style="height:300px;border-radius:12px;margin-bottom:24px;background:linear-gradient(135deg,rgba(0,212,170,0.2),rgba(0,143,107,0.2));display:flex;align-items:center;justify-content:center;font-size:80px;">
+      ${note.cover}
+    </div>
+
+    <div class="note-detail-body">
+      <p>${note.content}</p>
+      <p>（此处为笔记正文示例内容，实际内容会更长...）</p>
+      <p>通过对比不同时期的本草文献，我们可以发现古人对药物的认知是一个不断深入的过程。《本草图经》的绘图为我们提供了宝贵的形态学资料，这对于鉴定古代药物的真实身份具有重要意义。</p>
+    </div>
+
+    ${note.herbs.length > 0 ? `
+      <h3 style="font-family:'Noto Serif SC',serif;font-size:18px;margin:24px 0 16px;color:#00d4aa;">📖 引用药物</h3>
+      <div class="herb-cards">
+        ${note.herbs.map(herb => `
+          <div class="herb-card" onclick="goToHerb(${herb.id})">
+            <div class="herb-card-img">🌿</div>
+            <div class="herb-card-info">
+              <div class="herb-card-name">${herb.name}</div>
+              <div class="herb-card-latin">${herb.latin}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    ` : ''}
+
+    <div class="interaction-bar">
+      <div class="interaction-left">
+        <div class="interaction-item ${note.isLiked ? 'liked' : ''}" onclick="toggleLike(this, ${note.id})">
+          <span>${note.isLiked ? '❤️' : '🤍'}</span>
+          <span>${note.likes}</span>
+        </div>
+        <div class="interaction-item">
+          <span>💬</span>
+          <span>${note.comments}</span>
+        </div>
+        <div class="interaction-item ${note.isCollected ? 'collected' : ''}" onclick="toggleCollect(this, ${note.id})">
+          <span>${note.isCollected ? '⭐' : '📑'}</span>
+          <span>${note.collects}</span>
+        </div>
+      </div>
+      <div class="interaction-item">
+        <span>↗️</span>
+        <span>分享</span>
+      </div>
+    </div>
+  `;
+
+  openModal('noteDetailModal');
+}
+
+function toggleLike(el, noteId) {
+  const isLiked = el.classList.toggle('liked');
+  el.querySelector('span:first-child').textContent = isLiked ? '❤️' : '🤍';
+  // Update count logic here
+}
+
+function toggleCollect(el, noteId) {
+  const isCollected = el.classList.toggle('collected');
+  el.querySelector('span:first-child').textContent = isCollected ? '⭐' : '📑';
+  // Update count logic here
+}
+
+// ========== HERB SELECTOR ==========
+const mockHerbs = [
+  {id: 1, name: '人参', latin: 'Panax ginseng', desc: '五加科人参属，补气之要药'},
+  {id: 2, name: '独活', latin: 'Angelica pubescens', desc: '伞形科当归属，祛风湿，止痛'},
+  {id: 3, name: '羌活', latin: 'Notopterygium incisum', desc: '伞形科羌活属，解表散寒'},
+  {id: 4, name: '当归', latin: 'Angelica sinensis', desc: '伞形科当归属，补血活血'},
+  {id: 5, name: '黄芪', latin: 'Astragalus membranaceus', desc: '豆科黄芪属，补气升阳'},
+  {id: 6, name: '白术', latin: 'Atractylodes macrocephala', desc: '菊科苍术属，健脾益气'}
+];
+
+function openHerbSelector() {
+  document.getElementById('herbSearchInput').value = '';
+  renderHerbResults(mockHerbs);
+  openModal('herbSelectorModal');
+}
+
+function searchHerbs() {
+  const query = document.getElementById('herbSearchInput').value.toLowerCase();
+  const filtered = mockHerbs.filter(h =>
+    h.name.includes(query) || h.latin.toLowerCase().includes(query)
+  );
+  renderHerbResults(filtered);
+}
+
+function renderHerbResults(herbs) {
+  const container = document.getElementById('herbResults');
+  if (herbs.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:40px;color:rgba(255,255,255,0.4);">未找到相关药物</div>';
+    return;
+  }
+
+  container.innerHTML = herbs.map(herb => `
+    <div class="herb-result-item" onclick="addHerbToNote(${herb.id})">
+      <div class="herb-result-img">🌿</div>
+      <div class="herb-result-info">
+        <div class="herb-result-name">${herb.name}</div>
+        <div class="herb-result-latin">${herb.latin}</div>
+        <div class="herb-result-desc">${herb.desc}</div>
+      </div>
+      <button class="herb-result-add">添加</button>
+    </div>
+  `).join('');
+}
+
+function addHerbToNote(herbId) {
+  const herb = mockHerbs.find(h => h.id === herbId);
+  if (!herb || selectedHerbsInNote.find(h => h.id === herbId)) return;
+
+  selectedHerbsInNote.push(herb);
+  renderSelectedHerbs();
+  closeModal('herbSelectorModal');
+}
+
+function renderSelectedHerbs() {
+  const container = document.getElementById('selectedHerbs');
+  container.innerHTML = selectedHerbsInNote.map(herb => `
+    <div class="selected-herb">
+      <div style="font-size:24px;">🌿</div>
+      <div class="selected-herb-info">
+        <div class="selected-herb-name">${herb.name}</div>
+        <div class="selected-herb-latin">${herb.latin}</div>
+      </div>
+      <span class="selected-herb-remove" onclick="removeHerbFromNote(${herb.id})">✕</span>
+    </div>
+  `).join('');
+}
+
+function removeHerbFromNote(herbId) {
+  selectedHerbsInNote = selectedHerbsInNote.filter(h => h.id !== herbId);
+  renderSelectedHerbs();
+}
+
+// ========== TAG INPUT ==========
+function setupTagInput() {
+  const tagInput = document.getElementById('tagInput');
+  if (!tagInput) return;
+
+  tagInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      const value = tagInput.value.trim();
+      if (value && !currentTags.includes(value)) {
+        currentTags.push(value);
+        renderTags();
+        tagInput.value = '';
+      }
+    }
+  });
+}
+
+function renderTags() {
+  const wrapper = document.getElementById('tagInputWrapper');
+  const tagsHtml = currentTags.map(tag => `
+    <span class="tag-item">
+      #${tag}
+      <span class="tag-remove" onclick="removeTag('${tag}')">✕</span>
+    </span>
+  `).join('');
+
+  wrapper.innerHTML = tagsHtml + '<input type="text" class="tag-input" placeholder="添加标签，回车确认" id="tagInput">';
+  setupTagInput();
+  document.getElementById('tagInput').focus();
+}
+
+function removeTag(tag) {
+  currentTags = currentTags.filter(t => t !== tag);
+  renderTags();
+}
+
+// ========== PUBLISH NOTE ==========
+function publishNote() {
+  const title = document.getElementById('noteTitle').value.trim();
+  const content = document.getElementById('noteContent').value.trim();
+
+  if (!title || !content) {
+    alert('请填写标题和正文');
+    return;
+  }
+
+  const newNote = {
+    id: Date.now(),
+    title: title,
+    excerpt: content.substring(0, 100) + '...',
+    content: content,
+    cover: '📝',
+    date: new Date().toISOString().split('T')[0],
+    likes: 0,
+    comments: 0,
+    collects: 0,
+    isLiked: false,
+    isCollected: false,
+    herbs: selectedHerbsInNote,
+    tags: currentTags,
+    author: currentUser
+  };
+
+  notes.unshift(newNote);
+  document.getElementById('noteCount').textContent = notes.length;
+  renderNotes();
+  closeModal('createNoteModal');
+  alert('笔记发布成功！');
+}
+
+// ========== COVER & VISIBILITY SELECTION ==========
+document.querySelectorAll('.cover-option').forEach(option => {
+  option.addEventListener('click', () => {
+    document.querySelectorAll('.cover-option').forEach(o => o.classList.remove('selected'));
+    option.classList.add('selected');
+  });
+});
+
+document.querySelectorAll('.visibility-option').forEach(option => {
+  option.addEventListener('click', () => {
+    document.querySelectorAll('.visibility-option').forEach(o => o.classList.remove('selected'));
+    option.classList.add('selected');
+  });
+});
+
+// ========== USER MENU ==========
+function checkLoginStatus() {
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
+  const loginBtn = document.getElementById('loginBtn');
+  const userAvatar = document.getElementById('userAvatar');
+  const navUserAvatar = document.getElementById('navUserAvatar');
+  if (isLoggedIn === 'true') {
+    const userData = JSON.parse(localStorage.getItem('benCaoUser') || '{}');
+    if (userData.avatar && navUserAvatar) navUserAvatar.src = userData.avatar;
+    if (loginBtn) loginBtn.style.display = 'none';
+    if (userAvatar) userAvatar.style.display = 'block';
+  } else {
+    if (loginBtn) loginBtn.style.display = 'block';
+    if (userAvatar) userAvatar.style.display = 'none';
+  }
+}
+
+function toggleUserDropdown() {
+  document.getElementById('userDropdown').classList.toggle('show');
+}
+
+// 向后兼容旧函数名
+function toggleUserMenu() { toggleUserDropdown(); }
+
+function goToProfile() {
+  window.location.reload();
+}
+
+function goToLogin() {
+  window.location.href = 'login.html';
+}
+
+function goToSettings() {
+  alert('账号设置功能开发中...');
+}
+
+function logout() {
+  if (confirm('确定要退出登录吗？')) {
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('benCaoUser');
+    window.location.href = 'login.html';
+  }
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', (e) => {
+  const menu = document.getElementById('userMenu');
+  if (menu && !menu.contains(e.target)) {
+    document.getElementById('userDropdown').classList.remove('show');
+  }
+});
+
+checkLoginStatus();
+
+// ========== OTHER FUNCTIONS ==========
+function uploadAvatar() {
+  alert('头像上传功能开发中...');
+}
+
+function editProfile() {
+  const newNickname = prompt('请输入新昵称：', currentUser.nickname);
+  if (newNickname && newNickname.trim()) {
+    currentUser.nickname = newNickname.trim();
+    localStorage.setItem('benCaoUser', JSON.stringify(currentUser));
+    loadUserData();
+  }
+}
+
+function showFollows() {
+  alert('关注列表功能开发中...');
+}
+
+function showFans() {
+  alert('粉丝列表功能开发中...');
+}
+
+function removeCollection(id, event) {
+  event.stopPropagation();
+  if (confirm('确定要取消收藏吗？')) {
+    collections = collections.filter(c => c.id !== id);
+    document.getElementById('collectionCount').textContent = collections.length;
+    renderCollections();
+  }
+}
+
+function readBookmark(id) {
+  alert('跳转到阅读页面...');
+}
+
+function deleteBookmark(id) {
+  if (confirm('确定要删除此书签吗？')) {
+    bookmarks = bookmarks.filter(b => b.id !== id);
+    document.getElementById('bookmarkCount').textContent = bookmarks.length;
+    renderBookmarks();
+  }
+}
+
+function goToBrowse() {
+  window.location.href = 'wanxiang.html';
+}
+
+function goToRead() {
+  window.location.href = 'wanxiang.html';
+}
+
+function goToHerb(id) {
+  window.location.href = `duizhao-detail.html?herb=${id}`;
+}
+
+function setupEventListeners() {
+  setupTagInput();
+}
+</script>
+
+</body>
+</html>

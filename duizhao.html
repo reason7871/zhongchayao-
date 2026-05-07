@@ -1,0 +1,944 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>古今对照 · 药物通考 - 本草万象</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ========== DESIGN SYSTEM ========== */
+:root {
+  --bg-deep: #0F1115; --bg-surface: #141820; --bg-card: #1A1E28; --bg-card-hover: #222838;
+  --cyan: #00FFC2; --cyan-dim: #00CC9A; --cyan-glow: rgba(0,255,194,0.15); --cyan-border: rgba(0,255,194,0.12);
+  --red: #E63946; --red-glow: rgba(230,57,70,0.2);
+  --gold: #E6D8AD; --gold2: #C4B896; --gold3: #8A7E68;
+  --txt: #E6D8AD; --txt2: #A09888; --txt3: #6B6560;
+  --glass: rgba(15,17,21,0.6); --glass-border: rgba(0,255,194,0.12);
+  --serif: 'Noto Serif SC','SimSun',serif; --sans: 'Noto Sans SC','Microsoft YaHei',sans-serif; --mono: 'Source Code Pro','Consolas',monospace;
+  --r-sm:6px; --r-md:12px; --r-lg:20px; --r-xl:28px;
+  --ease: cubic-bezier(0.16,1,0.3,1); --dur: 0.3s;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:var(--sans);background:var(--bg-deep);color:var(--txt);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}button{cursor:pointer;border:none;background:none;font-family:inherit;color:inherit}
+input{font-family:inherit}ul,ol{list-style:none}img{max-width:100%;display:block}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(0,255,194,0.2);border-radius:3px}
+
+/* ========== NAV ========== */
+.nav-bar{position:fixed;top:0;left:0;right:0;z-index:1000;height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;background:rgba(15,17,21,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--glass-border);transition:var(--dur) var(--ease)}
+.nav-logo{display:flex;align-items:center;gap:12px;font-family:var(--serif);font-size:20px;font-weight:700;color:var(--gold)}
+.nav-logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--cyan),var(--red));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;font-weight:900;font-family:var(--serif)}
+.nav-links{display:flex;gap:4px}
+.nav-link{padding:8px 18px;border-radius:var(--r-sm);font-size:14px;font-weight:500;color:var(--txt2);transition:var(--dur) var(--ease);position:relative}
+.nav-link:hover,.nav-link.active{color:var(--cyan);background:rgba(0,255,194,0.06)}
+.nav-link.active::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:20px;height:2px;background:var(--cyan);border-radius:1px;box-shadow:0 0 8px var(--cyan)}
+.nav-actions{display:flex;gap:12px}
+.nav-btn{padding:8px 16px;border-radius:var(--r-sm);font-size:13px;font-weight:500;color:var(--txt2);border:1px solid var(--glass-border);transition:var(--dur) var(--ease)}
+.nav-btn:hover{color:var(--cyan);border-color:rgba(0,255,194,0.3)}
+.nav-btn.primary{background:rgba(0,255,194,0.1);color:var(--cyan);border-color:var(--cyan-border)}
+
+/* User Menu */
+.user-menu{position:relative;display:flex;align-items:center;gap:16px}
+.user-avatar{width:42px;height:42px;border-radius:50%;border:2px solid var(--cyan-border);cursor:pointer;overflow:hidden;transition:var(--dur) var(--ease)}
+.user-avatar:hover{border-color:var(--cyan);box-shadow:0 0 20px rgba(0,255,194,0.4)}
+.user-avatar img{width:100%;height:100%;object-fit:cover}
+.login-btn{padding:10px 24px;background:rgba(0,255,194,0.1);border:1px solid var(--cyan-border);border-radius:6px;color:var(--cyan);font-size:14px;cursor:pointer;transition:var(--dur) var(--ease);font-family:var(--serif);letter-spacing:1px}
+.login-btn:hover{background:rgba(0,255,194,0.2);border-color:var(--cyan);box-shadow:0 0 15px rgba(0,255,194,0.3)}
+.user-dropdown{position:absolute;top:55px;right:0;width:180px;background:rgba(20,24,32,0.95);border:1px solid var(--glass-border);border-radius:8px;backdrop-filter:blur(10px);opacity:0;visibility:hidden;transform:translateY(-10px);transition:var(--dur) var(--ease);z-index:200}
+.user-dropdown.show{opacity:1;visibility:visible;transform:translateY(0)}
+.user-dropdown-item{padding:12px 20px;font-size:14px;color:rgba(255,255,255,0.8);cursor:pointer;transition:var(--dur);display:flex;align-items:center;gap:10px}
+.user-dropdown-item:first-child{border-radius:8px 8px 0 0}
+.user-dropdown-item:last-child{border-radius:0 0 8px 8px}
+.user-dropdown-item:hover{background:rgba(0,255,194,0.1);color:var(--cyan)}
+.user-dropdown-divider{height:1px;background:var(--glass-border);margin:4px 0}
+
+/* ========== MAIN LAYOUT ========== */
+.main-container{padding-top:70px;min-height:100vh;display:flex;flex-direction:column}
+
+/* ========== HEADER ========== */
+.page-header{padding:24px 40px;border-bottom:1px solid var(--glass-border);background:rgba(15,17,21,0.5)}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.header-title{display:flex;align-items:center;gap:16px}
+.header-title h1{font-family:var(--serif);font-size:28px;font-weight:700;color:var(--gold)}
+.seal{display:inline-flex;align-items:center;justify-content:center;padding:4px 10px;border:2px solid var(--red);color:var(--red);font-family:var(--serif);font-weight:900;font-size:12px;border-radius:4px;letter-spacing:2px}
+.confidence{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--txt2)}
+.confidence-stars{color:var(--gold);letter-spacing:2px}
+
+/* Herb Info Bar */
+.herb-info-bar{display:flex;gap:32px;padding:16px 20px;background:var(--bg-card);border-radius:var(--r-md);border:1px solid var(--glass-border)}
+.info-item{display:flex;align-items:center;gap:8px}
+.info-label{font-size:12px;color:var(--txt3);text-transform:uppercase;letter-spacing:1px}
+.info-value{font-size:14px;color:var(--txt)}
+.info-value.latin{font-family:var(--mono);color:var(--cyan);font-style:italic}
+.info-value.ancient{font-family:var(--serif);color:var(--gold)}
+
+/* ========== TABS ========== */
+.tab-bar{display:flex;gap:4px;padding:0 40px;border-bottom:1px solid var(--glass-border);background:rgba(15,17,21,0.3)}
+.tab-btn{padding:14px 24px;font-size:14px;color:var(--txt2);border-bottom:2px solid transparent;margin-bottom:-1px;transition:var(--dur);cursor:pointer}
+.tab-btn:hover{color:var(--txt)}
+.tab-btn.active{color:var(--cyan);border-bottom-color:var(--cyan)}
+
+/* ========== CONTENT AREA ========== */
+.content-area{flex:1;padding:24px 40px;overflow-y:auto}
+
+/* ========== THREE COLUMN COMPARISON ========== */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;height:calc(100vh - 280px);min-height:500px}
+.compare-col{display:flex;flex-direction:column;gap:12px}
+.compare-col-header{display:flex;align-items:center;justify-content:space-between;padding-bottom:12px;border-bottom:1px solid var(--glass-border)}
+.compare-col-title{font-size:14px;font-weight:600;color:var(--txt);display:flex;align-items:center;gap:8px}
+.compare-col-title::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--cyan)}
+.compare-col:nth-child(2) .compare-col-title::before{background:var(--gold)}
+.compare-col:nth-child(3) .compare-col-title::before{background:var(--red)}
+.compare-col-badge{font-size:11px;padding:2px 8px;border-radius:10px;background:rgba(0,255,194,0.1);color:var(--cyan)}
+
+/* Image Box */
+.img-box{flex:1;border-radius:var(--r-md);background:var(--bg-card);border:1px solid var(--glass-border);overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;min-height:300px}
+.img-box svg{width:90%;height:90%}
+.img-box-placeholder{color:var(--txt3);font-size:14px;text-align:center}
+.img-box-placeholder-icon{font-size:48px;margin-bottom:12px;opacity:0.5}
+.img-label{position:absolute;bottom:12px;left:12px;font-size:11px;color:var(--txt3);background:rgba(15,17,21,0.9);padding:4px 10px;border-radius:var(--r-sm)}
+.img-nav{position:absolute;bottom:12px;right:12px;display:flex;gap:6px}
+.img-nav-btn{width:32px;height:32px;border-radius:var(--r-sm);border:1px solid var(--glass-border);background:rgba(15,17,21,0.8);color:var(--txt2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:var(--dur);font-size:12px}
+.img-nav-btn:hover{color:var(--cyan);border-color:rgba(0,255,194,0.3)}
+
+/* Highlight Zones */
+.highlight-zone{cursor:pointer;transition:all 0.3s var(--ease)}
+.highlight-zone:hover{filter:brightness(1.3);stroke:var(--cyan);stroke-width:2}
+.highlight-zone.active{filter:brightness(1.5) drop-shadow(0 0 8px rgba(0,255,194,0.5));stroke:var(--cyan);stroke-width:2}
+
+/* Parts List */
+.parts-list{padding:12px 0}
+.part-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r-sm);cursor:pointer;transition:var(--dur);margin-bottom:4px;border:1px solid transparent}
+.part-item:hover{background:rgba(0,255,194,0.05);border-color:rgba(0,255,194,0.15)}
+.part-item.active{background:rgba(0,255,194,0.1);border-color:var(--cyan-border)}
+.part-icon{width:24px;height:24px;border-radius:50%;background:rgba(0,255,194,0.1);display:flex;align-items:center;justify-content:center;font-size:12px}
+.part-name{font-size:13px;color:var(--txt)}
+.part-similarity{font-size:11px;color:var(--txt3);margin-left:auto}
+
+/* Part Detail */
+.part-detail{margin-top:12px;padding:16px;border-radius:var(--r-md);background:var(--bg-surface);border:1px solid var(--glass-border)}
+.part-detail-title{font-size:13px;font-weight:600;color:var(--cyan);margin-bottom:10px}
+.part-detail-text{font-size:12px;color:var(--txt2);line-height:1.8}
+.part-detail-compare{display:flex;gap:16px;margin-top:12px;padding-top:12px;border-top:1px solid var(--glass-border)}
+.part-detail-col{flex:1}
+.part-detail-col-title{font-size:11px;color:var(--txt3);margin-bottom:6px}
+.part-detail-col-text{font-size:12px;color:var(--txt)}
+
+/* ========== EVIDENCE CARDS ========== */
+.evidence-section{margin-top:24px}
+.section-title{font-family:var(--serif);font-size:18px;font-weight:600;color:var(--gold);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.section-title::before{content:'';width:3px;height:18px;background:var(--cyan);border-radius:2px}
+.evidence-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.evidence-card{background:var(--bg-card);border:1px solid var(--glass-border);border-radius:var(--r-md);padding:16px;transition:var(--dur)}
+.evidence-card:hover{border-color:rgba(0,255,194,0.3);transform:translateY(-2px)}
+.evidence-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.evidence-card-type{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:600}
+.evidence-card.type-core .evidence-card-type{background:rgba(0,255,194,0.15);color:var(--cyan)}
+.evidence-card.type-aux .evidence-card-type{background:rgba(230,216,173,0.1);color:var(--gold2)}
+.evidence-card-title{font-size:14px;font-weight:600;color:var(--txt);margin-bottom:8px}
+.evidence-card-body{font-size:13px;color:var(--txt2);line-height:1.7;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.evidence-card-meta{display:flex;gap:12px;margin-top:12px;padding-top:12px;border-top:1px solid var(--glass-border);font-size:11px;color:var(--txt3)}
+
+/* ========== BOTTOM ACTIONS ========== */
+.bottom-actions{position:fixed;bottom:0;left:0;right:0;padding:16px 40px;background:rgba(15,17,21,0.95);backdrop-filter:blur(20px);border-top:1px solid var(--glass-border);display:flex;align-items:center;justify-content:space-between;z-index:100}
+.action-left{display:flex;gap:12px}
+.action-right{display:flex;gap:12px}
+.action-btn{padding:10px 20px;border-radius:var(--r-sm);font-size:13px;font-weight:500;transition:var(--dur);display:flex;align-items:center;gap:6px}
+.action-btn.primary{background:rgba(0,255,194,0.1);color:var(--cyan);border:1px solid var(--cyan-border)}
+.action-btn.primary:hover{background:rgba(0,255,194,0.2)}
+.action-btn.secondary{background:transparent;color:var(--txt2);border:1px solid var(--glass-border)}
+.action-btn.secondary:hover{color:var(--txt);border-color:rgba(0,255,194,0.2)}
+
+/* ========== SYNC INDICATOR ========== */
+.sync-indicator{position:fixed;top:80px;right:40px;background:var(--bg-card);border:1px solid var(--cyan);border-radius:var(--r-sm);padding:8px 16px;font-size:12px;color:var(--cyan);opacity:0;transition:opacity 0.3s;z-index:100;pointer-events:none;display:flex;align-items:center;gap:8px}
+.sync-indicator.show{opacity:1}
+.sync-indicator::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* ========== HERB SELECTOR ========== */
+.herb-selector{display:flex;gap:12px;margin-bottom:20px;overflow-x:auto;padding-bottom:8px}
+.herb-selector-item{flex-shrink:0;padding:10px 20px;border-radius:var(--r-md);background:var(--bg-card);border:1px solid var(--glass-border);cursor:pointer;transition:var(--dur);text-align:center}
+.herb-selector-item:hover{border-color:rgba(0,255,194,0.2)}
+.herb-selector-item.active{background:rgba(0,255,194,0.1);border-color:var(--cyan-border)}
+.herb-selector-name{font-family:var(--serif);font-size:15px;color:var(--txt);margin-bottom:2px}
+.herb-selector-latin{font-size:11px;color:var(--txt3);font-style:italic}
+
+/* ========== RESPONSIVE ========== */
+@media(max-width:1200px){.compare-grid{grid-template-columns:1fr 1fr}.compare-col:nth-child(3){display:none}}
+@media(max-width:768px){.compare-grid{grid-template-columns:1fr}.herb-info-bar{flex-wrap:wrap;gap:16px}.evidence-grid{grid-template-columns:1fr 1fr}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav-bar">
+  <div style="display:flex;align-items:center">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">草</div>
+      <span>本草万象</span>
+    </a>
+  </div>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">首页</a>
+    <a href="wanxiang.html" class="nav-link">万象阅览</a>
+    <a href="duizhao-list.html" class="nav-link active">古今对照</a>
+    <a href="ditu2.html" class="nav-link">时空地图</a>
+    <a href="wenwu.html" class="nav-link">文物佐证</a>
+  </div>
+  <div class="user-menu" id="userMenu">
+    <button class="login-btn" id="loginBtn" onclick="goToLogin()">登录 / 注册</button>
+    <div class="user-avatar" id="userAvatar" style="display:none;" onclick="toggleUserDropdown()">
+      <img src="" alt="头像" id="navUserAvatar">
+    </div>
+    <div class="user-dropdown" id="userDropdown">
+      <div class="user-dropdown-item" onclick="goToProfile()">👤 个人中心</div>
+      <div class="user-dropdown-item" onclick="goToSettings()">⚙️ 账号设置</div>
+      <div class="user-dropdown-divider"></div>
+      <div class="user-dropdown-item" onclick="logout()">🚪 退出登录</div>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Container -->
+<div class="main-container">
+
+  <!-- Page Header -->
+  <header class="page-header">
+    <div class="header-top">
+      <div class="header-title">
+        <h1>人参</h1>
+        <span class="seal">考证完成</span>
+      </div>
+      <div class="confidence">
+        <span>考证置信度</span>
+        <span class="confidence-stars">★★★★★</span>
+      </div>
+    </div>
+    <div class="herb-info-bar">
+      <div class="info-item">
+        <span class="info-label">古名</span>
+        <span class="info-value ancient">人參、人薓</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">现代名</span>
+        <span class="info-value">人参</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">拉丁名</span>
+        <span class="info-value latin">Panax ginseng C. A. Mey.</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">基原结论</span>
+        <span class="info-value">五加科植物人参的干燥根</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Tabs -->
+  <div class="tab-bar">
+    <div class="tab-btn active" data-tab="compare">图证对照</div>
+    <div class="tab-btn" data-tab="evidence">考证原文</div>
+    <div class="tab-btn" data-tab="classics">关联典籍</div>
+    <div class="tab-btn" data-tab="formulas">方剂应用</div>
+  </div>
+
+  <!-- Content Area -->
+  <div class="content-area">
+
+    <!-- Herb Selector -->
+    <div class="herb-selector">
+      <div class="herb-selector-item active">
+        <div class="herb-selector-name">人参</div>
+        <div class="herb-selector-latin">Panax ginseng</div>
+      </div>
+      <div class="herb-selector-item">
+        <div class="herb-selector-name">黄芪</div>
+        <div class="herb-selector-latin">Astragalus mongholicus</div>
+      </div>
+      <div class="herb-selector-item">
+        <div class="herb-selector-name">当归</div>
+        <div class="herb-selector-latin">Angelica sinensis</div>
+      </div>
+      <div class="herb-selector-item">
+        <div class="herb-selector-name">丹参</div>
+        <div class="herb-selector-latin">Salvia miltiorrhiza</div>
+      </div>
+      <div class="herb-selector-item">
+        <div class="herb-selector-name">白术</div>
+        <div class="herb-selector-latin">Atractylodes macrocephala</div>
+      </div>
+    </div>
+
+    <!-- Comparison Section -->
+    <div class="compare-grid" id="compareSection">
+      <!-- Ancient Image Column -->
+      <div class="compare-col">
+        <div class="compare-col-header">
+          <div class="compare-col-title">古图区</div>
+          <span class="compare-col-badge">《图经》原图</span>
+        </div>
+        <div class="img-box">
+          <svg viewBox="0 0 400 500">
+            <!-- Paper texture background -->
+            <rect width="400" height="500" fill="#f5f0e6" opacity="0.1"/>
+            <!-- Ancient herb illustration -->
+            <g class="ancient-illustration" stroke="#E6D8AD" fill="none" stroke-width="1.5">
+              <!-- Root -->
+              <path class="highlight-zone" data-part="root" d="M200 450 Q200 400 180 350 Q160 300 170 250 Q180 200 200 180 Q220 200 230 250 Q240 300 220 350 Q200 400 200 450"/>
+              <!-- Stem -->
+              <path d="M200 180 L200 120"/>
+              <!-- Leaves -->
+              <path class="highlight-zone" data-part="leaf" d="M200 120 Q150 100 120 60 Q140 50 160 70 Q180 90 200 100"/>
+              <path class="highlight-zone" data-part="leaf" d="M200 120 Q250 100 280 60 Q260 50 240 70 Q220 90 200 100"/>
+              <path class="highlight-zone" data-part="leaf" d="M200 150 Q140 140 100 110 Q120 100 150 120 Q180 135 200 140"/>
+              <path class="highlight-zone" data-part="leaf" d="M200 150 Q260 140 300 110 Q280 100 250 120 Q220 135 200 140"/>
+              <!-- Flower -->
+              <circle class="highlight-zone" data-part="flower" cx="200" cy="80" r="15"/>
+            </g>
+            <!-- Labels -->
+            <text x="150" y="300" fill="#E6D8AD" font-size="12" font-family="Noto Serif SC">根</text>
+            <text x="280" y="100" fill="#E6D8AD" font-size="12" font-family="Noto Serif SC">叶</text>
+            <text x="220" y="60" fill="#E6D8AD" font-size="12" font-family="Noto Serif SC">花</text>
+          </svg>
+          <div class="img-label">《本草图经》明刊本 · 卷三</div>
+          <div class="img-nav">
+            <button class="img-nav-btn">◀</button>
+            <span style="color:var(--txt3);font-size:11px;padding:0 8px">1/3</span>
+            <button class="img-nav-btn">▶</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modern Image Column -->
+      <div class="compare-col">
+        <div class="compare-col-header">
+          <div class="compare-col-title">今照区</div>
+          <span class="compare-col-badge" style="color:var(--gold);background:rgba(230,216,173,0.1)">现代实拍</span>
+        </div>
+        <div class="img-box">
+          <svg viewBox="0 0 400 500">
+            <!-- Modern photo representation -->
+            <defs>
+              <linearGradient id="leafGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#4ade80"/>
+                <stop offset="100%" style="stop-color:#166534"/>
+              </linearGradient>
+              <linearGradient id="rootGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#d4a574"/>
+                <stop offset="100%" style="stop-color:#8b4513"/>
+              </linearGradient>
+            </defs>
+            <!-- Root -->
+            <path class="highlight-zone" data-part="root" d="M200 450 Q200 400 180 350 Q160 300 170 250 Q180 200 200 180 Q220 200 230 250 Q240 300 220 350 Q200 400 200 450" fill="url(#rootGrad)" opacity="0.9"/>
+            <!-- Stem -->
+            <rect x="195" y="120" width="10" height="60" fill="#5c4033"/>
+            <!-- Leaves -->
+            <path class="highlight-zone" data-part="leaf" d="M200 120 Q150 100 120 60 Q140 50 160 70 Q180 90 200 100" fill="url(#leafGrad)"/>
+            <path class="highlight-zone" data-part="leaf" d="M200 120 Q250 100 280 60 Q260 50 240 70 Q220 90 200 100" fill="url(#leafGrad)"/>
+            <path class="highlight-zone" data-part="leaf" d="M200 150 Q140 140 100 110 Q120 100 150 120 Q180 135 200 140" fill="url(#leafGrad)"/>
+            <path class="highlight-zone" data-part="leaf" d="M200 150 Q260 140 300 110 Q280 100 250 120 Q220 135 200 140" fill="url(#leafGrad)"/>
+            <!-- Flower -->
+            <circle class="highlight-zone" data-part="flower" cx="200" cy="80" r="15" fill="#fbbf24"/>
+            <circle cx="200" cy="80" r="8" fill="#f59e0b"/>
+          </svg>
+          <div class="img-label">摄于吉林长白山 · 2024年</div>
+          <div class="img-nav">
+            <button class="img-nav-btn">◀</button>
+            <span style="color:var(--txt3);font-size:11px;padding:0 8px">1/5</span>
+            <button class="img-nav-btn">▶</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detail Comparison Column -->
+      <div class="compare-col">
+        <div class="compare-col-header">
+          <div class="compare-col-title">细节对照</div>
+          <span class="compare-col-badge" style="color:var(--red);background:rgba(230,57,70,0.1)">部位比对</span>
+        </div>
+        <div class="parts-list">
+          <div class="part-item active" data-part="root">
+            <span class="part-icon">🥔</span>
+            <span class="part-name">根部</span>
+            <span class="part-similarity">相似度 92%</span>
+          </div>
+          <div class="part-item" data-part="leaf">
+            <span class="part-icon">🌿</span>
+            <span class="part-name">叶片</span>
+            <span class="part-similarity">相似度 88%</span>
+          </div>
+          <div class="part-item" data-part="flower">
+            <span class="part-icon">🌸</span>
+            <span class="part-name">花朵</span>
+            <span class="part-similarity">相似度 85%</span>
+          </div>
+          <div class="part-item" data-part="stem">
+            <span class="part-icon">🌱</span>
+            <span class="part-name">茎部</span>
+            <span class="part-similarity">相似度 90%</span>
+          </div>
+        </div>
+        <div class="part-detail">
+          <div class="part-detail-title">根部对比</div>
+          <div class="part-detail-text">
+            古图所绘人参根部呈人形，有头、身、四肢之分，与现代人参形态高度一致。《图经》载"根如人形者神"，与现代观察相符。
+          </div>
+          <div class="part-detail-compare">
+            <div class="part-detail-col">
+              <div class="part-detail-col-title">《图经》记载</div>
+              <div class="part-detail-col-text">"根如人形者善，百徹如人形者最上"</div>
+            </div>
+            <div class="part-detail-col">
+              <div class="part-detail-col-title">现代观察</div>
+              <div class="part-detail-col-text">主根圆柱形，有分枝，形似人形</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Evidence Section -->
+    <div class="evidence-section">
+      <div class="section-title">证据链</div>
+      <div class="evidence-grid">
+        <div class="evidence-card type-core">
+          <div class="evidence-card-header">
+            <span class="evidence-card-type">核心证据</span>
+          </div>
+          <div class="evidence-card-title">文献依据</div>
+          <div class="evidence-card-body">
+            《本草图经》卷三："人参生上党山谷及辽东，根如人形者神。"《名医别录》载其形态特征与今之东北人参相符。
+          </div>
+          <div class="evidence-card-meta">
+            <span>来源：《本草图经》</span>
+            <span>可信度：高</span>
+          </div>
+        </div>
+        <div class="evidence-card type-core">
+          <div class="evidence-card-header">
+            <span class="evidence-card-type">核心证据</span>
+          </div>
+          <div class="evidence-card-title">分类学依据</div>
+          <div class="evidence-card-body">
+            根据《中国植物志》记载，五加科人参属植物Panax ginseng主要分布于中国东北及朝鲜半岛，与宋代文献记载产地高度吻合。
+          </div>
+          <div class="evidence-card-meta">
+            <span>来源：《中国植物志》</span>
+            <span>可信度：高</span>
+          </div>
+        </div>
+        <div class="evidence-card type-aux">
+          <div class="evidence-card-header">
+            <span class="evidence-card-type">辅助证据</span>
+          </div>
+          <div class="evidence-card-title">考古出土实物</div>
+          <div class="evidence-card-body">
+            河南洛阳北宋墓葬出土药物遗存中，经鉴定含有人参成分，形态特征与今之栽培人参相近。
+          </div>
+          <div class="evidence-card-meta">
+            <span>来源：洛阳考古所</span>
+            <span>可信度：中</span>
+          </div>
+        </div>
+        <div class="evidence-card type-aux">
+          <div class="evidence-card-header">
+            <span class="evidence-card-type">辅助证据</span>
+          </div>
+          <div class="evidence-card-title">现代产区调查</div>
+          <div class="evidence-card-body">
+            项目组2024年实地考察吉林长白山人参种植基地，对野山参及园参形态进行详细记录与古图比对分析。
+          </div>
+          <div class="evidence-card-meta">
+            <span>来源：实地调查</span>
+            <span>可信度：高</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Bottom Actions -->
+<div class="bottom-actions">
+  <div class="action-left">
+    <button class="action-btn secondary">★ 收藏药物</button>
+    <button class="action-btn secondary">+ 加入对比</button>
+  </div>
+  <div class="action-right">
+    <button class="action-btn secondary">📥 下载资料</button>
+    <button class="action-btn secondary">↗️ 分享</button>
+  </div>
+</div>
+
+<!-- Sync Indicator -->
+<div class="sync-indicator" id="syncIndicator">
+  <span>●</span> 同步高亮中
+</div>
+
+<script src="data.js"></script>
+<script>
+// ========== LOAD HERB DATA FROM URL ==========
+const urlParams = new URLSearchParams(window.location.search);
+const herbId = urlParams.get('herb') || 'renshen';
+let currentHerb = getHerbById(herbId) || HERB_DATA[0];
+
+function loadHerbData(herb) {
+  currentHerb = herb;
+  // Update header
+  document.querySelector('.header-title h1').textContent = herb.name;
+  document.querySelector('.info-value.ancient').textContent = herb.ancientNames;
+  document.querySelector('.info-value.latin').textContent = herb.latin;
+  document.querySelector('.info-value:last-child').textContent = herb.origin;
+  
+  // Update confidence stars
+  const stars = '★'.repeat(herb.confidence) + '☆'.repeat(5 - herb.confidence);
+  document.querySelector('.confidence-stars').textContent = stars;
+  
+  // Update herb selector active
+  document.querySelectorAll('.herb-selector-item').forEach(item => {
+    const name = item.querySelector('.herb-selector-name').textContent;
+    item.classList.toggle('active', name === herb.name);
+  });
+  
+  // Reset to compare tab
+  document.querySelector('.tab-btn[data-tab="compare"]').click();
+  
+  // Rebuild evidence cards
+  renderEvidenceCards(herb);
+  
+  // Update URL without reload
+  history.replaceState(null, '', '?herb=' + herb.id);
+}
+
+// ========== TAB SWITCHING WITH CONTENT (P0) ==========
+const tabBtns = document.querySelectorAll('.tab-btn');
+tabBtns.forEach(btn => {
+  btn.addEventListener('click', function() {
+    tabBtns.forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    const tab = this.dataset.tab;
+    
+    // Hide all tab content
+    document.querySelectorAll('.tab-content-section').forEach(s => s.style.display = 'none');
+    
+    // Show selected tab content
+    const section = document.getElementById('tabContent_' + tab);
+    if (section) {
+      section.style.display = 'block';
+    } else {
+      // Create tab content if not exists
+      createTabContent(tab);
+    }
+  });
+});
+
+function createTabContent(tab) {
+  const contentArea = document.querySelector('.content-area');
+  const existingSection = document.getElementById('tabContent_' + tab);
+  if (existingSection) {
+    existingSection.style.display = 'block';
+    return;
+  }
+  
+  const section = document.createElement('div');
+  section.id = 'tabContent_' + tab;
+  section.className = 'tab-content-section';
+  section.style.display = 'block';
+  
+  if (tab === 'evidence' && currentHerb.textEvidence) {
+    section.innerHTML = `
+      <div class="herb-selector">${document.querySelector('.herb-selector').innerHTML}</div>
+      <div class="evidence-section" style="margin-top:20px">
+        <div class="section-title">考证原文</div>
+        ${currentHerb.textEvidence.map(e => `
+          <div style="background:var(--bg-card);border:1px solid var(--glass-border);border-radius:var(--r-md);padding:20px;margin-bottom:16px">
+            <div style="font-size:13px;color:var(--cyan);font-weight:600;margin-bottom:10px">${e.source}</div>
+            <div style="font-size:15px;color:var(--txt);line-height:2;font-family:var(--serif)">${e.text}</div>
+          </div>
+        `).join('')}
+      </div>`;
+  } else if (tab === 'classics' && currentHerb.relatedClassics) {
+    section.innerHTML = `
+      <div class="herb-selector">${document.querySelector('.herb-selector').innerHTML}</div>
+      <div class="evidence-section" style="margin-top:20px">
+        <div class="section-title">关联典籍</div>
+        <div class="evidence-grid" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr))">
+          ${currentHerb.relatedClassics.map(c => `
+            <div class="evidence-card type-core">
+              <div class="evidence-card-header">
+                <span class="evidence-card-type">典籍</span>
+              </div>
+              <div class="evidence-card-title">${c.title}</div>
+              <div class="evidence-card-body">${c.relation} — ${c.desc}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>`;
+  } else if (tab === 'formulas' && currentHerb.formulas) {
+    section.innerHTML = `
+      <div class="herb-selector">${document.querySelector('.herb-selector').innerHTML}</div>
+      <div class="evidence-section" style="margin-top:20px">
+        <div class="section-title">方剂应用</div>
+        <div class="evidence-grid" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr))">
+          ${currentHerb.formulas.map(f => `
+            <div class="evidence-card type-aux">
+              <div class="evidence-card-header">
+                <span class="evidence-card-type">方剂</span>
+              </div>
+              <div class="evidence-card-title">${f.name}</div>
+              <div class="evidence-card-body">
+                <div style="margin-bottom:6px">组成：${f.composition}</div>
+                <div style="margin-bottom:6px">功效：${f.effect}</div>
+                <div style="color:var(--txt3);font-size:11px">出处：${f.source}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>`;
+  }
+  
+  contentArea.appendChild(section);
+}
+
+// Hide compare section when switching tabs
+const compareSection = document.getElementById('compareSection');
+const originalTabClick = tabBtns[0]; // compare tab
+
+// ========== HERB SELECTOR (P1 - loads data) ==========
+const herbItems = document.querySelectorAll('.herb-selector-item');
+herbItems.forEach(item => {
+  item.addEventListener('click', function() {
+    const name = this.querySelector('.herb-selector-name').textContent;
+    const herb = getHerbByName(name);
+    if (herb) loadHerbData(herb);
+  });
+});
+
+// ========== PART SELECTION WITH SYNC ==========
+const partItems = document.querySelectorAll('.part-item');
+const highlightZones = document.querySelectorAll('.highlight-zone');
+const syncIndicator = document.getElementById('syncIndicator');
+
+partItems.forEach(item => {
+  item.addEventListener('click', function() {
+    const part = this.dataset.part;
+    partItems.forEach(p => p.classList.remove('active'));
+    this.classList.add('active');
+    highlightZones.forEach(zone => {
+      zone.classList.toggle('active', zone.dataset.part === part);
+    });
+    syncIndicator.classList.add('show');
+    setTimeout(() => syncIndicator.classList.remove('show'), 2000);
+    updatePartDetail(part);
+  });
+});
+
+highlightZones.forEach(zone => {
+  zone.addEventListener('click', function() {
+    const part = this.dataset.part;
+    const partItem = document.querySelector(`.part-item[data-part="${part}"]`);
+    if (partItem) partItem.click();
+  });
+});
+
+function updatePartDetail(part) {
+  const detailTitle = document.querySelector('.part-detail-title');
+  const detailText = document.querySelector('.part-detail-text');
+  const detailCompare = document.querySelector('.part-detail-compare');
+  
+  if (currentHerb.parts && currentHerb.parts[part]) {
+    const p = currentHerb.parts[part];
+    detailTitle.textContent = p.name + '对比';
+    detailText.textContent = p.detail || p.ancient;
+    if (detailCompare) {
+      detailCompare.innerHTML = `
+        <div class="part-detail-col">
+          <div class="part-detail-col-title">《图经》记载</div>
+          <div class="part-detail-col-text">"${p.ancient}"</div>
+        </div>
+        <div class="part-detail-col">
+          <div class="part-detail-col-title">现代观察</div>
+          <div class="part-detail-col-text">${p.modern}</div>
+        </div>`;
+    }
+  }
+}
+
+// ========== EVIDENCE CARDS (P1 - expand/collapse) ==========
+function renderEvidenceCards(herb) {
+  const grid = document.querySelector('.evidence-grid');
+  if (!herb.evidence || herb.evidence.length === 0) return;
+  
+  grid.innerHTML = herb.evidence.map((e, i) => `
+    <div class="evidence-card type-${e.type === '核心证据' || e.type === 'core' ? 'core' : 'aux'}">
+      <div class="evidence-card-header">
+        <span class="evidence-card-type">${e.type === 'core' ? '核心证据' : '辅助证据'}</span>
+        <button class="expand-btn" onclick="toggleEvidence(this)" style="background:none;border:1px solid var(--glass-border);color:var(--txt3);font-size:11px;padding:2px 8px;border-radius:4px;cursor:pointer">展开</button>
+      </div>
+      <div class="evidence-card-title">${e.title}</div>
+      <div class="evidence-card-body" data-full="${encodeURIComponent(e.body)}">${e.body}</div>
+      <div class="evidence-card-meta">
+        <span>来源：${e.source}</span>
+        <span>可信度：${e.reliability}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleEvidence(btn) {
+  const body = btn.closest('.evidence-card').querySelector('.evidence-card-body');
+  const isExpanded = body.style.webkitLineClamp !== '3';
+  if (isExpanded) {
+    body.style.webkitLineClamp = '3';
+    body.style.overflow = 'hidden';
+    body.style.display = '-webkit-box';
+    btn.textContent = '展开';
+  } else {
+    body.style.webkitLineClamp = 'unset';
+    body.style.overflow = 'visible';
+    body.style.display = 'block';
+    btn.textContent = '收起';
+  }
+}
+
+// ========== IMAGE NAVIGATION (P1) ==========
+let ancientImgPage = 1;
+let modernImgPage = 1;
+const ancientTotal = 3;
+const modernTotal = 5;
+
+document.querySelectorAll('.img-nav-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const col = this.closest('.compare-col');
+    const isAncient = col.querySelector('.compare-col-title').textContent.includes('古图');
+    const navSpan = this.parentElement.querySelector('span');
+    const isPrev = this.textContent.includes('◀');
+    
+    if (isAncient) {
+      ancientImgPage = isPrev ? Math.max(1, ancientImgPage - 1) : Math.min(ancientTotal, ancientImgPage + 1);
+      navSpan.textContent = ancientImgPage + '/' + ancientTotal;
+    } else {
+      modernImgPage = isPrev ? Math.max(1, modernImgPage - 1) : Math.min(modernTotal, modernImgPage + 1);
+      navSpan.textContent = modernImgPage + '/' + modernTotal;
+    }
+    showToast('切换至第 ' + (isAncient ? ancientImgPage : modernImgPage) + ' 幅图', 'info');
+  });
+});
+
+// ========== BOTTOM ACTIONS (P1) ==========
+document.querySelectorAll('.action-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const text = this.textContent.trim();
+    if (text.includes('收藏')) {
+      const isLoggedIn = localStorage.getItem('isLoggedIn');
+      if (!isLoggedIn) { showToast('请先登录后收藏', 'warning'); return; }
+      const favorites = JSON.parse(localStorage.getItem('benCaoFavorites') || '[]');
+      if (favorites.includes(currentHerb.id)) {
+        showToast('已收藏过该药物', 'info');
+      } else {
+        favorites.push(currentHerb.id);
+        localStorage.setItem('benCaoFavorites', JSON.stringify(favorites));
+        this.innerHTML = '★ 已收藏';
+        this.style.color = 'var(--red)';
+        showToast('已收藏：' + currentHerb.name, 'success');
+      }
+    } else if (text.includes('加入对比')) {
+      addToCompare(currentHerb);
+    } else if (text.includes('下载')) {
+      const isLoggedIn = localStorage.getItem('isLoggedIn');
+      if (!isLoggedIn) { showToast('请先登录后下载', 'warning'); return; }
+      showToast('资料下载功能开发中...', 'info');
+    } else if (text.includes('分享')) {
+      copyToClipboard(window.location.href);
+      showToast('对照页面链接已复制，可分享给他人', 'success');
+    }
+  });
+});
+
+// ========== INIT ==========
+// Ensure compare section is visible by default
+compareSection.style.display = 'grid';
+
+// Load herb data from URL
+loadHerbData(currentHerb);
+
+// ========== COMPARE PANEL (P2-7) ==========
+let compareList = JSON.parse(localStorage.getItem('benCaoCompare') || '[]');
+
+function addToCompare(herb) {
+  if (compareList.find(h => h.id === herb.id)) {
+    showToast(herb.name + '已在对比列表中', 'info');
+    showComparePanel();
+    return;
+  }
+  if (compareList.length >= 4) {
+    showToast('最多同时对比4种药物，请先移除已有项', 'warning');
+    return;
+  }
+  compareList.push({ id: herb.id, name: herb.name, latin: herb.latin, confidence: herb.confidence, conclusionText: herb.conclusionText });
+  localStorage.setItem('benCaoCompare', JSON.stringify(compareList));
+  showToast('已加入对比：' + herb.name, 'success');
+  showComparePanel();
+}
+
+function showComparePanel() {
+  const existing = document.getElementById('comparePanel');
+  if (existing) { existing.remove(); return; }
+  
+  const panel = document.createElement('div');
+  panel.id = 'comparePanel';
+  panel.style.cssText = 'position:fixed;z-index:2000;width:520px;max-height:80vh;background:linear-gradient(135deg,#1A1E28,#222838);border:1px solid rgba(0,255,194,0.25);border-radius:16px;padding:24px;box-shadow:0 24px 80px rgba(0,0,0,0.6);animation:noteCardIn 0.4s cubic-bezier(0.16,1,0.3,1);left:50%;top:50%;transform:translate(-50%,-50%);overflow-y:auto';
+  
+  const items = compareList.map((h, i) => `
+    <div style="display:flex;align-items:center;gap:12px;padding:14px;background:rgba(0,0,0,0.2);border-radius:10px;border:1px solid rgba(0,255,194,0.1);margin-bottom:10px">
+      <div style="width:40px;height:40px;border-radius:10px;background:rgba(0,255,194,0.1);display:flex;align-items:center;justify-content:center;font-size:18px;color:#00FFC2">${h.name.charAt(0)}</div>
+      <div style="flex:1">
+        <div style="font-size:15px;color:#E6D8AD;font-weight:600">${h.name}</div>
+        <div style="font-size:11px;color:#6B6560;font-style:italic">${h.latin}</div>
+        <div style="font-size:12px;color:#A09888;margin-top:4px">${'★'.repeat(h.confidence)}${'☆'.repeat(5-h.confidence)} · ${h.conclusionText}</div>
+      </div>
+      <button onclick="removeFromCompare(${i})" style="width:28px;height:28px;border-radius:6px;border:1px solid rgba(230,57,70,0.3);background:transparent;color:#E63946;font-size:14px;cursor:pointer">✕</button>
+    </div>
+  `).join('');
+  
+  panel.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div style="font-size:18px;font-weight:600;color:#E6D8AD;font-family:var(--serif)">药物对比面板</div>
+      <button onclick="this.closest('#comparePanel').remove()" style="width:28px;height:28px;border-radius:8px;border:1px solid rgba(0,255,194,0.15);background:transparent;color:#6B6560;font-size:14px;cursor:pointer">✕</button>
+    </div>
+    ${compareList.length === 0 ? '<div style="text-align:center;padding:40px;color:#6B6560">暂无对比药物<br><span style="font-size:12px">点击"+ 加入对比"添加药物</span></div>' : items}
+    ${compareList.length >= 2 ? `
+      <div style="margin-top:16px;padding:16px;background:rgba(0,255,194,0.05);border-radius:10px;border:1px solid rgba(0,255,194,0.15)">
+        <div style="font-size:13px;color:#00FFC2;font-weight:600;margin-bottom:10px">对比摘要</div>
+        <div style="font-size:12px;color:#A09888;line-height:1.8">
+          ${compareList.map(h => h.name + '（置信度' + h.confidence + '/5）').join(' vs ')}
+        </div>
+        <div style="margin-top:10px;display:flex;gap:8px">
+          ${compareList.map(h => `<span style="padding:4px 12px;border-radius:6px;font-size:11px;background:rgba(0,255,194,0.08);color:#00FFC2;border:1px solid rgba(0,255,194,0.15)">${h.name}</span>`).join('')}
+        </div>
+      </div>
+    ` : '<div style="text-align:center;padding:12px;font-size:12px;color:#6B6560">至少添加2种药物才能查看对比</div>'}
+  `;
+  document.body.appendChild(panel);
+  
+  // Add animation style
+  if (!document.getElementById('noteCardStyle')) {
+    const style = document.createElement('style');
+    style.id = 'noteCardStyle';
+    style.textContent = '@keyframes noteCardIn{from{opacity:0;transform:translateY(12px) scale(0.96)}to{opacity:1;transform:translateY(0) scale(1)}}';
+    document.head.appendChild(style);
+  }
+  
+  setTimeout(() => {
+    document.addEventListener('click', function closePanel(e) {
+      if (!panel.contains(e.target)) {
+        panel.remove();
+        document.removeEventListener('click', closePanel);
+      }
+    });
+  }, 50);
+}
+
+function removeFromCompare(index) {
+  const removed = compareList.splice(index, 1);
+  localStorage.setItem('benCaoCompare', JSON.stringify(compareList));
+  showToast('已移除：' + removed[0].name, 'info');
+  document.getElementById('comparePanel').remove();
+  if (compareList.length > 0) showComparePanel();
+}
+
+// ========== VIDEO PLAYER (P2-9) ==========
+// Add video button to modern image column
+const modernCol = document.querySelectorAll('.compare-col')[1];
+if (modernCol) {
+  const videoBtn = document.createElement('button');
+  videoBtn.className = 'img-nav-btn';
+  videoBtn.style.cssText = 'position:absolute;top:12px;right:12px;z-index:10';
+  videoBtn.textContent = '🎬 视频';
+  videoBtn.addEventListener('click', showVideoPlayer);
+  modernCol.querySelector('.img-box').appendChild(videoBtn);
+}
+
+function showVideoPlayer() {
+  const existing = document.getElementById('videoPanel');
+  if (existing) { existing.remove(); return; }
+  
+  const panel = document.createElement('div');
+  panel.id = 'videoPanel';
+  panel.style.cssText = 'position:fixed;z-index:2000;width:640px;background:linear-gradient(135deg,#1A1E28,#222838);border:1px solid rgba(0,255,194,0.25);border-radius:16px;padding:24px;box-shadow:0 24px 80px rgba(0,0,0,0.6);animation:noteCardIn 0.4s cubic-bezier(0.16,1,0.3,1);left:50%;top:50%;transform:translate(-50%,-50%)';
+  panel.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="font-size:16px;font-weight:600;color:#E6D8AD;font-family:var(--serif)">🎬 现场考察视频</div>
+      <button onclick="this.closest('#videoPanel').remove()" style="width:28px;height:28px;border-radius:8px;border:1px solid rgba(0,255,194,0.15);background:transparent;color:#6B6560;font-size:14px;cursor:pointer">✕</button>
+    </div>
+    <div style="width:100%;aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;position:relative">
+      <div style="text-align:center;color:#6B6560">
+        <div style="font-size:48px;margin-bottom:12px;opacity:0.4">🎬</div>
+        <div style="font-size:14px">吉林长白山人参考察记录</div>
+        <div style="font-size:12px;color:#4a4a4a;margin-top:4px">2024年8月 · 项目组实拍</div>
+        <button onclick="showToast('视频播放功能需要后端支持','info')" style="margin-top:16px;padding:10px 24px;border-radius:8px;border:1px solid rgba(0,255,194,0.3);background:rgba(0,255,194,0.1);color:#00FFC2;font-size:13px;cursor:pointer">▶ 播放视频</button>
+      </div>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:8px">
+      <div style="padding:6px 14px;border-radius:6px;font-size:11px;background:rgba(0,255,194,0.08);color:#00FFC2;border:1px solid rgba(0,255,194,0.15)">人参</div>
+      <div style="padding:6px 14px;border-radius:6px;font-size:11px;background:rgba(0,255,194,0.05);color:#A09888;border:1px solid rgba(0,255,194,0.1)">长白山</div>
+      <div style="padding:6px 14px;border-radius:6px;font-size:11px;background:rgba(0,255,194,0.05);color:#A09888;border:1px solid rgba(0,255,194,0.1)">实地考察</div>
+    </div>
+  `;
+  document.body.appendChild(panel);
+  
+  setTimeout(() => {
+    document.addEventListener('click', function closeVideo(e) {
+      if (!panel.contains(e.target)) {
+        panel.remove();
+        document.removeEventListener('click', closeVideo);
+      }
+    });
+  }, 50);
+}
+
+// ========== USER AUTH ==========
+function checkLoginStatus() {
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
+  const loginBtn = document.getElementById('loginBtn');
+  const userAvatar = document.getElementById('userAvatar');
+  const navUserAvatar = document.getElementById('navUserAvatar');
+  if (isLoggedIn) {
+    const userData = JSON.parse(localStorage.getItem('benCaoUser') || '{}');
+    if (userData.avatar && navUserAvatar) navUserAvatar.src = userData.avatar;
+    if (loginBtn) loginBtn.style.display = 'none';
+    if (userAvatar) userAvatar.style.display = 'block';
+  } else {
+    if (loginBtn) loginBtn.style.display = 'block';
+    if (userAvatar) userAvatar.style.display = 'none';
+  }
+}
+function goToLogin() { window.location.href = 'login.html'; }
+function goToProfile() { window.location.href = 'profile.html'; }
+function goToSettings() { showToast('账号设置功能开发中...', 'info'); }
+function logout() {
+  if (confirm('确定要退出登录吗？')) {
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('benCaoUser');
+    location.reload();
+  }
+}
+function toggleUserDropdown() {
+  document.getElementById('userDropdown').classList.toggle('show');
+}
+document.addEventListener('click', (e) => {
+  const userMenu = document.getElementById('userMenu');
+  if (userMenu && !userMenu.contains(e.target)) {
+    const dropdown = document.getElementById('userDropdown');
+    if (dropdown) dropdown.classList.remove('show');
+  }
+});
+checkLoginStatus();
+</script>
+
+</body>
+</html>

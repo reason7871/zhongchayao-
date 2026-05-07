@@ -1,0 +1,1851 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>古今对照详情 - 本草万象</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ========== DESIGN SYSTEM — 全息科技古籍风 ========== */
+:root {
+  --bg-deep: #0a0c0f; --bg-surface: #111419; --bg-card: #161a22; --bg-hover: #1e2330;
+  --cyan: #00d4aa; --cyan-dim: #00a884; --cyan-glow: rgba(0,212,170,0.2);
+  --gold: #c9b037; --gold-dim: #a8942b; --gold-glow: rgba(201,176,55,0.15);
+  --red: #e63946;
+  --txt: #e8e4dc; --txt2: #9a9588; --txt3: #6b6560;
+  --glass: rgba(16,18,24,0.85); --glass-border: rgba(0,212,170,0.12);
+  --serif: 'Noto Serif SC',serif; --sans: 'Noto Sans SC',sans-serif;
+  --r-sm: 6px; --r-md: 12px; --r-lg: 20px;
+  --ease: cubic-bezier(0.16,1,0.3,1);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg-deep);color:var(--txt);min-height:100vh;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(0,212,170,0.2);border-radius:3px}
+
+/* ========== BACKGROUND EFFECTS ========== */
+.hero-bg{position:fixed;inset:0;z-index:0;background:var(--bg-deep);overflow:hidden}
+.hero-bg::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,rgba(0,212,170,0.04) 0%,transparent 60%),radial-gradient(ellipse at 70% 80%,rgba(201,176,55,0.03) 0%,transparent 60%)}
+.hero-bg::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 0%,transparent 40%,rgba(10,12,15,0.7) 80%,rgba(10,12,15,0.95) 100%)}
+.hero-vignette{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,12,15,0.2) 0%,transparent 20%,transparent 80%,rgba(10,12,15,0.5) 100%)}
+
+/* Particles */
+.particles-container{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden}
+.particle{position:absolute;width:2px;height:2px;background:var(--cyan);border-radius:50%;opacity:0.4;animation:particleFloat linear infinite}
+@keyframes particleFloat{0%{transform:translateY(100vh) translateX(0);opacity:0}8%{opacity:0.6}92%{opacity:0.6}100%{transform:translateY(-100vh) translateX(40px);opacity:0}}
+
+/* Scan line */
+.scan-line{position:fixed;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,212,170,0.6),transparent);animation:scanMove 6s linear infinite;z-index:2;pointer-events:none;opacity:0.25}
+@keyframes scanMove{0%{top:0}100%{top:100vh}}
+
+/* Mouse glow */
+.mouse-glow{position:fixed;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(0,212,170,0.1) 0%,transparent 70%);pointer-events:none;z-index:2;transform:translate(-50%,-50%);transition:opacity 0.3s}
+
+/* ========== NAVIGATION ========== */
+.nav-bar{position:fixed;top:0;left:0;right:0;z-index:1000;height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 50px;background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--glass-border)}
+.nav-brand{display:flex;align-items:center;gap:12px;font-family:var(--serif);font-size:20px;font-weight:700;color:var(--gold)}
+.nav-logo-icon{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,var(--cyan),#008f6b);display:flex;align-items:center;justify-content:center;font-size:16px}
+.nav-links{display:flex;gap:6px}
+.nav-link{padding:8px 18px;border-radius:6px;font-size:14px;color:var(--txt2);transition:all 0.3s;position:relative}
+.nav-link:hover,.nav-link.active{color:var(--cyan);background:rgba(0,212,170,0.06)}
+.nav-link.active::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:20px;height:2px;background:var(--cyan);border-radius:1px;box-shadow:0 0 8px var(--cyan)}
+
+/* User menu */
+.user-menu{position:relative;display:flex;align-items:center;gap:16px}
+.user-avatar{width:42px;height:42px;border-radius:50%;border:2px solid rgba(0,212,170,0.4);cursor:pointer;overflow:hidden;transition:all 0.3s}
+.user-avatar:hover{border-color:var(--cyan);box-shadow:0 0 20px rgba(0,212,170,0.4)}
+.user-avatar img{width:100%;height:100%;object-fit:cover}
+.login-btn{padding:10px 24px;background:rgba(0,212,170,0.1);border:1px solid rgba(0,212,170,0.3);border-radius:6px;color:var(--cyan);font-size:14px;cursor:pointer;transition:all 0.3s;font-family:var(--serif);letter-spacing:1px}
+.login-btn:hover{background:rgba(0,212,170,0.2);border-color:var(--cyan);box-shadow:0 0 15px rgba(0,212,170,0.3)}
+.user-dropdown{position:absolute;top:55px;right:0;width:180px;background:rgba(20,24,32,0.95);border:1px solid var(--glass-border);border-radius:8px;backdrop-filter:blur(10px);opacity:0;visibility:hidden;transform:translateY(-10px);transition:all 0.3s;z-index:200}
+.user-dropdown.show{opacity:1;visibility:visible;transform:translateY(0)}
+.user-dropdown-item{padding:12px 20px;font-size:14px;color:rgba(255,255,255,0.8);cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:10px}
+.user-dropdown-item:hover{background:rgba(0,212,170,0.1);color:var(--cyan)}
+.user-dropdown-divider{height:1px;background:var(--glass-border);margin:4px 0}
+
+/* ========== PAGE HEADER ========== */
+.page-header{position:relative;z-index:10;padding:100px 50px 30px;background:linear-gradient(180deg,rgba(0,212,170,0.04) 0%,transparent 100%)}
+.header-content{max-width:1600px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:20px}
+.header-left h1{font-family:var(--serif);font-size:48px;font-weight:900;color:var(--gold);text-shadow:0 0 40px rgba(201,176,55,0.2);margin-bottom:10px;letter-spacing:4px}
+.header-meta{display:flex;gap:24px;margin-top:14px;flex-wrap:wrap}
+.meta-item{font-size:14px;color:var(--txt2);display:flex;align-items:center;gap:6px}
+.meta-item::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--cyan);box-shadow:0 0 6px var(--cyan)}
+.meta-item span{color:var(--cyan)}
+.confidence-badge{padding:8px 20px;border-radius:20px;font-size:14px;background:rgba(0,212,170,0.08);border:1px solid var(--cyan);color:var(--cyan);box-shadow:0 0 20px rgba(0,212,170,0.1);letter-spacing:1px;cursor:help}
+.latin-link{color:var(--cyan);text-decoration:none;border-bottom:1px dashed var(--cyan);cursor:pointer;transition:opacity 0.3s}
+.latin-link:hover{opacity:0.8;border-bottom-style:solid}
+.header-right{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.back-btn{padding:12px 24px;border-radius:8px;font-size:14px;color:var(--txt2);border:1px solid var(--glass-border);background:var(--glass);backdrop-filter:blur(10px);transition:all 0.3s;display:flex;align-items:center;gap:8px}
+.back-btn:hover{border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 20px rgba(0,212,170,0.15)}
+
+/* ========== MAIN CONTENT ========== */
+.main-content{position:relative;z-index:10;padding:24px 50px 100px;max-width:1600px;margin:0 auto}
+
+/* ========== COMPARISON LAYOUT — 三栏：古图 | 今照 | 细节对照 ========== */
+.comparison-area{display:flex;flex-direction:column;gap:20px}
+.triple-columns{display:grid;grid-template-columns:1fr 1fr 320px;gap:16px}
+
+/* Column card shared */
+.col-card{background:var(--bg-card);border:1px solid var(--glass-border);border-radius:var(--r-md);overflow:hidden;position:relative;backdrop-filter:blur(4px);transition:all 0.3s;display:flex;flex-direction:column}
+.col-card:hover{border-color:rgba(0,212,170,0.25);box-shadow:0 8px 40px rgba(0,0,0,0.4)}
+.col-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,212,170,0.4),transparent);opacity:0.5;z-index:5}
+
+/* Column header */
+.col-header{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--glass-border);background:rgba(0,0,0,0.15)}
+.col-title{font-family:var(--serif);font-size:15px;font-weight:600;color:var(--txt);display:flex;align-items:center;gap:8px}
+.col-title::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 6px var(--cyan)}
+.col-title.modern-title::before{background:var(--gold);box-shadow:0 0 6px var(--gold)}
+.col-badge{font-size:10px;padding:3px 10px;border-radius:10px;border:1px solid var(--cyan-glow);color:var(--cyan);background:rgba(0,212,170,0.08)}
+.col-badge.modern{color:var(--gold);background:rgba(201,176,55,0.08);border-color:rgba(201,176,55,0.2)}
+.col-actions{display:flex;gap:4px}
+.col-action-btn{width:28px;height:28px;border-radius:5px;background:rgba(0,0,0,0.2);border:1px solid var(--glass-border);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--txt2);cursor:pointer;transition:all 0.3s}
+.col-action-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.col-action-btn:active{transform:scale(0.9)}
+.col-action-btn.active{background:rgba(0,212,170,0.1);border-color:var(--cyan);color:var(--cyan)}
+
+/* Zoomable canvas — per column */
+.col-canvas{position:relative;width:100%;height:360px;overflow:hidden;cursor:grab;background:radial-gradient(ellipse at center,rgba(20,24,32,1) 0%,rgba(10,12,15,1) 100%);flex-shrink:0}
+.col-canvas.dragging{cursor:grabbing}
+.col-canvas .placeholder-svg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);max-width:88%;max-height:88%}
+
+/* Annotations — interactive part markers */
+.annot-layer{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:5}
+.annot-layer.visible{pointer-events:auto}
+.annot-spot{position:absolute;width:28px;height:28px;margin-left:-14px;margin-top:-14px;border-radius:50%;border:2px solid var(--cyan);background:rgba(0,212,170,0.12);cursor:pointer;pointer-events:auto;transition:all 0.25s var(--ease);display:flex;align-items:center;justify-content:center}
+.annot-spot:hover{border-color:#fff;background:rgba(0,212,170,0.35);transform:scale(1.25);z-index:10}
+.annot-spot::after{content:'';position:absolute;width:100%;height:100%;border-radius:50%;border:2px solid var(--cyan);opacity:0;animation:pulseRing 2s ease-out infinite}
+@keyframes pulseRing{0%{transform:scale(1);opacity:0.5}100%{transform:scale(2.4);opacity:0}}
+.annot-spot-inner{width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px rgba(0,212,170,0.6)}
+.annot-tooltip{position:absolute;bottom:140%;left:50%;transform:translateX(-50%) translateY(4px);background:rgba(10,12,15,0.95);border:1px solid var(--cyan);padding:7px 13px;border-radius:8px;font-size:12px;color:var(--txt);white-space:nowrap;opacity:0;pointer-events:none;transition:opacity 0.25s,transform 0.25s;z-index:20;box-shadow:0 4px 20px rgba(0,0,0,0.4);line-height:1.5}
+.annot-tooltip b{color:var(--gold);font-weight:600;font-size:13px}
+.annot-spot:hover .annot-tooltip{opacity:1;transform:translateX(-50%) translateY(0)}
+.annot-spot.active{border-color:#fff;background:rgba(0,212,170,0.45);transform:scale(1.35);z-index:15;box-shadow:0 0 16px rgba(0,212,170,0.5)}
+.annot-spot.active .annot-spot-inner{background:#fff;box-shadow:0 0 12px rgba(255,255,255,0.8)}
+
+/* Image caption */
+.col-caption{padding:10px 14px;border-top:1px solid var(--glass-border);background:rgba(0,0,0,0.1);display:grid;grid-template-columns:1fr auto;gap:6px;align-items:start}
+.caption-main{display:flex;flex-direction:column;gap:3px}
+.caption-title{font-family:var(--serif);font-size:13px;font-weight:600;color:var(--txt)}
+.caption-source{font-size:11px;color:var(--txt3);display:flex;align-items:center;gap:5px}
+.caption-source::before{content:'';width:3px;height:3px;border-radius:50%;background:var(--cyan);opacity:0.6}
+.caption-note{font-size:12px;color:var(--txt2);line-height:1.5;margin-top:2px;font-style:italic}
+.caption-version{font-size:10px;padding:2px 8px;border-radius:6px;background:rgba(201,176,55,0.08);color:var(--gold);border:1px solid rgba(201,176,55,0.15);white-space:nowrap;height:fit-content}
+
+/* Thumbnail strip — compact */
+.thumb-strip{display:flex;gap:6px;padding:8px 12px;overflow-x:auto;scrollbar-width:thin;border-top:1px solid rgba(0,0,0,0.2)}
+.thumb-strip::-webkit-scrollbar{height:3px}
+.thumb-strip::-webkit-scrollbar-thumb{background:rgba(0,212,170,0.2);border-radius:2px}
+.thumb-item{flex-shrink:0;width:64px;height:48px;border-radius:6px;border:2px solid transparent;background:var(--bg-surface);cursor:pointer;transition:all 0.3s;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center}
+.thumb-item:hover{border-color:var(--glass-border);background:var(--bg-hover)}
+.thumb-item.active{border-color:var(--cyan);box-shadow:0 0 8px rgba(0,212,170,0.2)}
+.thumb-item svg{width:75%;height:75%;opacity:0.6;transition:opacity 0.3s}
+.thumb-item.active svg,.thumb-item:hover svg{opacity:1}
+.thumb-label{position:absolute;bottom:1px;left:0;right:0;text-align:center;font-size:8px;color:var(--txt3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 2px}
+.thumb-item.active .thumb-label{color:var(--cyan)}
+
+/* Zoom indicator */
+.zoom-indicator{position:absolute;bottom:10px;right:10px;padding:3px 8px;border-radius:5px;background:rgba(0,0,0,0.6);border:1px solid var(--glass-border);font-size:11px;color:var(--txt2);z-index:5;pointer-events:none;backdrop-filter:blur(4px)}
+
+/* Hotspot annotations — compact */
+.annotation-marker{position:absolute;cursor:pointer;transition:all 0.3s;z-index:10}
+.annotation-ring{width:22px;height:22px;border-radius:50%;border:2px solid var(--cyan);background:rgba(0,212,170,0.08);display:flex;align-items:center;justify-content:center;animation:annotPulse 2.5s ease-in-out infinite;box-shadow:0 0 8px rgba(0,212,170,0.12)}
+.annotation-marker:hover .annotation-ring{border-color:var(--gold);background:rgba(201,176,55,0.15);box-shadow:0 0 14px rgba(201,176,55,0.3);animation:none;transform:scale(1.15)}
+.annotation-label{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);white-space:nowrap;padding:5px 12px;border-radius:6px;background:rgba(10,12,15,0.95);border:1px solid rgba(0,212,170,0.3);backdrop-filter:blur(10px);font-size:11px;color:var(--txt);pointer-events:none;opacity:0;transition:all 0.25s var(--ease);box-shadow:0 4px 12px rgba(0,0,0,0.4)}
+.annotation-label::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:rgba(0,212,170,0.3)}
+.annotation-marker:hover .annotation-label{opacity:1;transform:translateX(-50%) translateY(-3px)}
+.annotation-sublabel{font-size:9px;color:var(--txt3);margin-top:1px}
+@keyframes annotPulse{0%,100%{box-shadow:0 0 6px rgba(0,212,170,0.08)}50%{box-shadow:0 0 14px rgba(0,212,170,0.25)}}
+
+/* ========== 细节对照区（右栏） ========== */
+.detail-compare{display:flex;flex-direction:column;gap:0}
+.detail-compare-header{padding:10px 14px;border-bottom:1px solid var(--glass-border);background:rgba(0,0,0,0.15);display:flex;justify-content:space-between;align-items:center}
+.detail-compare-title{font-family:var(--serif);font-size:15px;font-weight:600;color:var(--txt);display:flex;align-items:center;gap:8px}
+.detail-compare-title::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 6px var(--gold)}
+.detail-sync-badge{font-size:10px;padding:2px 8px;border-radius:8px;background:rgba(0,212,170,0.08);color:var(--cyan);border:1px solid var(--cyan-glow);cursor:pointer;transition:all 0.3s}
+.detail-sync-badge:hover{background:rgba(0,212,170,0.15)}
+
+/* Part list in right column */
+.detail-parts{display:flex;flex-direction:column;gap:0;flex:1;overflow-y:auto}
+.detail-part-item{padding:12px 14px;border-bottom:1px solid rgba(0,0,0,0.15);cursor:pointer;transition:all 0.3s;position:relative}
+.detail-part-item:hover{background:rgba(0,212,170,0.03)}
+.detail-part-item.active{background:rgba(0,212,170,0.06);border-left:3px solid var(--cyan)}
+.detail-part-item:not(.active){border-left:3px solid transparent}
+.detail-part-name{font-size:14px;font-weight:600;color:var(--txt);display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.detail-part-name .part-emoji{font-size:16px}
+.detail-part-similarity{font-size:12px;display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.similarity-bar{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,0.06);overflow:hidden}
+.similarity-fill{height:100%;border-radius:2px;transition:width 0.5s var(--ease)}
+.similarity-fill.high{background:var(--cyan);box-shadow:0 0 6px var(--cyan)}
+.similarity-fill.mid{background:var(--gold);box-shadow:0 0 6px var(--gold)}
+.similarity-fill.low{background:var(--red);box-shadow:0 0 6px var(--red)}
+.similarity-value{font-size:11px;color:var(--txt3);min-width:32px;text-align:right}
+
+.detail-part-desc{font-size:12px;color:var(--txt2);line-height:1.6}
+.detail-part-ancient{font-size:11px;color:var(--cyan);margin-top:4px;padding:4px 8px;border-radius:4px;background:rgba(0,212,170,0.04);border-left:2px solid var(--cyan)}
+.detail-part-modern{font-size:11px;color:var(--gold);margin-top:3px;padding:4px 8px;border-radius:4px;background:rgba(201,176,55,0.04);border-left:2px solid var(--gold)}
+
+/* Difference alert */
+.diff-alert{margin-top:6px;padding:5px 10px;border-radius:4px;background:rgba(230,57,70,0.06);border:1px solid rgba(230,57,70,0.15);font-size:11px;color:var(--red);display:flex;align-items:center;gap:6px;cursor:pointer;transition:all 0.3s}
+.diff-alert:hover{background:rgba(230,57,70,0.1);border-color:rgba(230,57,70,0.3)}
+.diff-alert .diff-icon{font-size:12px}
+.diff-alert .diff-text{flex:1}
+.diff-alert .diff-expand{font-size:10px;color:var(--txt3)}
+.diff-detail{font-size:11px;color:var(--txt2);line-height:1.6;margin-top:4px;padding:6px 10px;border-radius:4px;background:rgba(0,0,0,0.2);border:1px solid var(--glass-border);display:none}
+.diff-alert.expanded .diff-detail{display:block}
+.diff-alert.expanded .diff-expand::after{content:'收起 ▲'}
+
+/* Parts Panel */
+.parts-panel{background:var(--bg-card);border:1px solid var(--glass-border);border-radius:var(--r-md);padding:16px;backdrop-filter:blur(4px);position:relative;overflow:hidden}
+.parts-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,212,170,0.4),transparent);opacity:0.4}
+.parts-title{font-family:var(--serif);font-size:15px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px;color:var(--txt)}
+.parts-title::before{content:'';width:3px;height:16px;background:var(--cyan);border-radius:2px;box-shadow:0 0 6px var(--cyan)}
+.parts-list{display:flex;flex-direction:column;gap:6px}
+.part-item{display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;background:rgba(0,0,0,0.2);border:1px solid transparent;cursor:pointer;transition:all 0.3s}
+.part-item:hover{background:rgba(0,212,170,0.04);border-color:var(--glass-border)}
+.part-item.active{background:rgba(0,212,170,0.08);border-color:var(--cyan);box-shadow:0 0 12px rgba(0,212,170,0.1)}
+.part-icon{width:32px;height:32px;border-radius:8px;background:rgba(0,212,170,0.1);display:flex;align-items:center;justify-content:center;font-size:14px}
+.part-info{flex:1}
+.part-name{font-size:13px;font-weight:500}
+.part-match{font-size:12px;color:var(--txt3)}
+.part-match.high{color:var(--cyan)}
+
+/* Evidence Chain — 下方横排 */
+.evidence-section{background:var(--bg-card);border:1px solid var(--glass-border);border-radius:var(--r-md);padding:20px;position:relative;overflow:hidden;backdrop-filter:blur(4px)}
+.evidence-section::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,212,170,0.4),transparent);opacity:0.4}
+.evidence-title{font-family:var(--serif);font-size:15px;font-weight:600;margin-bottom:14px;color:var(--txt2);display:flex;align-items:center;gap:8px}
+.evidence-title::before{content:'';width:3px;height:16px;background:var(--gold);border-radius:2px;box-shadow:0 0 6px var(--gold)}
+.evidence-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;max-height:none;overflow:visible}
+.evidence-card{padding:14px;border-radius:8px;background:rgba(0,0,0,0.2);border:1px solid var(--glass-border);transition:all 0.3s;cursor:pointer;position:relative;overflow:hidden}
+.evidence-card::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px}
+.evidence-card.core::before{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+.evidence-card.aux::before{background:var(--gold);box-shadow:0 0 8px var(--gold)}
+.evidence-card:hover{border-color:rgba(0,212,170,0.25);background:rgba(0,212,170,0.02)}
+.evidence-header{display:flex;justify-content:space-between;align-items:center}
+.evidence-type{font-size:11px;padding:3px 10px;border-radius:10px;background:rgba(0,212,170,0.12);color:var(--cyan)}
+.evidence-type.aux{background:rgba(201,176,55,0.12);color:var(--gold)}
+.evidence-title-text{font-size:14px;font-weight:600}
+.evidence-content{font-size:13px;color:var(--txt2);line-height:1.7;margin-top:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;transition:all 0.3s}
+.evidence-card.expanded .evidence-content{-webkit-line-clamp:unset;overflow:visible}
+.evidence-detail{font-size:13px;color:var(--txt3);line-height:1.8;margin-top:10px;padding-top:10px;border-top:1px solid var(--glass-border);display:none}
+.evidence-card.expanded .evidence-detail{display:block}
+.evidence-source{font-size:12px;color:var(--txt3);margin-top:8px;padding-top:8px;border-top:1px solid var(--glass-border)}
+.evidence-expand-hint{font-size:11px;color:var(--txt3);margin-top:6px;text-align:center;opacity:0.6;transition:opacity 0.3s}
+.evidence-card:hover .evidence-expand-hint{opacity:1;color:var(--cyan)}
+.evidence-card.expanded .evidence-expand-hint{display:none}
+.evidence-hidden{display:none}
+.evidence-more-btn:hover{opacity:1 !important;border-color:var(--cyan) !important}
+
+/* Evidence hover tooltip — 悬浮展示完整内容 */
+.evidence-card .evidence-tooltip{display:none;position:absolute;left:0;right:0;top:100%;margin-top:8px;padding:16px 18px;border-radius:10px;background:rgba(16,20,28,0.96);border:1px solid rgba(0,212,170,0.3);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 8px 32px rgba(0,0,0,0.6),0 0 16px rgba(0,212,170,0.08);z-index:50;font-size:13px;color:var(--txt);line-height:1.8;pointer-events:none;animation:evidenceTooltipIn 0.25s var(--ease)}
+.evidence-card .evidence-tooltip::after{content:'';position:absolute;bottom:100%;left:24px;border:6px solid transparent;border-bottom-color:rgba(0,212,170,0.3)}
+.evidence-card:not(.expanded):hover .evidence-tooltip{display:block}
+@keyframes evidenceTooltipIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ========== DETAIL TAB SECTION ========== */
+.detail-tabs{display:flex;gap:4px;background:var(--bg-surface);border:1px solid var(--glass-border);border-radius:var(--r-md);padding:4px;margin-bottom:24px;backdrop-filter:blur(4px);position:sticky;top:74px;z-index:50}
+.detail-tab{padding:12px 32px;border-radius:8px;font-size:14px;font-weight:500;color:var(--txt2);transition:all 0.3s;position:relative;letter-spacing:1px}
+.detail-tab:hover{color:var(--txt);background:rgba(0,212,170,0.03)}
+.detail-tab.active{background:rgba(0,212,170,0.1);color:var(--cyan);font-weight:600;box-shadow:0 0 16px rgba(0,212,170,0.08)}
+.detail-tab.active::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:20px;height:2px;background:var(--cyan);border-radius:1px;box-shadow:0 0 8px var(--cyan)}
+
+/* Tab Content */
+.tab-content{display:none;animation:tabFadeIn 0.4s var(--ease)}
+.tab-content.active{display:block}
+@keyframes tabFadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ========== 考证原文 TAB ========== */
+.text-evidence-grid{display:grid;grid-template-columns:1fr 360px;gap:24px}
+.text-full-panel{background:var(--bg-card);border:1px solid var(--glass-border);border-radius:var(--r-md);padding:28px;position:relative;overflow:hidden;backdrop-filter:blur(4px)}
+.text-full-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,212,170,0.4),transparent);opacity:0.5}
+.text-full-title{font-family:var(--serif);font-size:20px;font-weight:700;color:var(--gold);margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.text-full-title::before{content:'';width:3px;height:24px;background:var(--cyan);border-radius:2px;box-shadow:0 0 8px var(--cyan)}
+.text-item{margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--glass-border)}
+.text-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.text-item-source{font-size:13px;color:var(--cyan);font-weight:500;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.text-item-source::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 6px var(--cyan)}
+.text-item-body{font-family:var(--serif);font-size:15px;line-height:2;color:var(--txt);letter-spacing:0.5px}
+.text-item-body em{font-style:normal;color:var(--gold);border-bottom:1px dashed var(--gold)}
+
+/* References & Versions sidebar */
+.ref-panel{display:flex;flex-direction:column;gap:20px}
+.ref-card{background:var(--bg-card);border:1px solid var(--glass-border);border-radius:var(--r-md);padding:20px;position:relative;overflow:hidden}
+.ref-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,212,170,0.3),transparent);opacity:0.4}
+.ref-card-title{font-family:var(--serif);font-size:16px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px;color:var(--txt)}
+.ref-card-title::before{content:'';width:3px;height:16px;background:var(--gold);border-radius:2px;box-shadow:0 0 6px var(--gold)}
+.ref-list{display:flex;flex-direction:column;gap:10px}
+.ref-item{padding:10px 14px;border-radius:8px;background:rgba(0,0,0,0.15);border:1px solid var(--glass-border);font-size:13px;line-height:1.6;color:var(--txt2);transition:all 0.3s;cursor:pointer}
+.ref-item:hover{border-color:var(--cyan-glow);background:rgba(0,212,170,0.03)}
+.ref-item-index{color:var(--cyan);font-weight:600;margin-right:6px}
+.version-list{display:flex;flex-direction:column;gap:8px}
+.version-item{padding:12px;border-radius:8px;background:rgba(0,0,0,0.15);border:1px solid var(--glass-border);display:flex;align-items:center;gap:12px;font-size:13px;color:var(--txt2)}
+.version-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.version-dot.current{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+.version-dot.past{background:var(--txt3)}
+.version-date{color:var(--txt3);font-size:12px;white-space:nowrap}
+.version-desc{flex:1}
+
+/* ========== 关联典籍 TAB ========== */
+.classics-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.classic-card{background:var(--bg-card);border:1px solid var(--glass-border);border-radius:var(--r-md);padding:24px;transition:all 0.3s;position:relative;overflow:hidden}
+.classic-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,212,170,0.4),transparent);opacity:0.4}
+.classic-card:hover{border-color:rgba(0,212,170,0.3);transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,0,0,0.4),0 0 20px rgba(0,212,170,0.06)}
+.classic-card-header{display:flex;align-items:flex-start;gap:16px;margin-bottom:16px}
+.classic-icon{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,rgba(0,212,170,0.12),rgba(201,176,55,0.08));border:1px solid var(--glass-border);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.classic-info{flex:1}
+.classic-title{font-family:var(--serif);font-size:18px;font-weight:700;color:var(--gold);margin-bottom:4px}
+.classic-relation{font-size:13px;color:var(--cyan);padding:3px 10px;border-radius:10px;background:rgba(0,212,170,0.08);border:1px solid var(--cyan-glow);display:inline-block}
+.classic-desc{font-size:14px;color:var(--txt2);line-height:1.7;margin-bottom:16px}
+.classic-action{display:flex;gap:10px}
+.classic-action-btn{padding:8px 18px;border-radius:6px;font-size:13px;border:1px solid var(--glass-border);color:var(--txt2);transition:all 0.3s}
+.classic-action-btn:hover{border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 12px rgba(0,212,170,0.1)}
+.classic-action-btn.primary{background:rgba(0,212,170,0.08);border-color:var(--cyan-glow);color:var(--cyan)}
+
+/* Citation chart */
+.citation-chart{background:var(--bg-card);border:1px solid var(--glass-border);border-radius:var(--r-md);padding:28px;margin-top:20px;grid-column:1/-1;position:relative;overflow:hidden}
+.citation-chart::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(201,176,55,0.4),transparent);opacity:0.4}
+.citation-chart-title{font-family:var(--serif);font-size:16px;font-weight:600;margin-bottom:20px;display:flex;align-items:center;gap:8px;color:var(--txt)}
+.citation-chart-title::before{content:'';width:3px;height:16px;background:var(--gold);border-radius:2px;box-shadow:0 0 6px var(--gold)}
+.citation-flow{display:flex;align-items:center;justify-content:center;gap:16px;padding:20px 0;flex-wrap:wrap}
+.citation-node{padding:12px 20px;border-radius:8px;background:rgba(0,0,0,0.2);border:1px solid var(--glass-border);font-family:var(--serif);font-size:14px;color:var(--txt);text-align:center;min-width:120px;transition:all 0.3s;cursor:pointer}
+.citation-node:hover{border-color:var(--cyan);transform:scale(1.05);box-shadow:0 0 16px rgba(0,212,170,0.1)}
+.citation-node.source{border-color:var(--cyan);background:rgba(0,212,170,0.06);color:var(--cyan);box-shadow:0 0 16px rgba(0,212,170,0.08)}
+.citation-arrow{color:var(--txt3);font-size:20px}
+.citation-label{font-size:11px;color:var(--txt3);margin-top:4px}
+
+/* ========== 方剂应用 TAB ========== */
+.formula-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.formula-section{background:var(--bg-card);border:1px solid var(--glass-border);border-radius:var(--r-md);padding:24px;position:relative;overflow:hidden}
+.formula-section::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,212,170,0.4),transparent);opacity:0.5}
+.formula-section-title{font-family:var(--serif);font-size:18px;font-weight:700;color:var(--gold);margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.formula-section-title::before{content:'';width:3px;height:24px;background:var(--cyan);border-radius:2px;box-shadow:0 0 8px var(--cyan)}
+.formula-section-title .section-tag{font-size:12px;font-weight:400;color:var(--cyan);padding:3px 10px;border-radius:10px;background:rgba(0,212,170,0.08);border:1px solid var(--cyan-glow);margin-left:auto}
+.formula-list{display:flex;flex-direction:column;gap:14px}
+.formula-card{padding:18px;border-radius:10px;background:rgba(0,0,0,0.2);border:1px solid var(--glass-border);transition:all 0.3s}
+.formula-card:hover{border-color:rgba(0,212,170,0.25);background:rgba(0,212,170,0.02);box-shadow:0 4px 16px rgba(0,0,0,0.3)}
+.formula-name{font-family:var(--serif);font-size:16px;font-weight:600;color:var(--txt);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.formula-name::after{content:'';flex:1;height:1px;background:var(--glass-border)}
+.formula-composition{font-size:13px;color:var(--txt2);margin-bottom:8px;line-height:1.6}
+.formula-composition strong{color:var(--cyan);font-weight:500;text-shadow:0 0 8px rgba(0,212,170,0.3)}
+.formula-effect{font-size:13px;color:var(--gold);margin-bottom:6px}
+.formula-source{font-size:12px;color:var(--txt3)}
+
+/* Modern application */
+.modern-app-list{display:flex;flex-direction:column;gap:14px}
+.modern-app-item{padding:18px;border-radius:10px;background:rgba(0,0,0,0.2);border:1px solid var(--glass-border);transition:all 0.3s}
+.modern-app-item:hover{border-color:rgba(0,212,170,0.25)}
+.modern-app-name{font-size:14px;font-weight:600;color:var(--txt);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.modern-app-tag{font-size:11px;padding:2px 8px;border-radius:4px;background:rgba(0,212,170,0.1);color:var(--cyan);border:1px solid var(--cyan-glow)}
+.modern-app-desc{font-size:13px;color:var(--txt2);line-height:1.7}
+.modern-app-evidence{font-size:12px;color:var(--txt3);margin-top:6px}
+
+/* ========== BOTTOM TOOLBAR ========== */
+.bottom-toolbar{position:fixed;bottom:0;left:0;right:0;padding:14px 50px;background:var(--glass);backdrop-filter:blur(20px);border-top:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;z-index:90}
+.toolbar-left{display:flex;gap:12px}
+.toolbar-right{display:flex;gap:12px}
+.tool-btn{padding:10px 20px;border-radius:6px;font-size:14px;color:var(--txt2);border:1px solid var(--glass-border);background:transparent;transition:all 0.3s;display:flex;align-items:center;gap:8px}
+.tool-btn:hover{border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 12px rgba(0,212,170,0.1)}
+.tool-btn.primary{background:rgba(0,212,170,0.1);color:var(--cyan);border-color:var(--cyan-glow)}
+.tool-btn.primary:hover{background:rgba(0,212,170,0.15);box-shadow:0 0 20px rgba(0,212,170,0.15)}
+
+/* Citation Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(10px);z-index:200;display:none;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{width:90%;max-width:600px;background:var(--bg-surface);border:1px solid var(--glass-border);border-radius:var(--r-md);padding:32px;position:relative;overflow:hidden}
+.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,212,170,0.5),transparent)}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.modal-title{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--gold)}
+.modal-close{width:36px;height:36px;border-radius:8px;background:transparent;border:1px solid var(--glass-border);color:var(--txt2);font-size:20px;cursor:pointer;transition:all 0.3s}
+.modal-close:hover{border-color:var(--cyan);color:var(--cyan)}
+.citation-tabs{display:flex;gap:8px;margin-bottom:20px}
+.citation-tab{padding:10px 20px;border-radius:6px;font-size:14px;color:var(--txt2);background:transparent;border:1px solid transparent;cursor:pointer;transition:all 0.3s}
+.citation-tab:hover{color:var(--txt)}
+.citation-tab.active{background:rgba(0,212,170,0.1);border-color:var(--cyan);color:var(--cyan)}
+.citation-content{background:var(--bg-card);border:1px solid var(--glass-border);border-radius:8px;padding:20px;margin-bottom:20px}
+.citation-text{font-family:'SF Mono',monospace;font-size:13px;line-height:1.8;color:var(--txt2);white-space:pre-wrap}
+.copy-btn{width:100%;padding:14px;border-radius:6px;font-size:14px;font-weight:600;background:var(--cyan);color:#000;border:none;cursor:pointer;transition:all 0.3s}
+.copy-btn:hover{background:var(--cyan-dim);box-shadow:0 0 20px rgba(0,212,170,0.3)}
+.copy-btn.copied{background:var(--gold)}
+
+/* ========== ANIMATIONS ========== */
+@keyframes pulse{0%,100%{opacity:0.5}50%{opacity:1}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.glow-pulse{animation:pulse 3s ease-in-out infinite}
+.float-anim{animation:float 6s ease-in-out infinite}
+
+/* ========== RESPONSIVE ========== */
+@media(max-width:1200px){
+  .triple-columns{grid-template-columns:1fr 1fr;gap:12px}
+  .detail-compare-col{grid-column:1/-1}
+  .evidence-list{grid-template-columns:1fr}
+  .text-evidence-grid{grid-template-columns:1fr}
+  .classics-grid,.formula-grid{grid-template-columns:1fr}
+  .col-canvas{height:300px}
+}
+@media(max-width:768px){
+  .triple-columns{grid-template-columns:1fr}
+  .col-canvas{height:280px}
+  .header-content{flex-direction:column;gap:20px}
+  .bottom-toolbar{flex-direction:column;gap:12px}
+  .detail-tabs{overflow-x:auto}
+  .detail-tab{white-space:nowrap;padding:10px 18px}
+  .citation-flow{flex-direction:column}
+  .page-header{padding:90px 20px 20px}
+  .main-content{padding:20px 20px 100px}
+  .nav-bar{padding:0 20px}
+  .evidence-list{grid-template-columns:1fr}
+  .col-header{flex-direction:column;gap:6px;align-items:flex-start}
+  .thumb-item{width:52px;height:40px}
+}
+</style>
+</head>
+<body>
+<div id="errorDisplay" style="display:none;position:fixed;top:0;left:0;right:0;z-index:9999;background:#e63946;color:#fff;padding:10px 20px;font-family:sans-serif;font-size:14px;"></div>
+<script>window.onerror=function(msg,url,line){var d=document.getElementById('errorDisplay');if(d){d.style.display='block';d.textContent='JS错误 @行'+line+': '+msg;}console.error(msg,url,line);};</script>
+
+<!-- Background Effects -->
+<div class="hero-bg">
+  <div class="hero-vignette"></div>
+</div>
+<div class="scan-line"></div>
+<div class="mouse-glow" id="mouseGlow"></div>
+<div class="particles-container" id="particlesContainer"></div>
+
+<!-- Navigation -->
+<nav class="nav-bar">
+  <div class="nav-brand">
+    <div class="nav-logo-icon">🌿</div>
+    <span>本草万象</span>
+  </div>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">首页</a>
+    <a href="wanxiang.html" class="nav-link">万象阅览</a>
+    <a href="duizhao-list.html" class="nav-link active">古今对照</a>
+    <a href="ditu2.html" class="nav-link">时空地图</a>
+    <a href="wenwu.html" class="nav-link">文物佐证</a>
+  </div>
+  <div class="user-menu" id="userMenu">
+    <button class="login-btn" id="loginBtn" onclick="goToLogin()">登录 / 注册</button>
+    <div class="user-avatar" id="userAvatar" style="display:none;" onclick="toggleUserDropdown()">
+      <img src="" alt="头像" id="navUserAvatar">
+    </div>
+    <div class="user-dropdown" id="userDropdown">
+      <div class="user-dropdown-item" onclick="goToProfile()">👤 个人中心</div>
+      <div class="user-dropdown-item" onclick="goToSettings()">⚙️ 账号设置</div>
+      <div class="user-dropdown-divider"></div>
+      <div class="user-dropdown-item" onclick="logout()">🚪 退出登录</div>
+    </div>
+  </div>
+</nav>
+
+<!-- Page Header -->
+<header class="page-header">
+  <div class="header-content">
+    <div class="header-left">
+      <h1 id="herbName">人参</h1>
+      <div class="header-meta" id="headerMeta">
+        <span class="meta-item">拉丁名: <a id="herbLatin" href="https://tropicos.org/name/search?q=Panax+ginseng" target="_blank" rel="noopener" class="latin-link" title="点击查询TROPICOS分类学数据库">Panax ginseng C. A. Mey. ↗</a></span>
+        <span class="meta-item">分类: <span id="herbCategory">草部 · 上品</span></span>
+        <span class="meta-item">基原: <span id="herbOrigin">五加科植物人参的干燥根</span></span>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="confidence-badge" id="confidenceBadge" title="">★★★★★ 考证置信度：高</span>
+      <a href="duizhao-list.html" class="back-btn">← 返回列表</a>
+    </div>
+  </div>
+</header>
+
+<!-- Main Content -->
+<main class="main-content">
+  <!-- Tab 栏在顶部 -->
+  <div class="detail-tabs">
+    <button class="detail-tab active" data-tab="compare">图证对照</button>
+    <button class="detail-tab" data-tab="text">考证原文</button>
+    <button class="detail-tab" data-tab="classics">关联典籍</button>
+    <button class="detail-tab" data-tab="formulas">方剂应用</button>
+  </div>
+
+  <!-- Tab: 图证对照 — 三栏：古图 | 今照 | 细节对照 -->
+  <div class="tab-content active" id="tabCompare">
+    <div class="comparison-area">
+      <div class="triple-columns">
+        <!-- 左栏：古图区 -->
+        <div class="col-card ancient-col">
+          <div class="col-header">
+            <div class="col-title">古图</div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <span class="col-badge">高清原图</span>
+              <div class="col-actions">
+                <button class="col-action-btn" id="ancZoomIn" title="放大">＋</button>
+                <button class="col-action-btn" id="ancZoomOut" title="缩小">－</button>
+                <button class="col-action-btn" id="ancReset" title="重置">⟲</button>
+                <button class="col-action-btn" id="ancAnnot" title="标注">◎</button>
+              </div>
+            </div>
+          </div>
+          <div class="col-canvas" id="ancCanvas">
+            <div class="zoom-indicator" id="ancZoomInd">100%</div>
+          </div>
+          <div class="col-caption">
+            <div class="caption-main">
+              <div class="caption-title" id="ancCapTitle">—</div>
+              <div class="caption-source" id="ancCapSource">—</div>
+              <div class="caption-note" id="ancCapNote">—</div>
+            </div>
+            <div class="caption-version" id="ancCapVersion">—</div>
+          </div>
+          <div class="thumb-strip" id="ancThumbs"></div>
+        </div>
+
+        <!-- 中栏：今照区 -->
+        <div class="col-card modern-col">
+          <div class="col-header">
+            <div class="col-title modern-title">今照</div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <span class="col-badge modern">4K实拍</span>
+              <div class="col-actions">
+                <button class="col-action-btn" id="modZoomIn" title="放大">＋</button>
+                <button class="col-action-btn" id="modZoomOut" title="缩小">－</button>
+                <button class="col-action-btn" id="modReset" title="重置">⟲</button>
+                <button class="col-action-btn" id="modAnnot" title="标注">◎</button>
+              </div>
+            </div>
+          </div>
+          <div class="col-canvas" id="modCanvas">
+            <div class="zoom-indicator" id="modZoomInd">100%</div>
+          </div>
+          <div class="col-caption">
+            <div class="caption-main">
+              <div class="caption-title" id="modCapTitle">—</div>
+              <div class="caption-source" id="modCapSource">—</div>
+              <div class="caption-note" id="modCapNote">—</div>
+            </div>
+            <div class="caption-version" id="modCapVersion">—</div>
+          </div>
+          <div class="thumb-strip" id="modThumbs"></div>
+        </div>
+
+        <!-- 右栏：细节对照区 -->
+        <div class="col-card detail-compare-col">
+          <div class="detail-compare-header">
+            <div class="detail-compare-title">细节对照</div>
+            <span class="detail-sync-badge" id="syncToggle">同步高亮：开</span>
+          </div>
+          <div class="detail-parts" id="detailParts">
+            <!-- JS动态渲染部位对照 -->
+          </div>
+        </div>
+      </div>
+
+      <!-- 证据链（下方） -->
+      <div class="evidence-section">
+        <div class="evidence-title">证据链</div>
+        <div class="evidence-list" id="evidenceList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: 考证原文 -->
+  <div class="tab-content" id="tabText">
+    <div class="text-evidence-grid">
+      <div class="text-full-panel">
+        <div class="text-full-title">考证全文</div>
+        <div id="textEvidenceContent"></div>
+      </div>
+      <div class="ref-panel">
+        <div class="ref-card">
+          <div class="ref-card-title">参考文献</div>
+          <div class="ref-list" id="refList"></div>
+        </div>
+        <div class="ref-card">
+          <div class="ref-card-title">版本记录</div>
+          <div class="version-list" id="versionList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: 关联典籍 -->
+  <div class="tab-content" id="tabClassics">
+    <div class="classics-grid">
+      <div id="classicsCards"></div>
+      <div class="citation-chart">
+        <div class="citation-chart-title">引用关系图</div>
+        <div class="citation-flow" id="citationFlow"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: 方剂应用 -->
+  <div class="tab-content" id="tabFormulas">
+    <div class="formula-grid">
+      <div class="formula-section">
+        <div class="formula-section-title">古方列举 <span class="section-tag" id="formulaCount"></span></div>
+        <div class="formula-list" id="formulaList"></div>
+      </div>
+      <div class="formula-section">
+        <div class="formula-section-title">现代应用</div>
+        <div class="modern-app-list" id="modernAppList"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Bottom Toolbar -->
+<div class="bottom-toolbar">
+  <div class="toolbar-left">
+    <button class="tool-btn" id="favBtn">★ 收藏</button>
+    <button class="tool-btn" id="addToCompareBtn2">+ 加入对比</button>
+    <button class="tool-btn" id="downloadBtn">📥 下载高清图</button>
+  </div>
+  <div class="toolbar-right">
+    <button class="tool-btn" onclick="openCitationModal()">📋 一键引用</button>
+    <button class="tool-btn primary" id="viewMapBtn">🗺️ 查看产地</button>
+  </div>
+</div>
+
+<!-- Citation Modal -->
+<div class="modal-overlay" id="citationModal" onclick="closeCitationModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title">引用本页</h3>
+      <button class="modal-close" onclick="closeCitationModal()">×</button>
+    </div>
+    <div class="citation-tabs">
+      <button class="citation-tab active" data-format="gbt">GB/T 7714</button>
+      <button class="citation-tab" data-format="mla">MLA</button>
+      <button class="citation-tab" data-format="apa">APA</button>
+    </div>
+    <div class="citation-content">
+      <div class="citation-text" id="citationText"></div>
+    </div>
+    <button class="copy-btn" id="copyBtn" onclick="copyCitation()">复制引用</button>
+  </div>
+</div>
+
+<script>
+/**
+ * 本草万象 - 统一数据模块
+ * 所有页面共享的药物、产地、文物等数据
+ */
+
+// ========== 药物数据 ==========
+const HERB_DATA = [
+  {
+    id: 'renshen', name: '人参', nameTraditional: '人參', latin: 'Panax ginseng C. A. Mey.',
+    category: '草部', confidence: 5, conclusionType: 'match', conclusionText: '形态一致 · 古今对应',
+    wordCount: 1892, ancientNames: '人參、人薓',
+    origin: '五加科植物人参的干燥根',
+    songLocations: ['上党', '辽东'], modernLocations: ['吉林', '辽宁'],
+    description: '味甘微寒，主补五脏，安精神，定魂魄，止惊悸，除邪气，明目，开心益智。久服，轻身延年。',
+    images: [
+      { id: 'ancient_main', type: 'ancient', title: '《本草图经》人参全图', source: '《本草图经》· 明刊本 · 卷三', caption: '绘有人参全株形态，根如人形，叶为掌状复叶', version: '明万历刊本', url: 'assets/images/Traditional_Chinese_herbal_med_2026-05-06T13-23-09.png' },
+      { id: 'ancient_detail', type: 'ancient', title: '人参根形详图', source: '《本草纲目》· 清刊本', caption: '特写人参根部人形特征，标注"根如人形者神"', version: '清乾隆重刊本' },
+      { id: 'ancient_herbal', type: 'ancient', title: '人参采收图', source: '《救荒本草》· 明永乐刊本', caption: '描绘野外采挖人参场景，可见茎叶与根部', version: '明永乐四年刊本' },
+      { id: 'modern_photo', type: 'modern', title: '人参鲜品标本', source: '中国医学科学院药用植物研究所', caption: '东北长白山栽培人参鲜品，可见掌状复叶与伞形花序', version: '2024年摄制', url: 'assets/images/Modern_botanical_photograph_of_2026-05-06T13-23-49.png' },
+      { id: 'modern_root', type: 'modern', title: '人参根部高清', source: '吉林人参研究院', caption: '人参主根与支根特写，可见明显的芦头与须根', version: '2023年摄制' }
+    ],
+    parts: {
+      root: { name: '根部', similarity: 92, ancient: '根如人形者善，百徹如人形者最上', modern: '主根圆柱形，有分枝，形似人形', detail: '古图所绘人参根部呈人形，有头、身、四肢之分，与现代人参形态高度一致。《图经》载"根如人形者神"，与现代观察相符。' },
+      leaf: { name: '叶片', similarity: 88, ancient: '叶如野葛而有毛', modern: '掌状复叶，小叶5枚', detail: '古图所示叶片为掌状复叶，小叶5枚，与人参加工品的叶形一致。《图经》描述"叶如野葛而有毛"，符合人参叶特征。' },
+      flower: { name: '花朵', similarity: 85, ancient: '花小而黄，顶生', modern: '伞形花序，花小而黄', detail: '古图所绘花小而黄，顶生伞形花序，与人参考察记录相符。《图经》未详述花色，但图示与现代观察一致。' },
+      stem: { name: '茎部', similarity: 90, ancient: '茎高三、四尺', modern: '茎直立，圆柱形，高30-60cm', detail: '古图所示茎直立，圆柱形，与人参茎形态相符。茎高30-60厘米，表面光滑，符合《图经》描述。' }
+    },
+    evidence: [
+      { type: 'core', title: '文献依据', body: '《本草图经》卷三："人参生上党山谷及辽东，根如人形者神。"《名医别录》载其形态特征与今之东北人参相符。', source: '《本草图经》', reliability: '高' },
+      { type: 'core', title: '分类学依据', body: '根据《中国植物志》记载，五加科人参属植物Panax ginseng主要分布于中国东北及朝鲜半岛，与宋代文献记载产地高度吻合。', source: '《中国植物志》', reliability: '高' },
+      { type: 'aux', title: '考古出土实物', body: '河南洛阳北宋墓葬出土药物遗存中，经鉴定含有人参成分，形态特征与今之栽培人参相近。', source: '洛阳考古所', reliability: '中' },
+      { type: 'aux', title: '现代产区调查', body: '项目组2024年实地考察吉林长白山人参种植基地，对野山参及园参形态进行详细记录与古图比对分析。', source: '实地调查', reliability: '高' }
+    ],
+    // 考证原文
+    textEvidence: [
+      { source: '《本草图经》卷三', text: '人参，味甘微寒，主补五脏，安精神，定魂魄，止惊悸，除邪气，明目，开心益智。久服，轻身延年。生上党山谷及辽东。' },
+      { source: '《名医别录》', text: '人参生上党郡，在冀州西南，今魏国辽东及高丽亦有之。根如人形者善，百徹如人形者最上。' },
+      { source: '《本草经集注》陶弘景', text: '上党郡在冀州西南，今魏国辽东及高丽亦有之。根状如人者善，百徹如人形者最上。' }
+    ],
+    // 关联典籍
+    relatedClassics: [
+      { title: '《神农本草经》', relation: '上品', desc: '列为上品，载"主补五脏，安精神"' },
+      { title: '《本草纲目》', relation: '草部·人参', desc: '李时珍增补大量临床应用' },
+      { title: '《名医别录》', relation: '上品', desc: '补充产地与品质鉴别' }
+    ],
+    // 方剂应用
+    formulas: [
+      { name: '四君子汤', composition: '人参、白术、茯苓、甘草', effect: '益气健脾', source: '《太平惠民和剂局方》' },
+      { name: '生脉散', composition: '人参、麦冬、五味子', effect: '益气生津，敛阴止汗', source: '《医学启源》' },
+      { name: '参附汤', composition: '人参、附子', effect: '回阳救逆，益气固脱', source: '《正体类要》' }
+    ]
+  },
+  {
+    id: 'huangqi', name: '黄芪', nameTraditional: '黃芪', latin: 'Astragalus mongholicus',
+    category: '草部', confidence: 4, conclusionType: 'migrate', conclusionText: '产地变迁 · 山西→甘肃',
+    wordCount: 1654, ancientNames: '黃芪、黃耆',
+    origin: '豆科植物蒙古黄芪的干燥根',
+    songLocations: ['山西', '陕西'], modernLocations: ['甘肃', '内蒙古'],
+    description: '味甘微温，主痈疽久败疮，排脓止痛，大风癞疾，五痔鼠瘘，补虚，小儿百病。',
+    images: [
+      { id: 'ancient_main', type: 'ancient', title: '《本草图经》黄芪全图', source: '《本草图经》· 明刊本', caption: '绘有黄芪全株，根茎粗壮，叶片对生', version: '明万历刊本' },
+      { id: 'modern_photo', type: 'modern', title: '黄芪药材标本', source: '中国中医科学院', caption: '蒙古黄芪干燥根切片，可见菊花心纹理', version: '2024年摄制' }
+    ],
+    parts: {
+      root: { name: '根部', similarity: 85, ancient: '根长二三尺，皮黄肉白', modern: '圆柱形，表面淡棕黄色', detail: '古图所绘黄芪根部粗壮，根皮黄色，与今之黄芪特征相符。' },
+      leaf: { name: '叶片', similarity: 80, ancient: '叶似槐叶而微尖', modern: '奇数羽状复叶', detail: '古图叶片为羽状复叶，与今之黄芪叶形基本一致。' }
+    },
+    evidence: [
+      { type: 'core', title: '文献依据', body: '《本草图经》载黄芪产地为山西、陕西，与今之黄芪产区变迁历史相符。', source: '《本草图经》', reliability: '高' },
+      { type: 'aux', title: '产区调查', body: '现代黄芪主产区已转移至甘肃、内蒙古，与宋时产地有变迁。', source: '实地调查', reliability: '高' }
+    ],
+    textEvidence: [{ source: '《本草图经》', text: '黄芪，味甘微温，主痈疽久败疮，排脓止痛。生蜀郡山谷及白水。' }],
+    relatedClassics: [{ title: '《神农本草经》', relation: '上品', desc: '列为上品' }],
+    formulas: [{ name: '补中益气汤', composition: '黄芪、人参、白术、甘草等', effect: '补中益气，升阳举陷', source: '《脾胃论》' }]
+  },
+  {
+    id: 'danggui', name: '当归', nameTraditional: '當歸', latin: 'Angelica sinensis',
+    category: '草部', confidence: 5, conclusionType: 'match', conclusionText: '形态一致 · 产地延续',
+    wordCount: 2103, ancientNames: '當歸、乾歸',
+    origin: '伞形科植物当归的干燥根',
+    songLocations: ['甘肃岷县'], modernLocations: ['甘肃岷县'],
+    description: '味甘辛温，主咳逆上气，温疟寒热，妇人漏下绝子，诸恶疮疡。',
+    images: [
+      { id: 'ancient_main', type: 'ancient', title: '《本草图经》当归全图', source: '《本草图经》· 明刊本', caption: '绘有当归全株，根黄黑色，肉白多脂', version: '明万历刊本' },
+      { id: 'modern_photo', type: 'modern', title: '岷当归药材标本', source: '甘肃岷县当归研究所', caption: '甘肃岷县产当归全根，主根粗短，支根数条，香气浓郁', version: '2024年摄制' }
+    ],
+    parts: {
+      root: { name: '根部', similarity: 95, ancient: '根黄黑色，肉白多脂', modern: '主根粗短，支根数条', detail: '古今产地一致，形态高度吻合，岷当归至今仍为道地药材。' }
+    },
+    evidence: [
+      { type: 'core', title: '文献依据', body: '《本草图经》载当归主产甘肃岷县，与今之岷当归产地完全一致。', source: '《本草图经》', reliability: '高' }
+    ],
+    textEvidence: [{ source: '《本草图经》', text: '当归，味甘辛温，主咳逆上气。生陇西川谷。' }],
+    relatedClassics: [{ title: '《神农本草经》', relation: '中品', desc: '列为中品' }],
+    formulas: [{ name: '四物汤', composition: '当归、川芎、白芍、熟地', effect: '补血调经', source: '《太平惠民和剂局方》' }]
+  },
+  {
+    id: 'danshen', name: '丹参', nameTraditional: '丹參', latin: 'Salvia miltiorrhiza',
+    category: '草部', confidence: 3, conclusionType: 'migrate', conclusionText: '形态存疑 · 需进一步考证',
+    wordCount: 892, ancientNames: '丹參、郄蟬草',
+    origin: '唇形科植物丹参的干燥根及根茎',
+    songLocations: ['陕西', '河南'], modernLocations: ['山东', '四川'],
+    description: '味苦微寒，主心腹邪气，肠鸣幽幽如走水，寒热积聚，破癥除瘕。',
+    images: [
+      { id: 'ancient_main', type: 'ancient', title: '《本草图经》丹参图', source: '《本草图经》· 明刊本', caption: '绘有丹参全株，根赤色，叶对生', version: '明万历刊本' },
+      { id: 'modern_photo', type: 'modern', title: '丹参鲜品标本', source: '山东省中医药研究院', caption: '丹参干燥根茎，根砖红色或红棕色', version: '2024年摄制' }
+    ],
+    parts: {
+      root: { name: '根部', similarity: 70, ancient: '根赤色', modern: '根砖红色或红棕色', detail: '古图所示根色偏暗，与今之丹参砖红色有差异，存疑。' }
+    },
+    evidence: [
+      { type: 'aux', title: '形态存疑', body: '古图所绘与今之丹参形态存在差异，需进一步考证是否为同名异物。', source: '项目研究', reliability: '中' }
+    ],
+    textEvidence: [{ source: '《本草图经》', text: '丹参，味苦微寒，主心腹邪气。生桐柏山川谷及太山。' }],
+    relatedClassics: [{ title: '《神农本草经》', relation: '中品', desc: '列为中品' }],
+    formulas: [{ name: '丹参饮', composition: '丹参、檀香、砂仁', effect: '活血化瘀，行气止痛', source: '《时方歌括》' }]
+  },
+  {
+    id: 'baizhu', name: '白术', nameTraditional: '白術', latin: 'Atractylodes macrocephala',
+    category: '草部', confidence: 4, conclusionType: 'match', conclusionText: '形态一致 · 古今对应',
+    wordCount: 1245, ancientNames: '白術、山薊',
+    origin: '菊科植物白术的干燥根茎',
+    songLocations: ['浙江', '安徽'], modernLocations: ['浙江', '安徽'],
+    description: '味苦甘温，主风寒湿痹，死肌痉疸，止汗除热消食。',
+    images: [
+      { id: 'ancient_main', type: 'ancient', title: '《本草图经》白术图', source: '《本草图经》· 明刊本', caption: '绘有白术全株，根茎肥厚', version: '明万历刊本' },
+      { id: 'modern_photo', type: 'modern', title: '白术药材标本', source: '浙江中医药大学', caption: '白术干燥根茎，呈拳状肥厚', version: '2024年摄制' }
+    ],
+    parts: {
+      root: { name: '根茎', similarity: 88, ancient: '根如指大，有须根', modern: '根茎肥厚，呈拳状', detail: '古图与今之白术根茎形态基本吻合。' }
+    },
+    evidence: [
+      { type: 'core', title: '文献依据', body: '《本草图经》载白术产浙江、安徽，与今之产地一致。', source: '《本草图经》', reliability: '高' }
+    ],
+    textEvidence: [{ source: '《本草图经》', text: '白术，味苦甘温，主风寒湿痹。生郑山山谷及汉中。' }],
+    relatedClassics: [{ title: '《神农本草经》', relation: '上品', desc: '列为上品，名"术"' }],
+    formulas: [{ name: '四君子汤', composition: '人参、白术、茯苓、甘草', effect: '益气健脾', source: '《太平惠民和剂局方》' }]
+  },
+  {
+    id: 'fuling', name: '茯苓', nameTraditional: '茯苓', latin: 'Poria cocos',
+    category: '木部', confidence: 2, conclusionType: 'doubt', conclusionText: '仅文献记载 · 无实物佐证',
+    wordCount: 567, ancientNames: '茯苓、伏靈',
+    origin: '多孔菌科真菌茯苓的干燥菌核',
+    songLocations: ['云南', '安徽'], modernLocations: ['云南', '湖北'],
+    description: '味甘平，主胸胁逆气，忧恚惊邪恐悸，心下结痛，寒热烦满。',
+    images: [
+      { id: 'ancient_main', type: 'ancient', title: '《本草图经》茯苓图', source: '《本草图经》· 明刊本', caption: '绘有茯苓形态，大者如拳，皮黑肉白', version: '明万历刊本' },
+      { id: 'modern_photo', type: 'modern', title: '茯苓菌核标本', source: '云南普洱茯苓研究所', caption: '茯苓干燥菌核，类球形或不规则块状', version: '2024年摄制' }
+    ],
+    parts: {
+      root: { name: '菌核', similarity: 60, ancient: '大者如拳，皮黑肉白', modern: '菌核类球形或不规则块状', detail: '古图所绘形态与今之茯苓菌核差异较大，且无实物佐证。' }
+    },
+    evidence: [
+      { type: 'aux', title: '文献记载', body: '仅有《图经》文字记载，缺乏考古出土实物佐证。', source: '文献研究', reliability: '低' }
+    ],
+    textEvidence: [{ source: '《本草图经》', text: '茯苓，味甘平，主胸胁逆气。生太山山谷及华山。' }],
+    relatedClassics: [{ title: '《神农本草经》', relation: '上品', desc: '列为上品' }],
+    formulas: [{ name: '五苓散', composition: '茯苓、猪苓、泽泻、白术、桂枝', effect: '利水渗湿，温阳化气', source: '《伤寒论》' }]
+  }
+];
+
+// ========== 产地/地图数据 ==========
+const MAP_DATA = {
+  locations: [
+    { id: 'shangdang', name: '上党', modern: '今山西省长治市', type: 'ancient', pos: [112.8, 36.2], svgPos: [360, 340], herbs: ['人参', '党参', '黄芪'], desc: '人参主产地',
+      timeline: [
+        { era: '宋代（960-1127）', text: '《本草图经》记载："人参生上党山谷及辽东"，上党为当时人参主产区。' },
+        { era: '明清时期', text: '由于过度采挖，上党人参资源逐渐枯竭，产量大幅下降。' },
+        { era: '现代', text: '人参主产区已转移至东北三省，吉林长白山成为最大产区。' }
+      ]
+    },
+    { id: 'liaodong', name: '辽东', modern: '今辽宁省东南部', type: 'ancient', pos: [123.4, 41.8], svgPos: [680, 300], herbs: ['人参'], desc: '人参产区',
+      timeline: [
+        { era: '宋代', text: '辽东为人参重要产区，与上党齐名。' },
+        { era: '现代', text: '辽宁仍为人参产区之一，但产量不如吉林。' }
+      ]
+    },
+    { id: 'guanzhong', name: '关中', modern: '今陕西省中部', type: 'ancient', pos: [108.9, 34.3], svgPos: [320, 400], herbs: ['黄芪', '丹参'], desc: '黄芪产地',
+      timeline: [
+        { era: '宋代', text: '关中为黄芪传统产区。' },
+        { era: '现代', text: '黄芪产区已转移至甘肃、内蒙古。' }
+      ]
+    },
+    { id: 'jilin', name: '吉林', modern: '吉林省长白山', type: 'modern', pos: [126.5, 43.8], svgPos: [750, 200], herbs: ['人参'], desc: '人参最大产区',
+      timeline: [
+        { era: '现代', text: '吉林长白山为人参最大产区，产量占全国70%以上。' }
+      ]
+    },
+    { id: 'gansu', name: '甘肃', modern: '甘肃省岷县', type: 'modern', pos: [104.1, 34.5], svgPos: [280, 450], herbs: ['黄芪', '当归'], desc: '黄芪/当归产区',
+      timeline: [
+        { era: '现代', text: '甘肃岷县为当归道地产区（岷归），黄芪主产于陇西。' }
+      ]
+    }
+  ],
+  routes: [
+    { from: 'shangdang', to: 'jilin', herb: '人参', label: '上党→吉林' },
+    { from: 'liaodong', to: 'jilin', herb: '人参', label: '辽东→吉林' },
+    { from: 'guanzhong', to: 'gansu', herb: '黄芪', label: '关中→甘肃' }
+  ]
+};
+
+// ========== 文物数据 ==========
+const ARTIFACT_DATA = [
+  {
+    id: 'painting1', name: '人参图', category: 'painting', type: '宋代药图',
+    dynasty: '北宋', material: '绢本设色', location: '故宫博物院',
+    relatedHerbs: ['人参'], region: '河南',
+    desc: '《本草图经》原图，绘有人参全株形态，根如人形，叶为掌状复叶，花小而黄。',
+    detail: '此图为《本草图经》人参条目配图，绘有人参全株形态。图中人参根部呈人形，有头、身、手足之分，符合《图经》"根如人形者神"的描述。画面采用工笔重彩技法，先用淡墨勾勒轮廓，再以矿物颜料层层渲染。叶片采用没骨画法，花蕊以金粉点缀，显示出宋代院体画的典型风格。画面右下角钤有"御览"朱文方印，表明此图曾入藏宋代内府。',
+    meta: { period: '北宋政和年间（1111-1118）', size: '纵30.5cm，横25.8cm', material: '绢本设色', catalog: '故00012345' },
+    totalImages: 3,
+    annotations: [
+      { part: 'root', title: '根部', content: '人参根部呈人形，是古人判断人参品质的重要依据。' },
+      { part: 'leaf', title: '叶片', content: '掌状复叶，小叶5枚，叶缘有锯齿。' },
+      { part: 'flower', title: '花朵', content: '伞形花序，花小而黄，顶生。' }
+    ]
+  },
+  {
+    id: 'painting2', name: '写生珍禽图卷（局部）', category: 'art', type: '辅证宋画',
+    dynasty: '北宋', material: '绢本设色', location: '故宫博物院',
+    relatedHerbs: [], region: '河南',
+    desc: '宋徽宗赵佶所作，画中绘有多种珍禽与本草植物，可佐证宋代对植物的观察与描绘。',
+    detail: '此卷为宋徽宗赵佶亲笔所绘，画中描绘了多种珍禽与本草植物，体现了宋代对自然界的精细观察。画中若干植物形态与《本草图经》所绘相近，可作为宋代植物绘图风格的旁证。',
+    meta: { period: '北宋政和年间', size: '纵27.5cm，横525cm', material: '绢本设色', catalog: '故00067890' },
+    totalImages: 5, annotations: []
+  },
+  {
+    id: 'excavation1', name: '北宋墓葬出土药物', category: 'excavation', type: '出土药物',
+    dynasty: '北宋', material: '药物遗存', location: '洛阳考古所',
+    relatedHerbs: ['人参', '茯苓'], region: '河南',
+    desc: '河南洛阳北宋墓葬出土药物遗存，经鉴定含有人参、茯苓等药材成分，为研究宋代用药提供实物证据。',
+    detail: '河南洛阳北宋墓葬出土药物遗存，经现代科技检测，鉴定含有人参、茯苓等药材成分。出土药物保存状况良好，部分药材仍可辨识形态。此发现为研究宋代用药提供了珍贵的实物证据，也验证了《本草图经》中关于上党人参的记载。',
+    meta: { period: '北宋元祐年间', size: '药包长约15cm', material: '药物遗存', catalog: '洛考2024001' },
+    totalImages: 2, annotations: []
+  },
+  {
+    id: 'utensil1', name: '越窑青瓷药瓶', category: 'utensil', type: '宋代药具',
+    dynasty: '北宋', material: '青瓷', location: '浙江省博物馆',
+    relatedHerbs: [], region: '浙江',
+    desc: '越窑青瓷药瓶，瓶身刻有"药"字铭文，为宋代医家储药之用，形制小巧精致。',
+    detail: '越窑青瓷药瓶，瓶身刻有"药"字铭文，为宋代医家储药之用。瓶高12cm，口径3cm，形制小巧精致，釉色温润如玉，是越窑青瓷精品。此类药瓶在宋代医家中较为常见，反映了宋代药物储藏的专业化。',
+    meta: { period: '北宋', size: '高12cm，口径3cm', material: '越窑青瓷', catalog: '浙博09876' },
+    totalImages: 4, annotations: []
+  },
+  {
+    id: 'painting3', name: '黄芪图', category: 'painting', type: '宋代药图',
+    dynasty: '北宋', material: '纸本墨笔', location: '国家图书馆',
+    relatedHerbs: ['黄芪'], region: '陕西',
+    desc: '《本草图经》黄芪原图，绘有根、茎、叶、花全株，根茎粗壮，叶片对生。',
+    detail: '《本草图经》黄芪条目配图，绘有黄芪全株形态。根茎粗壮，皮色黄褐，叶为奇数羽状复叶，与今之黄芪形态基本一致。',
+    meta: { period: '北宋', size: '纵28cm，横24cm', material: '纸本墨笔', catalog: '国图12345' },
+    totalImages: 2, annotations: []
+  },
+  {
+    id: 'art2', name: '果熟来禽图', category: 'art', type: '辅证宋画',
+    dynasty: '南宋', material: '绢本设色', location: '故宫博物院',
+    relatedHerbs: [], region: '浙江',
+    desc: '南宋画家林椿所作，绘有林檎果实与小鸟，可佐证宋代对果类本草的记录。',
+    detail: '南宋画家林椿所作，绘有林檎（苹果类）果实与小鸟。画中果实描绘精细，可佐证宋代对果类本草的观察记录。',
+    meta: { period: '南宋', size: '纵26.9cm，横27cm', material: '绢本设色', catalog: '故00054321' },
+    totalImages: 1, annotations: []
+  },
+  {
+    id: 'utensil2', name: '铜制药碾', category: 'utensil', type: '宋代药具',
+    dynasty: '北宋', material: '铜器', location: '上海博物馆',
+    relatedHerbs: [], region: '河南',
+    desc: '宋代医家研磨药材所用器具，由碾槽与碾轮组成，用于将药材研磨成粉。',
+    detail: '宋代医家研磨药材所用器具，由碾槽与碾轮组成。铜制，长25cm，碾轮直径8cm。用于将干燥药材研磨成粉末，是宋代药房必备工具。',
+    meta: { period: '北宋', size: '长25cm', material: '铜', catalog: '上博67890' },
+    totalImages: 3, annotations: []
+  },
+  {
+    id: 'excavation2', name: '南宋墓葬出土药包', category: 'excavation', type: '出土药物',
+    dynasty: '南宋', material: '药物遗存', location: '杭州考古所',
+    relatedHerbs: ['当归', '川芎'], region: '浙江',
+    desc: '浙江杭州南宋墓葬出土药包，内有当归、川芎等药材，保存较为完好。',
+    detail: '浙江杭州南宋墓葬出土药包，内有当归、川芎等药材，保存较为完好。药包以绢布包裹，外有墨书标签，标明药物名称与用量。此发现为了解南宋时期民间用药提供了实物依据。',
+    meta: { period: '南宋绍兴年间', size: '药包约10×8cm', material: '绢布包裹药物', catalog: '杭考2024002' },
+    totalImages: 2, annotations: []
+  }
+];
+
+// ========== 典籍卷目数据 ==========
+const VOLUME_DATA = [
+  { level: 1, name: '卷首', icon: '📜', expanded: true, children: [] },
+  { level: 1, name: '卷一', icon: '📜', expanded: true, read: true, children: [
+    { level: 2, name: '玉石上品', icon: '🌿', herb: null },
+    { level: 2, name: '玉石中品', icon: '🌿', herb: null }
+  ]},
+  { level: 1, name: '卷二', icon: '📜', expanded: false, read: true, children: [] },
+  { level: 1, name: '卷三', icon: '📜', expanded: true, read: true, active: true, children: [
+    { level: 2, name: '草部上品', icon: '🌿', active: true, children: [
+      { level: 3, name: '人参', icon: '🌱', herb: 'renshen', highlight: true },
+      { level: 3, name: '丹参', icon: '🌱', herb: 'danshen' },
+      { level: 3, name: '黄芪', icon: '🌱', herb: 'huangqi' }
+    ]}
+  ]},
+  { level: 1, name: '卷四', icon: '📜', expanded: false, read: false, children: [] },
+  { level: 1, name: '卷五', icon: '📜', expanded: false, read: false, children: [] }
+];
+
+// ========== 工具函数 ==========
+function showToast(message, type = 'info') {
+  let toast = document.getElementById('globalToast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'globalToast';
+    toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:8px;font-size:14px;color:#fff;opacity:0;transition:opacity 0.3s;pointer-events:none;font-family:"Noto Sans SC",sans-serif;max-width:400px;';
+    document.body.appendChild(toast);
+  }
+  const colors = { info: 'rgba(0,255,194,0.9)', success: 'rgba(0,200,150,0.9)', warning: 'rgba(230,216,173,0.9)', error: 'rgba(230,57,70,0.9)' };
+  toast.style.background = colors[type] || colors.info;
+  toast.textContent = message;
+  toast.style.opacity = '1';
+  setTimeout(() => { toast.style.opacity = '0'; }, 2500);
+}
+
+function copyToClipboard(text) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => showToast('已复制到剪贴板', 'success'));
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('已复制到剪贴板', 'success');
+  }
+}
+
+function getHerbById(id) {
+  return HERB_DATA.find(h => h.id === id);
+}
+
+function getHerbByName(name) {
+  return HERB_DATA.find(h => h.name === name);
+}
+
+function getArtifactById(id) {
+  return ARTIFACT_DATA.find(a => a.id === id);
+}
+
+function getLocationById(id) {
+  return MAP_DATA.locations.find(l => l.id === id);
+}
+
+</script>
+<script>
+// ========== Load herb data ==========
+const urlParams = new URLSearchParams(window.location.search);
+const herbParam = urlParams.get('herb') || 'renshen';
+// Support both id (e.g. renshen) and Chinese name (e.g. 人参)
+const herb = getHerbById(herbParam) || getHerbByName(herbParam);
+
+if (!herb) {
+  document.body.innerHTML = '<div style="text-align:center;padding:100px;color:#9a9588"><h2>未找到该药物数据</h2><p><a href="duizhao-list.html" style="color:#00d4aa">返回列表</a></p></div>';
+  throw new Error('Herb not found: ' + herbParam);
+}
+
+// ========== Populate Header ==========
+document.getElementById('herbName').textContent = herb.name;
+const latinEl = document.getElementById('herbLatin');
+latinEl.textContent = herb.latin + ' ↗';
+latinEl.href = 'https://tropicos.org/name/search?q=' + encodeURIComponent(herb.latin);
+latinEl.title = '点击查询TROPICOS分类学数据库：' + herb.latin;
+document.getElementById('herbCategory').textContent = herb.category + ' · ' + (herb.confidence >= 4 ? '上品' : herb.confidence >= 3 ? '中品' : '下品');
+document.getElementById('herbOrigin').textContent = herb.origin;
+
+const stars = '★'.repeat(herb.confidence) + '☆'.repeat(5 - herb.confidence);
+const confText = herb.confidence >= 5 ? '高' : herb.confidence >= 3 ? '中' : '低';
+const badge = document.getElementById('confidenceBadge');
+badge.textContent = stars + ' 考证置信度：' + confText;
+// 置信度tooltip：统计证据数量与质量
+const ev = herb.evidence || [];
+const coreCount = ev.filter(e => e.type === 'core').length;
+const auxCount = ev.filter(e => e.type === 'aux').length;
+const highRel = ev.filter(e => e.reliability === '高').length;
+badge.title = `评分依据：核心证据${coreCount}条 + 辅助证据${auxCount}条 | 高可信度${highRel}条 | 总计${ev.length}条证据链`;
+document.title = herb.name + ' · 古今对照详情 - 本草万象';
+
+// ========== Dual Image Viewer System — 古图 + 今照 ==========
+const images = herb.images || [];
+const ancientImages = images.filter(i => i.type === 'ancient');
+const modernImages = images.filter(i => i.type === 'modern');
+
+// Viewer state factory
+function createViewerState() {
+  return { idx: 0, zoom: 1, panX: 0, panY: 0, dragging: false, dragStartX: 0, dragStartY: 0, annotVisible: true };
+}
+const ancState = createViewerState();
+const modState = createViewerState();
+let syncHighlight = true;
+let activePartKey = null;
+
+// ========== 高品质SVG生成：古图水墨风 + 今照摄影风 ==========
+function generateSVG(imgData, isThumb) {
+  // 极简模式：直接返回简单SVG
+  const w = isThumb ? 100 : 400;
+  const h = isThumb ? 140 : 500;
+  const isAncient = imgData.type === "ancient";
+  const bg = isAncient ? '#f5f0e6' : '#f8f6f0';
+  const fg = isAncient ? '#8b7355' : '#4ade80';
+  return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">
+    <rect width="${w}" height="${h}" fill="${bg}"/>
+    <circle cx="${w/2}" cy="${h/2}" r="${w*0.25}" fill="none" stroke="${fg}" stroke-width="2"/>
+    <text x="${w/2}" y="${h/2}" fill="${fg}" font-size="14" text-anchor="middle" font-family="serif">${imgData.title || '图'}</text>
+  </svg>`;
+}
+
+
+function buildAnnotations(canvasId, state) {
+  // 标注构建：在图片上创建可交互部位圈选（根/叶/花/茎）
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+
+  // 清除旧标注层
+  canvas.querySelectorAll('.annot-layer').forEach(el => el.remove());
+  if (!state.annotVisible) return;
+  if (!herb || !herb.parts) return;
+
+  const wrap = canvas.querySelector('.placeholder-svg');
+  if (!wrap) return;
+
+  const layer = document.createElement('div');
+  layer.className = 'annot-layer visible';
+
+  // 部位坐标映射（基于图片百分比的 x,y 位置）
+  const POS_MAP = {
+    renshen:  { root: {x:52,y:80},  leaf: {x:35,y:35},  flower: {x:55,y:18}, stem: {x:50,y:52} },
+    huangqi:  { root: {x:50,y:76},  leaf: {x:38,y:30} },
+    danggui:  { root: {x:50,y:74} },
+    danshen:  { root: {x:48,y:76},  leaf: {x:35,y:32} },
+    baizhu:   { root: {x:50,y:74},  leaf: {x:38,y:28} },
+    fuling:   { root: {x:50,y:68} }
+  };
+
+  const partEmojis = { root: '🌿', leaf: '🍃', flower: '🌸', stem: '🌱' };
+  const herbPos = POS_MAP[herb.id] || {};
+
+  Object.entries(herb.parts).forEach(([key, part]) => {
+    const pos = herbPos[key];
+    if (!pos) return;
+
+    const spot = document.createElement('div');
+    spot.className = 'annot-spot';
+    spot.style.left = pos.x + '%';
+    spot.style.top = pos.y + '%';
+    spot.dataset.part = key;
+
+    const inner = document.createElement('div');
+    inner.className = 'annot-spot-inner';
+    spot.appendChild(inner);
+
+    const tooltip = document.createElement('div');
+    tooltip.className = 'annot-tooltip';
+    tooltip.innerHTML = `<b>${partEmojis[key] || '🌿'} ${part.name}</b><br/><span style="color:var(--cyan);font-size:11px">古：${part.ancient.slice(0,10)}… · 相似度 ${part.similarity}%</span>`;
+    spot.appendChild(tooltip);
+
+    // 点击圈选 → 同步高亮右栏 + 滚动到对应部位
+    spot.addEventListener('click', (e) => {
+      e.stopPropagation();
+      highlightPart(key);
+      // 滚动右栏对应部位到可视区
+      const rightItem = document.querySelector(`.detail-part-item[data-part="${key}"]`);
+      if (rightItem) rightItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+
+    // 鼠标悬浮 → 高亮
+    spot.addEventListener('mouseenter', () => {
+      highlightPart(key);
+    });
+
+    layer.appendChild(spot);
+  });
+
+  wrap.appendChild(layer);
+}
+
+function showViewerImage(canvasId, imgList, state, captionIds) {
+  if (!imgList.length) return;
+  state.idx = Math.max(0, Math.min(state.idx, imgList.length - 1));
+  const img = imgList[state.idx];
+  state.zoom = 1; state.panX = 0; state.panY = 0;
+  updateViewerTransform(canvasId, state);
+
+  const canvas = document.getElementById(canvasId);
+  const existing = canvas.querySelector('.placeholder-svg');
+  if (existing) existing.remove();
+  const wrap = document.createElement('div');
+  wrap.className = 'placeholder-svg';
+
+  // 如果有真实图片URL，优先显示图片；否则用SVG占位
+  if (img.url) {
+    const imgEl = document.createElement('img');
+    imgEl.src = img.url;
+    imgEl.alt = img.title || '药材图';
+    imgEl.style.cssText = 'width:100%;height:100%;object-fit:contain;display:block;';
+    imgEl.onerror = function() {
+      // 图片加载失败时回退到SVG
+      wrap.innerHTML = generateSVG(img, false);
+    };
+    wrap.appendChild(imgEl);
+  } else {
+    wrap.innerHTML = generateSVG(img, false);
+  }
+  canvas.insertBefore(wrap, canvas.firstChild);
+
+  // Update caption
+  if (captionIds.title) document.getElementById(captionIds.title).textContent = img.title;
+  if (captionIds.source) document.getElementById(captionIds.source).textContent = img.source;
+  if (captionIds.note) document.getElementById(captionIds.note).textContent = img.caption;
+  if (captionIds.version) document.getElementById(captionIds.version).textContent = img.version;
+
+  // Rebuild annotations
+  buildAnnotations(canvasId, state);
+}
+
+// Transform helper
+function updateViewerTransform(canvasId, state) {
+  const wrap = document.querySelector(`#${canvasId} .placeholder-svg`);
+  if (!wrap) return;
+  wrap.style.transform = `translate(${state.panX}px, ${state.panY}px) scale(${state.zoom})`;
+  const zoomIndId = canvasId === 'ancCanvas' ? 'ancZoomInd' : 'modZoomInd';
+  const ind = document.getElementById(zoomIndId);
+  if (ind) ind.textContent = Math.round(state.zoom * 100) + '%';
+}
+
+// Setup canvas interactions (wheel zoom + drag + touch)
+function setupCanvasInteractions(canvasId, state, imgList, captionIds) {
+  const canvas = document.getElementById(canvasId);
+
+  canvas.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -0.12 : 0.12;
+    state.zoom = Math.max(0.3, Math.min(5, state.zoom + delta));
+    updateViewerTransform(canvasId, state);
+  }, { passive: false });
+
+  canvas.addEventListener('mousedown', (e) => {
+    if (e.target.closest('.annotation-marker')) return;
+    state.dragging = true;
+    state.dragStartX = e.clientX - state.panX;
+    state.dragStartY = e.clientY - state.panY;
+    canvas.classList.add('dragging');
+  });
+  document.addEventListener('mousemove', (e) => {
+    if (!state.dragging) return;
+    state.panX = e.clientX - state.dragStartX;
+    state.panY = e.clientY - state.dragStartY;
+    updateViewerTransform(canvasId, state);
+  });
+  document.addEventListener('mouseup', () => {
+    state.dragging = false;
+    canvas.classList.remove('dragging');
+  });
+
+  // Touch
+  let lastDist = 0;
+  canvas.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 1) {
+      state.dragging = true;
+      state.dragStartX = e.touches[0].clientX - state.panX;
+      state.dragStartY = e.touches[0].clientY - state.panY;
+    } else if (e.touches.length === 2) {
+      state.dragging = false;
+      lastDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    }
+  }, { passive: true });
+  canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    if (e.touches.length === 1 && state.dragging) {
+      state.panX = e.touches[0].clientX - state.dragStartX;
+      state.panY = e.touches[0].clientY - state.dragStartY;
+      updateViewerTransform(canvasId, state);
+    } else if (e.touches.length === 2) {
+      const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+      state.zoom = Math.max(0.3, Math.min(5, state.zoom * (dist / lastDist)));
+      lastDist = dist;
+      updateViewerTransform(canvasId, state);
+    }
+  }, { passive: false });
+  canvas.addEventListener('touchend', () => { state.dragging = false; });
+}
+
+// Render thumbnails for a viewer
+function renderThumbnails(stripId, imgList, state, canvasId, captionIds) {
+  const strip = document.getElementById(stripId);
+  strip.innerHTML = '';
+  imgList.forEach((img, idx) => {
+    const thumb = document.createElement('div');
+    thumb.className = 'thumb-item' + (idx === 0 ? ' active' : '');
+    // 缩略图：有真实图片用img，否则用SVG
+    if (img.url) {
+      const imgEl = document.createElement('img');
+      imgEl.src = img.url;
+      imgEl.alt = img.title;
+      imgEl.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:4px;';
+      imgEl.onerror = function() {
+        this.outerHTML = generateSVG(img, true);
+      };
+      thumb.appendChild(imgEl);
+    } else {
+      thumb.innerHTML = generateSVG(img, true);
+    }
+    const label = document.createElement('span');
+    label.className = 'thumb-label';
+    label.textContent = img.title.slice(-4);
+    thumb.appendChild(label);
+    thumb.addEventListener('click', () => {
+      state.idx = idx;
+      showViewerImage(canvasId, imgList, state, captionIds);
+      strip.querySelectorAll('.thumb-item').forEach((t, i) => t.classList.toggle('active', i === idx));
+    });
+    strip.appendChild(thumb);
+  });
+}
+
+// Caption ID maps
+const ancCaptionIds = { title: 'ancCapTitle', source: 'ancCapSource', note: 'ancCapNote', version: 'ancCapVersion' };
+const modCaptionIds = { title: 'modCapTitle', source: 'modCapSource', note: 'modCapNote', version: 'modCapVersion' };
+
+// Initialize both viewers
+setupCanvasInteractions('ancCanvas', ancState, ancientImages, ancCaptionIds);
+setupCanvasInteractions('modCanvas', modState, modernImages, modCaptionIds);
+
+if (ancientImages.length > 0) {
+  renderThumbnails('ancThumbs', ancientImages, ancState, 'ancCanvas', ancCaptionIds);
+  showViewerImage('ancCanvas', ancientImages, ancState, ancCaptionIds);
+} else {
+  document.getElementById('ancCapTitle').textContent = '暂无古图';
+}
+if (modernImages.length > 0) {
+  renderThumbnails('modThumbs', modernImages, modState, 'modCanvas', modCaptionIds);
+  showViewerImage('modCanvas', modernImages, modState, modCaptionIds);
+} else {
+  document.getElementById('modCapTitle').textContent = '暂无今照';
+}
+
+// Toolbar buttons — Ancient
+document.getElementById('ancZoomIn').addEventListener('click', () => { ancState.zoom = Math.min(5, ancState.zoom + 0.3); updateViewerTransform('ancCanvas', ancState); });
+document.getElementById('ancZoomOut').addEventListener('click', () => { ancState.zoom = Math.max(0.3, ancState.zoom - 0.3); updateViewerTransform('ancCanvas', ancState); });
+document.getElementById('ancReset').addEventListener('click', () => { ancState.zoom = 1; ancState.panX = 0; ancState.panY = 0; updateViewerTransform('ancCanvas', ancState); });
+document.getElementById('ancAnnot').addEventListener('click', function() {
+  ancState.annotVisible = !ancState.annotVisible;
+  this.classList.toggle('active', ancState.annotVisible);
+  buildAnnotations('ancCanvas', ancState);
+});
+
+// Toolbar buttons — Modern
+document.getElementById('modZoomIn').addEventListener('click', () => { modState.zoom = Math.min(5, modState.zoom + 0.3); updateViewerTransform('modCanvas', modState); });
+document.getElementById('modZoomOut').addEventListener('click', () => { modState.zoom = Math.max(0.3, modState.zoom - 0.3); updateViewerTransform('modCanvas', modState); });
+document.getElementById('modReset').addEventListener('click', () => { modState.zoom = 1; modState.panX = 0; modState.panY = 0; updateViewerTransform('modCanvas', modState); });
+document.getElementById('modAnnot').addEventListener('click', function() {
+  modState.annotVisible = !modState.annotVisible;
+  this.classList.toggle('active', modState.annotVisible);
+  buildAnnotations('modCanvas', modState);
+});
+
+// ========== 细节对照区（右栏） ==========
+const detailParts = document.getElementById('detailParts');
+const partEmojis = { root: '🥔', leaf: '🌿', flower: '🌸', stem: '🌱' };
+const partAncientDescs = {
+  root: '《图经》云：「根如人形者神」，以根之形态为鉴别要诀',
+  leaf: '《图经》绘叶为掌状复叶，古籍多云「叶五出」',
+  flower: '《图经》绘花顶生伞形，古注「花细小，黄绿色」',
+  stem: '《图经》绘茎直立，古注「茎有细纵棱」'
+};
+const partModernDescs = {
+  root: '现代观察：主根肥大，肉质，圆柱形或纺锤形，下部有分枝',
+  leaf: '现代观察：掌状复叶，小叶3-5，边缘有细锯齿',
+  flower: '现代观察：伞形花序顶生，花小，黄绿色，花瓣5',
+  stem: '现代观察：茎直立，圆柱形，光滑无毛'
+};
+const partDiffs = {
+  root: null,
+  leaf: '古图绘叶对生而现代观察为掌状复叶互生，存在差异',
+  flower: null,
+  stem: null
+};
+
+Object.entries(herb.parts).forEach(([key, part], index) => {
+  const sim = part.similarity;
+  const simClass = sim >= 85 ? 'high' : sim >= 60 ? 'mid' : 'low';
+  const diff = partDiffs[key];
+
+  const item = document.createElement('div');
+  item.className = 'detail-part-item' + (index === 0 ? ' active' : '');
+  item.dataset.part = key;
+  item.innerHTML = `
+    <div class="detail-part-name"><span class="part-emoji">${partEmojis[key] || '🌿'}</span>${part.name}</div>
+    <div class="detail-part-similarity">
+      <div class="similarity-bar"><div class="similarity-fill ${simClass}" style="width:${sim}%"></div></div>
+      <span class="similarity-value">${sim}%</span>
+    </div>
+    <div class="detail-part-desc">
+      <div class="detail-part-ancient">📖 古记：${partAncientDescs[key] || '古书记载该部位形态'}</div>
+      <div class="detail-part-modern">🔬 今察：${partModernDescs[key] || '现代观察该部位特征'}</div>
+    </div>
+    ${diff ? `<div class="diff-alert" data-part="${key}">
+      <span class="diff-icon">⚠️</span>
+      <span class="diff-text">存疑：${diff.slice(0, 20)}...</span>
+      <span class="diff-expand">展开 ▼</span>
+      <div class="diff-detail">${diff}</div>
+    </div>` : ''}
+  `;
+
+  // Click to highlight part in both viewers
+  item.addEventListener('click', function() {
+    document.querySelectorAll('.detail-part-item').forEach(p => p.classList.remove('active'));
+    this.classList.add('active');
+    activePartKey = key;
+    highlightPart(key);
+  });
+
+  detailParts.appendChild(item);
+});
+
+// Sync highlight toggle
+document.getElementById('syncToggle').addEventListener('click', function() {
+  syncHighlight = !syncHighlight;
+  this.textContent = syncHighlight ? '同步高亮：开' : '同步高亮：关';
+  this.style.color = syncHighlight ? 'var(--cyan)' : 'var(--txt3)';
+  this.style.borderColor = syncHighlight ? 'var(--cyan-glow)' : 'var(--glass-border)';
+});
+
+
+// Diff alert expand
+document.querySelectorAll('.diff-alert').forEach(alert => {
+  alert.addEventListener('click', function(e) {
+    e.stopPropagation();
+    this.classList.toggle('expanded');
+    const expand = this.querySelector('.diff-expand');
+    if (this.classList.contains('expanded')) {
+      expand.textContent = '收起 ▲';
+      this.querySelector('.diff-text').textContent = '存疑：' + (partDiffs[this.dataset.part] || '').slice(0, 40) + '...';
+    } else {
+      expand.textContent = '展开 ▼';
+    }
+  });
+});
+
+// Auto-select first part
+if (Object.keys(herb.parts).length > 0) {
+  activePartKey = Object.keys(herb.parts)[0];
+  highlightPart(activePartKey);
+}
+
+// ========== Render Evidence List — 默认显示前3条 ==========
+const evidenceList = document.getElementById('evidenceList');
+const MAX_VISIBLE_EVIDENCE = 3;
+herb.evidence.forEach((ev, idx) => {
+  const card = document.createElement('div');
+  card.className = `evidence-card ${ev.type}` + (idx >= MAX_VISIBLE_EVIDENCE ? ' evidence-hidden' : '');
+  if (idx >= MAX_VISIBLE_EVIDENCE) card.style.display = 'none';
+  card.innerHTML = `<div class="evidence-tooltip">${ev.body}${ev.reliability ? '<br><span style="color:var(--txt3);font-size:12px">可靠度：' + ev.reliability + '</span>' : ''}</div>
+    <div class="evidence-header">
+      <span class="evidence-title-text">${ev.title}</span>
+      <span class="evidence-type ${ev.type === 'aux' ? 'aux' : ''}">${ev.type === 'core' ? '核心' : '辅助'}</span>
+    </div>
+    <div class="evidence-content">${ev.body}</div>
+    <div class="evidence-detail">${herb.parts[Object.keys(herb.parts)[0]]?.detail || ''}</div>
+    <div class="evidence-source">来源：${ev.source}${ev.reliability ? ' · 可靠度：' + ev.reliability : ''}</div>
+    <div class="evidence-expand-hint">点击展开详情 ▼</div>`;
+
+  card.addEventListener('click', function() {
+    this.classList.toggle('expanded');
+    const hint = this.querySelector('.evidence-expand-hint');
+    if (this.classList.contains('expanded')) {
+      hint.textContent = '点击收起 ▲';
+    } else {
+      hint.textContent = '点击展开详情 ▼';
+    }
+  });
+  evidenceList.appendChild(card);
+});
+
+// 证据链"显示更多"按钮
+if (herb.evidence.length > MAX_VISIBLE_EVIDENCE) {
+  const moreBtn = document.createElement('div');
+  moreBtn.className = 'evidence-more-btn';
+  moreBtn.innerHTML = `还有 ${herb.evidence.length - MAX_VISIBLE_EVIDENCE} 条证据，点击展开全部 ▼`;
+  moreBtn.style.cssText = 'text-align:center;padding:10px;font-size:12px;color:var(--cyan);cursor:pointer;border:1px dashed var(--glass-border);border-radius:8px;margin-top:8px;transition:all 0.3s;opacity:0.7';
+  moreBtn.addEventListener('mouseenter', function(){ this.style.opacity='1'; this.style.borderColor='var(--cyan)'; });
+  moreBtn.addEventListener('mouseleave', function(){ this.style.opacity='0.7'; this.style.borderColor='var(--glass-border)'; });
+  moreBtn.addEventListener('click', function(){
+    document.querySelectorAll('.evidence-hidden').forEach(el => { el.style.display = ''; el.classList.remove('evidence-hidden'); });
+    this.remove();
+  });
+  evidenceList.appendChild(moreBtn);
+}
+
+
+// ========== Tab Switching ==========
+const detailTabs = document.querySelectorAll('.detail-tab');
+const tabContents = document.querySelectorAll('.tab-content');
+detailTabs.forEach(tab => {
+  tab.addEventListener('click', function() {
+    const target = this.dataset.tab;
+    detailTabs.forEach(t => t.classList.remove('active'));
+    tabContents.forEach(c => c.classList.remove('active'));
+    this.classList.add('active');
+    document.getElementById('tab' + target.charAt(0).toUpperCase() + target.slice(1)).classList.add('active');
+  });
+});
+
+// ========== Render 考证原文 Tab ==========
+function renderTextEvidence() {
+  const container = document.getElementById('textEvidenceContent');
+  const refList = document.getElementById('refList');
+  const versionList = document.getElementById('versionList');
+
+  if (herb.textEvidence && herb.textEvidence.length > 0) {
+    herb.textEvidence.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'text-item';
+      div.innerHTML = `<div class="text-item-source">${item.source}</div>
+        <div class="text-item-body">${item.text}</div>`;
+      container.appendChild(div);
+    });
+  } else {
+    container.innerHTML = '<div style="color:var(--txt3);text-align:center;padding:40px">暂无考证原文</div>';
+  }
+
+  const refs = new Set();
+  herb.evidence.forEach(ev => refs.add(ev.source));
+  if (herb.textEvidence) herb.textEvidence.forEach(te => refs.add(te.source));
+  let refIndex = 1;
+  refs.forEach(ref => {
+    const item = document.createElement('div');
+    item.className = 'ref-item';
+    item.innerHTML = `<span class="ref-item-index">[${refIndex}]</span>${ref}`;
+    item.addEventListener('click', () => {
+      copyToClipboard(ref);
+      showToast('文献名已复制', 'success');
+    });
+    refList.appendChild(item);
+    refIndex++;
+  });
+
+  const versions = [
+    { date: '2025-03-15', desc: '初始考证完成', current: false },
+    { date: '2025-08-22', desc: '补充《名医别录》引用', current: false },
+    { date: '2026-01-10', desc: '修订产地考证结论', current: true }
+  ];
+  versions.forEach(v => {
+    const item = document.createElement('div');
+    item.className = 'version-item';
+    item.innerHTML = `<div class="version-dot ${v.current ? 'current' : 'past'}"></div>
+      <span class="version-date">${v.date}</span>
+      <span class="version-desc">${v.desc}${v.current ? ' <span style="color:var(--cyan);font-size:11px">当前版本</span>' : ''}</span>`;
+    versionList.appendChild(item);
+  });
+}
+
+// ========== Render 关联典籍 Tab ==========
+function renderClassics() {
+  const container = document.getElementById('classicsCards');
+  const flow = document.getElementById('citationFlow');
+
+  if (herb.relatedClassics && herb.relatedClassics.length > 0) {
+    herb.relatedClassics.forEach(classic => {
+      const card = document.createElement('div');
+      card.className = 'classic-card';
+      card.innerHTML = `<div class="classic-card-header">
+          <div class="classic-icon">📜</div>
+          <div class="classic-info">
+            <div class="classic-title">${classic.title}</div>
+            <span class="classic-relation">${classic.relation}</span>
+          </div>
+        </div>
+        <div class="classic-desc">${classic.desc}</div>
+        <div class="classic-action">
+          <button class="classic-action-btn primary" onclick="showToast('正在跳转至${classic.title}相关内容...','info')">查看记载</button>
+          <button class="classic-action-btn" onclick="copyToClipboard('${classic.title} · ${classic.desc}');showToast('典籍信息已复制','success')">复制引用</button>
+        </div>`;
+      container.appendChild(card);
+    });
+  } else {
+    container.innerHTML = '<div style="color:var(--txt3);text-align:center;padding:40px;grid-column:1/-1">暂无关联典籍</div>';
+  }
+
+  const flowItems = [];
+  flowItems.push({ label: '《本草图经》', isSource: true, subLabel: '原文出处' });
+  if (herb.relatedClassics) {
+    herb.relatedClassics.forEach(c => {
+      flowItems.push({ label: c.title, isSource: false, subLabel: c.relation });
+    });
+  }
+
+  flow.innerHTML = '';
+  flowItems.forEach((item, i) => {
+    if (i > 0) {
+      const arrow = document.createElement('span');
+      arrow.className = 'citation-arrow';
+      arrow.textContent = '→';
+      flow.appendChild(arrow);
+    }
+    const node = document.createElement('div');
+    node.className = 'citation-node' + (item.isSource ? ' source' : '');
+    node.innerHTML = `${item.label}<div class="citation-label">${item.subLabel}</div>`;
+    node.addEventListener('click', () => {
+      showToast('首期仅预留接口，暂不支持跳转', 'info');
+    });
+    flow.appendChild(node);
+  });
+}
+
+// ========== Render 方剂应用 Tab ==========
+function renderFormulas() {
+  const formulaList = document.getElementById('formulaList');
+  const modernAppList = document.getElementById('modernAppList');
+  const formulaCount = document.getElementById('formulaCount');
+
+  if (herb.formulas && herb.formulas.length > 0) {
+    formulaCount.textContent = herb.formulas.length + '首';
+    herb.formulas.forEach(f => {
+      const card = document.createElement('div');
+      card.className = 'formula-card';
+      const compHtml = f.composition.split('、').map(c => {
+        return c === herb.name ? `<strong>${c}</strong>` : c;
+      }).join('、');
+      card.innerHTML = `<div class="formula-name">${f.name}</div>
+        <div class="formula-composition">组成：${compHtml}</div>
+        <div class="formula-effect">功效：${f.effect}</div>
+        <div class="formula-source">出处：${f.source}</div>`;
+      formulaList.appendChild(card);
+    });
+  } else {
+    formulaCount.textContent = '0首';
+    formulaList.innerHTML = '<div style="color:var(--txt3);text-align:center;padding:30px">暂无古方记载</div>';
+  }
+
+  const modernApps = getModernApps(herb);
+  modernApps.forEach(app => {
+    const item = document.createElement('div');
+    item.className = 'modern-app-item';
+    item.innerHTML = `<div class="modern-app-name">${app.name} <span class="modern-app-tag">${app.tag}</span></div>
+      <div class="modern-app-desc">${app.desc}</div>
+      <div class="modern-app-evidence">证据等级：${app.evidence}</div>`;
+    modernAppList.appendChild(item);
+  });
+}
+
+function getModernApps(h) {
+  const appsMap = {
+    renshen: [
+      { name: '抗疲劳与免疫调节', tag: '强证据', desc: '人参皂苷Rg1、Rb1具有显著的抗疲劳作用，可增强机体免疫力，临床用于气虚体倦、食欲不振。', evidence: 'I级（RCT验证）' },
+      { name: '心血管保护', tag: '中证据', desc: '人参提取物可改善心肌缺血，调节血压，对冠心病辅助治疗具有一定效果。', evidence: 'II级（队列研究）' },
+      { name: '神经系统保护', tag: '探索中', desc: '人参皂苷对阿尔茨海默病模型有神经保护作用，正在开展临床试验。', evidence: 'III级（基础研究）' }
+    ],
+    huangqi: [
+      { name: '免疫调节', tag: '强证据', desc: '黄芪多糖可增强巨噬细胞活性，提高机体免疫力，广泛用于气虚证。', evidence: 'I级（RCT验证）' },
+      { name: '保肝作用', tag: '中证据', desc: '黄芪皂苷对肝损伤有保护作用，可用于慢性肝炎辅助治疗。', evidence: 'II级（队列研究）' }
+    ],
+    danggui: [
+      { name: '妇科调经', tag: '强证据', desc: '当归挥发油及阿魏酸具有调节子宫平滑肌作用，为妇科要药。', evidence: 'I级（RCT验证）' },
+      { name: '补血活血', tag: '强证据', desc: '当归多糖促进造血干细胞增殖，临床用于贫血及血虚证。', evidence: 'I级（RCT验证）' }
+    ],
+    danshen: [
+      { name: '心血管疾病', tag: '强证据', desc: '丹参酮IIA及丹酚酸B具有抗血小板聚集、改善微循环作用，广泛用于冠心病治疗。', evidence: 'I级（RCT验证）' },
+      { name: '抗肝纤维化', tag: '中证据', desc: '丹参提取物可抑制肝星状细胞活化，减缓肝纤维化进程。', evidence: 'II级（队列研究）' }
+    ],
+    baizhu: [
+      { name: '健脾益气', tag: '强证据', desc: '白术挥发油及白术内酯具有促进胃肠蠕动、增强消化功能的作用。', evidence: 'I级（RCT验证）' },
+      { name: '利尿消肿', tag: '中证据', desc: '白术具有温和利尿作用，可用于水肿及脾虚湿盛证。', evidence: 'II级（队列研究）' }
+    ],
+    fuling: [
+      { name: '利水渗湿', tag: '强证据', desc: '茯苓多糖及茯苓酸具有利尿消肿作用，广泛用于水肿、痰饮证。', evidence: 'I级（RCT验证）' },
+      { name: '抗肿瘤辅助', tag: '探索中', desc: '茯苓多糖对多种肿瘤细胞有抑制作用，正在开展临床研究。', evidence: 'III级（基础研究）' }
+    ]
+  };
+  return appsMap[h.id] || [
+    { name: '综合调理', tag: '传统应用', desc: '在传统中医中广泛应用，具体现代药理研究尚在进行中。', evidence: '待验证' }
+  ];
+}
+
+// Initialize all tabs
+renderTextEvidence();
+renderClassics();
+renderFormulas();
+
+function highlightPart(key) {
+  // 高亮指定部位：同步高亮古图+今照中的圈选标注 + 右栏部位列表
+  if (!key) return;
+
+  // 高亮图片上的圈选标注
+  document.querySelectorAll('.annot-spot').forEach(el => {
+    el.classList.toggle('active', el.dataset.part === key);
+  });
+
+  // 高亮右栏部位列表
+  document.querySelectorAll('.detail-part-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.part === key);
+  });
+}
+
+// ========== Compare Functionality ==========
+let compareList = JSON.parse(localStorage.getItem('benCaoCompare') || '[]');
+
+function updateCompareCount() {
+  const btn = document.getElementById('compareCountBtn');
+  if (btn) btn.textContent = '对比列表 (' + compareList.length + ')';
+}
+
+function addToCompare() {
+  if (compareList.find(h => h.id === herb.id)) {
+    showToast('该药物已在对比列表中', 'warning');
+    showComparePanel();
+    return;
+  }
+  if (compareList.length >= 4) {
+    showToast('最多同时对比4种药物', 'warning');
+    return;
+  }
+  compareList.push({ id: herb.id, name: herb.name, latin: herb.latin, confidence: herb.confidence, conclusionText: herb.conclusionText });
+  localStorage.setItem('benCaoCompare', JSON.stringify(compareList));
+  updateCompareCount();
+  showToast(herb.name + '已加入对比列表', 'success');
+}
+
+document.getElementById('addToCompareBtn2').addEventListener('click', addToCompare);
+
+function showComparePanel() {
+  const existing = document.getElementById('comparePanel');
+  if (existing) { existing.remove(); return; }
+
+  const panel = document.createElement('div');
+  panel.id = 'comparePanel';
+  panel.style.cssText = 'position:fixed;top:80px;right:20px;width:320px;background:var(--bg-surface);border:1px solid var(--glass-border);border-radius:12px;padding:20px;z-index:150;backdrop-filter:blur(20px);box-shadow:0 12px 40px rgba(0,0,0,0.6)';
+
+  let html = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><span style="font-family:var(--serif);font-size:16px;font-weight:600;color:var(--gold)">对比列表</span><button onclick="document.getElementById(\'comparePanel\').remove()" style="color:var(--txt2);font-size:18px">×</button></div>';
+
+  if (compareList.length === 0) {
+    html += '<div style="color:var(--txt3);text-align:center;padding:20px;font-size:13px">暂无对比项</div>';
+  } else {
+    compareList.forEach((item, i) => {
+      html += `<div style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;background:rgba(0,0,0,0.2);border:1px solid var(--glass-border);margin-bottom:8px">
+        <div style="flex:1"><div style="font-size:14px;font-weight:500">${item.name}</div><div style="font-size:12px;color:var(--txt3)">${item.latin}</div></div>
+        <button onclick="removeFromCompare(${i})" style="color:var(--red);font-size:12px;padding:4px 8px;border-radius:4px;background:rgba(230,57,70,0.1)">移除</button>
+      </div>`;
+    });
+  }
+  panel.innerHTML = html;
+  document.body.appendChild(panel);
+}
+
+function removeFromCompare(index) {
+  compareList.splice(index, 1);
+  localStorage.setItem('benCaoCompare', JSON.stringify(compareList));
+  updateCompareCount();
+  const panel = document.getElementById('comparePanel');
+  if (panel) panel.remove();
+  showComparePanel();
+}
+
+// ========== Favorite ==========
+document.getElementById('favBtn').addEventListener('click', function() {
+  const favs = JSON.parse(localStorage.getItem('benCaoFavs') || '[]');
+  const idx = favs.indexOf(herb.id);
+  if (idx >= 0) {
+    favs.splice(idx, 1);
+    this.textContent = '★ 收藏';
+    showToast('已取消收藏', 'info');
+  } else {
+    favs.push(herb.id);
+    this.textContent = '★ 已收藏';
+    showToast('已收藏 ' + herb.name, 'success');
+  }
+  localStorage.setItem('benCaoFavs', JSON.stringify(favs));
+});
+
+(function() {
+  const favs = JSON.parse(localStorage.getItem('benCaoFavs') || '[]');
+  if (favs.includes(herb.id)) {
+    document.getElementById('favBtn').textContent = '★ 已收藏';
+  }
+})();
+
+// ========== Download ==========
+document.getElementById('downloadBtn').addEventListener('click', function() {
+  showToast('正在生成高清图...', 'info');
+  setTimeout(() => {
+    const content = `${herb.name} - ${herb.latin}\n分类：${herb.category}\n基原：${herb.origin}\n\n【描述】\n${herb.description}\n\n【考证原文】\n${herb.textEvidence.map(t => t.source + '：' + t.text).join('\n\n')}\n\n【证据链】\n${herb.evidence.map(e => e.title + '：' + e.body + '（来源：' + e.source + '）').join('\n\n')}`;
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = herb.name + '_古今对照.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('文件已下载', 'success');
+  }, 800);
+});
+
+// ========== View Map ==========
+document.getElementById('viewMapBtn').addEventListener('click', function() {
+  location.href = 'ditu.html?herb=' + encodeURIComponent(herb.name);
+});
+
+// ========== Citation Modal ==========
+const citationModal = document.getElementById('citationModal');
+const citationTextEl = document.getElementById('citationText');
+const copyBtn = document.getElementById('copyBtn');
+
+const citations = {
+  gbt: `本草万象项目组. ${herb.name}古今对照考证[DB/OL]. 本草万象·中华本草文脉传承平台, 2024.`,
+  mla: `"${herb.name}古今对照考证." 本草万象·中华本草文脉传承平台, 2024, www.bencaowanxiang.com/duizhao/${herb.id}.`,
+  apa: `本草万象项目组. (2024). ${herb.name}古今对照考证. 本草万象·中华本草文脉传承平台.`
+};
+citationTextEl.textContent = citations.gbt;
+
+function openCitationModal() { citationModal.classList.add('show'); }
+function closeCitationModal(event) {
+  if (event && event.target !== event.currentTarget) return;
+  citationModal.classList.remove('show');
+}
+
+document.querySelectorAll('.citation-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.citation-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+    citationTextEl.textContent = citations[this.dataset.format];
+  });
+});
+
+function copyCitation() {
+  navigator.clipboard.writeText(citationTextEl.textContent).then(() => {
+    copyBtn.textContent = '已复制 ✓';
+    copyBtn.classList.add('copied');
+    setTimeout(() => { copyBtn.textContent = '复制引用'; copyBtn.classList.remove('copied'); }, 2000);
+  });
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeCitationModal();
+    const panel = document.getElementById('comparePanel');
+    if (panel) panel.remove();
+  }
+});
+
+// ========== BACKGROUND EFFECTS ==========
+// Mouse glow
+const mouseGlow = document.getElementById('mouseGlow');
+let mX = 0, mY = 0, gX = 0, gY = 0;
+const hasFinePointer = window.matchMedia('(pointer: fine)').matches;
+
+if (hasFinePointer) {
+  document.addEventListener('mousemove', (e) => {
+    mX = e.clientX; mY = e.clientY;
+    mouseGlow.style.opacity = '1';
+  });
+  document.addEventListener('mouseleave', () => { mouseGlow.style.opacity = '0'; });
+  function animateGlow() {
+    gX += (mX - gX) * 0.08;
+    gY += (mY - gY) * 0.08;
+    mouseGlow.style.left = gX + 'px';
+    mouseGlow.style.top = gY + 'px';
+    requestAnimationFrame(animateGlow);
+  }
+  animateGlow();
+} else {
+  mouseGlow.style.display = 'none';
+}
+
+// Particles
+const particlesContainer = document.getElementById('particlesContainer');
+for (let i = 0; i < 18; i++) {
+  const p = document.createElement('div');
+  p.className = 'particle';
+  p.style.left = Math.random() * 100 + '%';
+  p.style.animationDuration = (14 + Math.random() * 12) + 's';
+  p.style.animationDelay = Math.random() * 12 + 's';
+  const size = (1 + Math.random() * 2) + 'px';
+  p.style.width = size;
+  p.style.height = size;
+  p.style.opacity = 0.2 + Math.random() * 0.3;
+  particlesContainer.appendChild(p);
+}
+
+// ========== USER AUTH ==========
+function checkLoginStatus() {
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
+  const loginBtn = document.getElementById('loginBtn');
+  const userAvatar = document.getElementById('userAvatar');
+  const navUserAvatar = document.getElementById('navUserAvatar');
+  if (isLoggedIn) {
+    const userData = JSON.parse(localStorage.getItem('benCaoUser') || '{}');
+    if (userData.avatar && navUserAvatar) navUserAvatar.src = userData.avatar;
+    if (loginBtn) loginBtn.style.display = 'none';
+    if (userAvatar) userAvatar.style.display = 'block';
+  } else {
+    if (loginBtn) loginBtn.style.display = 'block';
+    if (userAvatar) userAvatar.style.display = 'none';
+  }
+}
+function goToLogin() { window.location.href = 'login.html'; }
+function goToProfile() { window.location.href = 'profile.html'; }
+function goToSettings() { showToast('账号设置功能开发中...', 'info'); }
+function logout() {
+  if (confirm('确定要退出登录吗？')) {
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('benCaoUser');
+    location.reload();
+  }
+}
+function toggleUserDropdown() {
+  document.getElementById('userDropdown').classList.toggle('show');
+}
+document.addEventListener('click', (e) => {
+  const userMenu = document.getElementById('userMenu');
+  if (userMenu && !userMenu.contains(e.target)) {
+    const dropdown = document.getElementById('userDropdown');
+    if (dropdown) dropdown.classList.remove('show');
+  }
+});
+checkLoginStatus();
+</script>
+</body>
+</html>

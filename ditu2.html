@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>时空地图 · 宋代本草地理 - 本草万象</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+<!-- 高德地图 API -->
+<script>
+  window._AMapSecurityConfig = {
+    securityJsCode: 'fa068e7cdc1eef7001a736218463aae5',
+  }
+</script>
+<script src="https://webapi.amap.com/maps?v=2.0&key=9bd3c82892712433a6a1f9b6d0cd9b76"></script>
+<script src="https://webapi.amap.com/loca?v=2.0.0&key=9bd3c82892712433a6a1f9b6d0cd9b76"></script>
+<style>
+/* ========== DESIGN SYSTEM ========== */
+:root {
+  --bg-deep: #0a0c0f; --bg-surface: #141820; --bg-card: #1a1e28; --bg-hover: #222838;
+  --cyan: #00d4aa; --cyan-dim: #00a884; --cyan-glow: rgba(0,212,170,0.3);
+  --gold: #c9b037; --gold-dim: #a8942b; --gold-glow: rgba(201,176,55,0.3);
+  --red: #E63946; --red-glow: rgba(230,57,70,0.3);
+  --txt: #e8e4dc; --txt2: #9a9588; --txt3: #6b6560;
+  --glass: rgba(20,24,32,0.95); --glass-border: rgba(0,212,170,0.15);
+  --serif: 'Noto Serif SC',serif; --sans: 'Noto Sans SC',sans-serif;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg-deep);color:var(--txt);min-height:100vh;overflow:hidden}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+
+/* ========== NAVIGATION ========== */
+.nav-bar{position:fixed;top:0;left:0;right:0;z-index:1000;height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;background:var(--glass);backdrop-filter:blur(20px);border-bottom:1px solid var(--glass-border)}
+.nav-brand{display:flex;align-items:center;gap:10px;font-family:var(--serif);font-size:20px;font-weight:700;color:var(--gold)}
+.nav-logo{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,var(--cyan),#008f6b);display:flex;align-items:center;justify-content:center}
+.nav-links{display:flex;gap:8px}
+.nav-link{padding:8px 16px;border-radius:6px;font-size:14px;color:var(--txt2);transition:all 0.3s}
+.nav-link:hover,.nav-link.active{color:var(--cyan);background:rgba(0,212,170,0.08)}
+.nav-actions{display:flex;gap:12px}
+.nav-btn{padding:8px 16px;border-radius:6px;font-size:13px;color:var(--txt2);border:1px solid var(--glass-border);transition:all 0.3s}
+.nav-btn:hover{color:var(--cyan);border-color:var(--cyan)}
+.nav-btn.primary{background:var(--cyan);color:#000;border-color:var(--cyan)}
+
+/* User Menu */
+.user-menu{position:relative;display:flex;align-items:center;gap:12px}
+.user-avatar{width:38px;height:38px;border-radius:50%;border:2px solid rgba(0,212,170,0.4);cursor:pointer;overflow:hidden;transition:all 0.3s}
+.user-avatar:hover{border-color:var(--cyan);box-shadow:0 0 20px rgba(0,212,170,0.4)}
+.user-avatar img{width:100%;height:100%;object-fit:cover}
+.login-btn{padding:8px 18px;background:rgba(0,212,170,0.1);border:1px solid rgba(0,212,170,0.3);border-radius:6px;color:var(--cyan);font-size:13px;cursor:pointer;transition:all 0.3s;font-family:var(--serif);letter-spacing:1px}
+.login-btn:hover{background:rgba(0,212,170,0.2);border-color:var(--cyan);box-shadow:0 0 15px rgba(0,212,170,0.3)}
+.user-dropdown{position:absolute;top:50px;right:0;width:180px;background:rgba(20,24,32,0.95);border:1px solid var(--glass-border);border-radius:8px;backdrop-filter:blur(10px);opacity:0;visibility:hidden;transform:translateY(-10px);transition:all 0.3s;z-index:200}
+.user-dropdown.show{opacity:1;visibility:visible;transform:translateY(0)}
+.user-dropdown-item{padding:12px 20px;font-size:14px;color:rgba(255,255,255,0.8);cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:10px}
+.user-dropdown-item:first-child{border-radius:8px 8px 0 0}
+.user-dropdown-item:last-child{border-radius:0 0 8px 8px}
+.user-dropdown-item:hover{background:rgba(0,212,170,0.1);color:var(--cyan)}
+.user-dropdown-divider{height:1px;background:var(--glass-border);margin:4px 0}
+
+/* Dynasty Switcher */
+.dynasty-switcher{position:fixed;top:90px;left:50%;transform:translateX(-50%);z-index:100;display:flex;gap:8px;background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:8px;padding:8px}
+.dynasty-btn{padding:10px 24px;border-radius:6px;font-size:14px;font-family:var(--serif);color:var(--txt2);background:transparent;border:1px solid transparent;cursor:pointer;transition:all 0.3s}
+.dynasty-btn:hover{color:var(--gold)}
+.dynasty-btn.active{background:rgba(201,176,55,0.15);color:var(--gold);border-color:var(--gold)}
+
+/* ========== MAP CONTAINER ========== */
+.map-container{position:fixed;top:70px;left:0;right:0;bottom:0;z-index:1}
+#map{width:100%;height:100%}
+
+/* Ancient Map Image Overlay - using DOM overlay */
+.ancient-map-overlay{position:fixed;top:70px;left:0;right:0;bottom:0;z-index:10;pointer-events:none;opacity:0.7}
+.ancient-map-overlay img{width:100%;height:100%;object-fit:cover;opacity:0.7;transition:opacity 0.3s}
+
+/* Curtain Compare Mode */
+.curtain-container{position:fixed;top:70px;left:0;right:0;bottom:0;z-index:20;pointer-events:none;display:none}
+.curtain-container.active{display:flex;pointer-events:auto}
+.curtain-modern{flex:0 0 50%;height:100%;overflow:hidden;position:relative}
+.curtain-modern #mapLeft{width:100%;height:100%}
+.curtain-ancient{flex:0 0 50%;height:100%;overflow:hidden;position:relative;background:var(--bg-deep)}
+.curtain-ancient .ancient-image{width:100%;height:100%;object-fit:cover;filter:sepia(20%)}
+.curtain-divider{position:absolute;top:0;bottom:0;width:6px;background:var(--cyan);cursor:ew-resize;z-index:30;box-shadow:0 0 20px var(--cyan-glow);transform:translateX(-50%);display:flex;align-items:center;justify-content:center}
+.curtain-divider-handle{width:36px;height:36px;border-radius:50%;background:var(--cyan);display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px var(--cyan-glow);pointer-events:none}
+.curtain-divider-handle::before{content:'↔';color:#000;font-size:16px;font-weight:bold}
+
+/* ========== BASEMAP SWITCHER ========== */
+.basemap-btn:hover{color:var(--gold)}
+.basemap-btn.active{background:rgba(0,212,170,0.1);color:var(--cyan);border-color:var(--cyan)}
+
+/* ========== TIMELINE BAR ========== */
+.timeline-bar{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);z-index:100;background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:40px;padding:16px 40px;box-shadow:0 10px 40px rgba(0,0,0,0.5)}
+.timeline-track{display:flex;align-items:center;gap:20px}
+.timeline-period{display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:all 0.3s;opacity:0.6}
+.timeline-period:hover,.timeline-period.active{opacity:1}
+.period-dot{width:16px;height:16px;border-radius:50%;background:var(--txt3);border:2px solid transparent;transition:all 0.3s;margin-bottom:6px}
+.timeline-period.active .period-dot{background:var(--cyan);box-shadow:0 0 10px var(--cyan-glow)}
+.period-label{font-size:14px;font-weight:500;color:var(--txt2);transition:all 0.3s}
+.timeline-period.active .period-label{color:var(--cyan)}
+.period-range{font-size:11px;color:var(--txt3);margin-top:2px}
+.timeline-line{flex:1;height:2px;min-width:60px;background:linear-gradient(90deg,var(--txt3),var(--cyan));opacity:0.4}
+
+/* ========== FULLSCREEN ========== */
+.fullscreen .nav-bar,.fullscreen .search-panel,.fullscreen .layer-control,.fullscreen .info-panel,.fullscreen .map-legend,.fullscreen .zoom-controls,.fullscreen .timeline-bar{z-index:1000}
+.fullscreen .nav-bar{position:fixed;top:0}
+.fullscreen .map-container,.fullscreen .curtain-container{top:0;z-index:1}
+.fullscreen .ancient-map-overlay{top:0}
+
+/* ========== SEARCH PANEL ========== */
+.search-panel{position:fixed;top:150px;left:40px;z-index:100;width:360px;background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:12px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+.search-title{font-family:var(--serif);font-size:16px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.search-title::before{content:'';width:4px;height:16px;background:var(--cyan);border-radius:2px}
+.search-box{position:relative;margin-bottom:16px}
+.search-input{width:100%;height:48px;padding:0 44px 0 16px;border-radius:8px;border:1px solid var(--glass-border);background:rgba(0,0,0,0.3);color:var(--txt);font-size:14px;outline:none;transition:all 0.3s}
+.search-input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,212,170,0.1)}
+.search-input::placeholder{color:var(--txt3)}
+.search-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--txt3)}
+.search-suggestions{display:none;margin-top:8px;border-top:1px solid var(--glass-border);padding-top:12px}
+.search-suggestions.show{display:block}
+.suggestion-item{display:flex;align-items:center;gap:12px;padding:12px;border-radius:6px;cursor:pointer;transition:all 0.3s;margin-bottom:8px}
+.suggestion-item:hover{background:rgba(0,212,170,0.05)}
+.suggestion-icon{width:36px;height:36px;border-radius:8px;background:rgba(0,212,170,0.1);display:flex;align-items:center;justify-content:center;font-size:16px}
+.suggestion-info{flex:1}
+.suggestion-name{font-size:14px;font-weight:500;margin-bottom:2px}
+.suggestion-desc{font-size:12px;color:var(--txt3)}
+
+/* ========== LAYER CONTROL ========== */
+.layer-control{position:fixed;left:40px;bottom:40px;z-index:100;background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:12px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,0.5);width:360px}
+.layer-title{font-family:var(--serif);font-size:16px;font-weight:600;margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.layer-title::before{content:'';width:4px;height:16px;background:var(--gold);border-radius:2px}
+
+/* Compare Mode Tabs */
+.compare-tabs{display:flex;gap:8px;margin-bottom:20px}
+.compare-tab{flex:1;padding:10px;border-radius:6px;font-size:13px;text-align:center;color:var(--txt2);background:rgba(0,0,0,0.2);border:1px solid var(--glass-border);cursor:pointer;transition:all 0.3s}
+.compare-tab:hover{color:var(--txt)}
+.compare-tab.active{background:rgba(0,212,170,0.1);color:var(--cyan);border-color:var(--cyan)}
+
+/* Opacity Slider */
+.slider-container{margin-bottom:24px}
+.slider-labels{display:flex;justify-content:space-between;margin-bottom:12px;font-size:13px}
+.slider-label{color:var(--txt2)}
+.slider-label.active{color:var(--cyan);font-weight:500}
+.slider-track{position:relative;height:6px;background:linear-gradient(90deg,var(--gold),var(--cyan));border-radius:3px;margin-bottom:8px}
+.slider-input{position:absolute;top:-7px;left:0;width:100%;height:20px;-webkit-appearance:none;background:transparent;cursor:pointer}
+.slider-input::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--txt);border:3px solid var(--cyan);cursor:pointer;box-shadow:0 0 10px rgba(0,212,170,0.5)}
+.slider-value{text-align:center;font-size:14px;color:var(--cyan);font-weight:500}
+
+/* Layer Toggle */
+.layer-toggles{display:flex;flex-direction:column;gap:12px}
+.layer-toggle{display:flex;align-items:center;gap:12px;padding:12px;border-radius:8px;background:rgba(0,0,0,0.2);border:1px solid var(--glass-border);cursor:pointer;transition:all 0.3s}
+.layer-toggle:hover{border-color:rgba(0,212,170,0.3)}
+.layer-toggle.active{border-color:var(--cyan);background:rgba(0,212,170,0.05)}
+.toggle-checkbox{width:20px;height:20px;border:2px solid var(--txt3);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:12px;color:transparent;transition:all 0.3s}
+.layer-toggle.active .toggle-checkbox{background:var(--cyan);border-color:var(--cyan);color:#000}
+.toggle-info{flex:1}
+.toggle-name{font-size:14px;font-weight:500;margin-bottom:2px}
+.toggle-desc{font-size:12px;color:var(--txt3)}
+.toggle-icon{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px}
+
+/* ========== INFO PANEL ========== */
+.info-panel{position:fixed;top:150px;right:40px;z-index:100;width:340px;background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:12px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,0.5);display:none;max-height:calc(100vh - 200px);overflow-y:auto}
+.info-panel.show{display:block}
+.info-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--glass-border)}
+.info-title{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--gold)}
+.info-close{width:28px;height:28px;border-radius:6px;background:transparent;border:1px solid var(--glass-border);color:var(--txt3);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s}
+.info-close:hover{border-color:var(--red);color:var(--red)}
+.info-subtitle{font-size:13px;color:var(--txt3);margin-top:4px}
+
+/* Coordinates */
+.coords-info{display:flex;gap:12px;margin-bottom:16px;padding:12px;background:rgba(0,0,0,0.2);border-radius:8px}
+.coord-item{flex:1;text-align:center}
+.coord-label{font-size:11px;color:var(--txt3);margin-bottom:4px}
+.coord-value{font-size:13px;font-family:monospace;color:var(--cyan)}
+
+/* Confidence Badge */
+.confidence-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:12px;margin-top:8px}
+.confidence-badge.high{background:rgba(0,212,170,0.15);color:var(--cyan);border:1px solid var(--cyan)}
+.confidence-badge.medium{background:rgba(201,176,55,0.15);color:var(--gold);border:1px solid var(--gold)}
+.confidence-badge.low{background:rgba(230,57,70,0.15);color:var(--red);border:1px solid var(--red)}
+
+/* Timeline */
+.info-timeline{position:relative;padding-left:24px;margin-bottom:16px}
+.info-timeline::before{content:'';position:absolute;left:7px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--gold),var(--cyan))}
+.timeline-item{position:relative;padding-bottom:16px}
+.timeline-item::before{content:'';position:absolute;left:-21px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--bg-surface);border:2px solid var(--cyan)}
+.timeline-era{font-size:12px;color:var(--cyan);margin-bottom:4px}
+.timeline-text{font-size:13px;color:var(--txt2);line-height:1.6}
+
+/* Herb List */
+.info-herbs{margin-top:16px;padding-top:16px;border-top:1px solid var(--glass-border)}
+.herbs-title{font-size:14px;font-weight:600;margin-bottom:12px}
+.herb-tags{display:flex;flex-wrap:wrap;gap:8px}
+.herb-tag{padding:6px 14px;border-radius:20px;font-size:12px;background:rgba(0,212,170,0.1);border:1px solid var(--cyan-glow);color:var(--cyan);cursor:pointer;transition:all 0.3s}
+.herb-tag:hover{background:var(--cyan);color:#000}
+
+/* ========== LEGEND ========== */
+.map-legend{position:fixed;right:40px;bottom:40px;z-index:100;background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:12px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+.legend-title{font-size:14px;font-weight:600;margin-bottom:16px}
+.legend-items{display:flex;flex-direction:column;gap:12px}
+.legend-item{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--txt2)}
+.legend-icon{width:16px;height:16px;border-radius:50%}
+.legend-icon.ancient{background:var(--gold);box-shadow:0 0 8px var(--gold-glow)}
+.legend-icon.modern{background:var(--cyan);box-shadow:0 0 8px var(--cyan-glow)}
+.legend-icon.route{border:2px dashed var(--cyan);background:transparent;border-radius:0}
+
+/* ========== ZOOM CONTROLS ========== */
+.zoom-controls{position:fixed;right:40px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:8px}
+.zoom-btn{width:40px;height:40px;border-radius:8px;background:var(--glass);backdrop-filter:blur(10px);border:1px solid var(--glass-border);color:var(--txt2);display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;transition:all 0.3s}
+.zoom-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+
+/* ========== LOADING ========== */
+.map-loading{position:fixed;inset:0;background:var(--bg-deep);display:flex;align-items:center;justify-content:center;z-index:2000}
+.map-loading.hidden{display:none}
+.loading-content{text-align:center}
+.loading-icon{font-size:48px;margin-bottom:16px;animation:spin 2s linear infinite}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.loading-text{font-size:16px;color:var(--txt2)}
+
+/* ========== TOAST ========== */
+.toast-container{position:fixed;top:90px;left:50%;transform:translateX(-50%);z-index:3000;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{padding:12px 24px;border-radius:8px;font-size:14px;animation:toastIn 0.3s ease,toastOut 0.3s ease 2.7s forwards;backdrop-filter:blur(10px)}
+.toast.success{background:rgba(0,212,170,0.15);border:1px solid var(--cyan);color:var(--cyan)}
+.toast.error{background:rgba(230,57,70,0.15);border:1px solid var(--red);color:var(--red)}
+.toast.info{background:rgba(201,176,55,0.15);border:1px solid var(--gold);color:var(--gold)}
+@keyframes toastIn{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes toastOut{to{opacity:0;transform:translateY(-20px)}}
+
+/* ========== RESPONSIVE ========== */
+@media(max-width:1024px){
+  .search-panel,.layer-control,.info-panel{width:calc(100% - 48px);left:24px;right:24px}
+  .search-panel{top:auto;bottom:200px}.layer-control{bottom:24px}.info-panel{top:80px}
+  .map-legend,.dynasty-switcher,.timeline-bar{display:none}.zoom-controls{right:24px}
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav-bar">
+  <div class="nav-brand">
+    <div class="nav-logo">🌿</div>
+    <span>本草万象</span>
+  </div>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">首页</a>
+    <a href="wanxiang.html" class="nav-link">万象阅览</a>
+    <a href="duizhao-list.html" class="nav-link">古今对照</a>
+    <a href="ditu2.html" class="nav-link active">时空地图</a>
+    <a href="wenwu.html" class="nav-link">文物佐证</a>
+  </div>
+  <div class="nav-actions" id="userMenu">
+    <button class="nav-btn" onclick="switchCompareMode('opacity')">透明度</button>
+    <button class="nav-btn" onclick="switchCompareMode('curtain')">卷帘对比</button>
+    <button class="nav-btn primary" onclick="resetView()">重置视图</button>
+    <button class="login-btn" id="loginBtn" onclick="goToLogin()">登录 / 注册</button>
+    <div class="user-avatar" id="userAvatar" style="display:none;" onclick="toggleUserDropdown()">
+      <img src="" alt="头像" id="navUserAvatar" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23333%22/%3E%3Ctext x=%2250%22 y=%2258%22 text-anchor=%22middle%22 fill=%22%2300d4aa%22 font-size=%2236%22%3E👤%3C/text%3E%3C/svg%3E'">
+    </div>
+    <div class="user-dropdown" id="userDropdown">
+      <div class="user-dropdown-item" onclick="goToProfile()">👤 个人中心</div>
+      <div class="user-dropdown-item" onclick="alert('功能开发中')">⚙️ 账号设置</div>
+      <div class="user-dropdown-divider"></div>
+      <div class="user-dropdown-item" onclick="logout()">🚪 退出登录</div>
+    </div>
+  </div>
+</nav>
+
+<!-- Dynasty Switcher -->
+<div class="dynasty-switcher">
+  <button class="dynasty-btn active" data-dynasty="northern" onclick="switchDynasty('northern')">北宋 (960-1127)</button>
+  <button class="dynasty-btn" data-dynasty="southern" onclick="switchDynasty('southern')">南宋 (1127-1279)</button>
+</div>
+
+<!-- Loading Screen -->
+<div class="map-loading" id="loadingScreen">
+  <div class="loading-content">
+    <div class="loading-icon">🗺️</div>
+    <div class="loading-text">正在加载时空地图...</div>
+  </div>
+</div>
+
+<!-- Map Container -->
+<div class="map-container" id="mapContainer">
+  <div id="map"></div>
+</div>
+
+<!-- Ancient Map Overlay (for opacity mode) -->
+<div class="ancient-map-overlay" id="ancientOverlay">
+  <img src="" alt="古地图" id="ancientMapImg">
+</div>
+
+<!-- Basemap Switcher -->
+<div style="position:fixed;right:40px;top:90px;z-index:100;display:flex;gap:6px;background:var(--glass);backdrop-filter:blur(10px);border:1px solid var(--glass-border);border-radius:8px;padding:6px">
+  <button class="basemap-btn active" data-basemap="whitesmoke" onclick="switchBasemap('whitesmoke')" style="padding:8px 14px;border-radius:6px;font-size:12px;background:rgba(0,212,170,0.1);border:1px solid var(--cyan);color:var(--cyan);cursor:pointer;transition:all 0.3s">水墨</button>
+  <button class="basemap-btn" data-basemap="satellite" onclick="switchBasemap('satellite')" style="padding:8px 14px;border-radius:6px;font-size:12px;background:transparent;border:1px solid transparent;color:var(--txt2);cursor:pointer;transition:all 0.3s">卫星</button>
+  <button class="basemap-btn" data-basemap="normal" onclick="switchBasemap('normal')" style="padding:8px 14px;border-radius:6px;font-size:12px;background:transparent;border:1px solid transparent;color:var(--txt2);cursor:pointer;transition:all 0.3s">道路</button>
+</div>
+
+<!-- Fullscreen Button -->
+<button onclick="toggleFullscreen()" style="position:fixed;right:40px;top:140px;z-index:100;width:40px;height:40px;border-radius:8px;background:var(--glass);backdrop-filter:blur(10px);border:1px solid var(--glass-border);color:var(--txt2);cursor:pointer;transition:all 0.3s;font-size:16px;display:flex;align-items:center;justify-content:center" onmouseover="this.style.borderColor='var(--cyan)';this.style.color='var(--cyan)'" onmouseout="this.style.borderColor='var(--glass-border)';this.style.color='var(--txt2)'">⛶</button>
+
+<!-- Timeline (Bottom) -->
+<div class="timeline-bar" id="timelineBar">
+  <div class="timeline-track">
+    <div class="timeline-period active" data-period="northern" onclick="switchDynasty('northern')">
+      <div class="period-dot"></div>
+      <div class="period-label">北宋</div>
+      <div class="period-range">960-1127</div>
+    </div>
+    <div class="timeline-line"></div>
+    <div class="timeline-period" data-period="southern" onclick="switchDynasty('southern')">
+      <div class="period-dot"></div>
+      <div class="period-label">南宋</div>
+      <div class="period-range">1127-1279</div>
+    </div>
+  </div>
+</div>
+<div class="curtain-container" id="curtainContainer">
+  <div class="curtain-modern" id="curtainModern">
+    <div id="mapLeft"></div>
+  </div>
+  <div class="curtain-ancient" id="curtainAncient">
+    <img src="" alt="古地图" class="ancient-image" id="curtainAncientImg">
+  </div>
+  <div class="curtain-divider" id="curtainDivider" style="left:50%">
+    <div class="curtain-divider-handle"></div>
+  </div>
+</div>
+
+<!-- Search Panel -->
+<div class="search-panel">
+  <div class="search-title">🔍 搜索产地/药物</div>
+  <div class="search-box">
+    <input type="text" class="search-input" placeholder="输入古地名如：上党、辽东..." id="searchInput">
+    <span class="search-icon">⌕</span>
+  </div>
+  <div class="search-suggestions" id="searchSuggestions"></div>
+</div>
+
+<!-- Layer Control -->
+<div class="layer-control">
+  <div class="layer-title">⚙️ 图层控制</div>
+
+  <!-- Compare Mode Tabs -->
+  <div class="compare-tabs">
+    <div class="compare-tab active" data-mode="opacity" onclick="switchCompareMode('opacity')">透明度混合</div>
+    <div class="compare-tab" data-mode="curtain" onclick="switchCompareMode('curtain')">卷帘对比</div>
+  </div>
+
+  <!-- Opacity Slider -->
+  <div class="slider-container" id="opacitySliderContainer">
+    <div class="slider-labels">
+      <span class="slider-label active" id="labelModern">现代卫星图</span>
+      <span class="slider-label" id="labelAncient">古地图</span>
+    </div>
+    <div class="slider-track">
+      <input type="range" class="slider-input" min="0" max="100" value="70" id="opacitySlider">
+    </div>
+    <div class="slider-value" id="sliderValue">古地图透明度 70%</div>
+  </div>
+
+  <!-- Layer Toggles -->
+  <div class="layer-toggles">
+    <div class="layer-toggle active" data-layer="ancient">
+      <div class="toggle-checkbox">✓</div>
+      <div class="toggle-info">
+        <div class="toggle-name">宋代产地标记</div>
+        <div class="toggle-desc">《图经》记载的古代产地</div>
+      </div>
+      <div class="toggle-icon" style="background:rgba(201,176,55,0.2);color:var(--gold)">📜</div>
+    </div>
+    <div class="layer-toggle active" data-layer="modern">
+      <div class="toggle-checkbox">✓</div>
+      <div class="toggle-info">
+        <div class="toggle-name">现代产区标记</div>
+        <div class="toggle-desc">当代道地药材产区</div>
+      </div>
+      <div class="toggle-icon" style="background:rgba(0,212,170,0.2);color:var(--cyan)">🌿</div>
+    </div>
+    <div class="layer-toggle active" data-layer="routes">
+      <div class="toggle-checkbox">✓</div>
+      <div class="toggle-info">
+        <div class="toggle-name">产地变迁连线</div>
+        <div class="toggle-desc">古今产地对应关系</div>
+      </div>
+      <div class="toggle-icon" style="background:rgba(0,212,170,0.1);color:var(--cyan)">〰</div>
+    </div>
+    <div class="layer-toggle" data-layer="heatmap">
+      <div class="toggle-checkbox">✓</div>
+      <div class="toggle-info">
+        <div class="toggle-name">产地热力图</div>
+        <div class="toggle-desc">药材分布密度可视化</div>
+      </div>
+      <div class="toggle-icon" style="background:rgba(230,57,70,0.1);color:#e63946">🔥</div>
+    </div>
+  </div>
+</div>
+
+<!-- Info Panel -->
+<div class="info-panel" id="infoPanel">
+  <div class="info-header">
+    <div>
+      <div class="info-title" id="infoTitle">上党</div>
+      <div class="info-subtitle" id="infoSubtitle">今山西省长治市</div>
+      <div class="confidence-badge high" id="infoConfidence">
+        <span>✓</span> 高置信度定位
+      </div>
+    </div>
+    <button class="info-close" onclick="closeInfoPanel()">×</button>
+  </div>
+
+  <!-- Coordinates -->
+  <div class="coords-info">
+    <div class="coord-item">
+      <div class="coord-label">古经度</div>
+      <div class="coord-value" id="coordLng">112.5°E</div>
+    </div>
+    <div class="coord-item">
+      <div class="coord-label">古纬度</div>
+      <div class="coord-value" id="coordLat">36.2°N</div>
+    </div>
+  </div>
+
+  <div class="info-timeline" id="infoTimeline">
+    <div class="timeline-item">
+      <div class="timeline-era">宋代（960-1127）</div>
+      <div class="timeline-text">《本草图经》记载："人参生上党山谷及辽东"，上党为当时人参主产区。</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-era">明清时期</div>
+      <div class="timeline-text">由于过度采挖，上党人参资源逐渐枯竭，产量大幅下降。</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-era">现代</div>
+      <div class="timeline-text">人参主产区已转移至东北三省，吉林长白山成为最大产区。</div>
+    </div>
+  </div>
+
+  <div class="info-herbs" id="infoHerbs">
+    <div class="herbs-title">📚 相关药物（3）</div>
+    <div class="herb-tags">
+      <span class="herb-tag" onclick="location.href='duizhao-detail.html?herb=人参'">人参</span>
+      <span class="herb-tag">党参</span>
+      <span class="herb-tag">黄芪</span>
+    </div>
+  </div>
+</div>
+
+<!-- Legend -->
+<div class="map-legend">
+  <div class="legend-title">图例</div>
+  <div class="legend-items">
+    <div class="legend-item">
+      <div class="legend-icon ancient"></div>
+      <span>宋代产地</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-icon modern"></div>
+      <span>现代产区</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-icon route"></div>
+      <span>产地变迁</span>
+    </div>
+  </div>
+</div>
+
+<!-- Zoom Controls -->
+<div class="zoom-controls">
+  <button class="zoom-btn" id="zoomIn">+</button>
+  <button class="zoom-btn" id="zoomOut">-</button>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="data.js"></script>
+<script>
+// ========== CONFIGURATION ==========
+const AMAP_KEY = '9bd3c82892712433a6a1f9b6d0cd9b76';
+const ANCIENT_MAP_BOUNDS = {
+  // 北宋地图配准边界 [西南角, 东北角] - 根据实际古地图调整
+  northern: {
+    southwest: [95.0, 18.0],   // 西南角经度, 纬度
+    northeast: [125.0, 42.0]   // 东北角经度, 纬度
+  },
+  // 南宋地图配准边界
+  southern: {
+    southwest: [100.0, 20.0],
+    northeast: [122.0, 40.0]
+  }
+};
+
+// ========== STATE ==========
+let map, mapLeft;
+let currentDynasty = 'northern'; // 'northern' | 'southern'
+let compareMode = 'opacity'; // 'opacity' | 'curtain'
+let ancientOverlay = null; // GroundOverlay instance
+let layerStates = { ancient: true, modern: true, routes: true, heatmap: false };
+let markers = { ancient: [], modern: [] };
+let polylines = [];
+let heatmapLayer = null;
+let isDraggingCurtain = false;
+let curtainPosition = 50; // percentage
+
+// ========== MAP DATA ==========
+// 北宋时期产地数据
+const NORTHERN_SONG_LOCATIONS = [
+  { id: 'shangdang', name: '上党', modern: '山西省长治市', pos: [113.1, 36.2], modernPos: [113.1, 36.2], confidence: 'high', herbs: ['人参', '党参'], timeline: [
+    { era: '北宋（960-1127）', text: '《本草图经》记载："人参生上党山谷及辽东"，上党为当时人参主产区。' },
+    { era: '明清时期', text: '由于过度采挖，上党人参资源逐渐枯竭，产量大幅下降。' },
+    { era: '现代', text: '人参主产区已转移至东北三省，吉林长白山成为最大产区。' }
+  ]},
+  { id: 'liaodong', name: '辽东', modern: '辽宁省东南部', pos: [123.8, 41.0], modernPos: [123.8, 41.0], confidence: 'high', herbs: ['人参', '鹿茸'], timeline: [
+    { era: '北宋（960-1127）', text: '辽东地区以人参、鹿茸等药材闻名，是重要的药材产地。' },
+    { era: '明清时期', text: '辽东药材贸易兴盛，成为关内外药材交流的重要通道。' },
+    { era: '现代', text: '辽宁东部山区仍为人参重要产区，与吉林产区相连。' }
+  ]},
+  { id: 'sichuan', name: '益州', modern: '四川省成都市', pos: [104.1, 30.7], modernPos: [104.1, 30.7], confidence: 'high', herbs: ['川芎', '川贝母', '附子'], timeline: [
+    { era: '北宋（960-1127）', text: '益州（成都）为西南重镇，川产药材通过蜀道运往中原。' },
+    { era: '南宋时期', text: '四川盆地相对稳定，药材种植业持续发展。' },
+    { era: '现代', text: '四川仍是全国重要的中药材生产基地，道地药材闻名。' }
+  ]},
+  { id: 'zhejiang', name: '两浙', modern: '浙江省杭州地区', pos: [120.2, 30.3], modernPos: [120.2, 30.3], confidence: 'medium', herbs: ['浙贝母', '白术', '杭菊花'], timeline: [
+    { era: '北宋（960-1127）', text: '两浙路经济发达，药材种植与贸易兴盛。' },
+    { era: '南宋时期', text: '临安（杭州）成为都城，药材需求大增，本地种植扩大。' },
+    { era: '现代', text: '浙八味等传统道地药材仍是浙江农业特色产业。' }
+  ]},
+  { id: 'guangzhou', name: '广州', modern: '广东省广州市', pos: [113.3, 23.1], modernPos: [113.3, 23.1], confidence: 'high', herbs: ['陈皮', '砂仁', '肉桂'], timeline: [
+    { era: '北宋（960-1127）', text: '广州作为海上丝绸之路起点，进口香料药材集散地。' },
+    { era: '明清时期', text: '广药体系形成，陈皮、肉桂等药材加工技术成熟。' },
+    { era: '现代', text: '广东仍为全国重要的南药生产基地和贸易中心。' }
+  ]}
+];
+
+// 南宋时期产地数据
+const SOUTHERN_SONG_LOCATIONS = [
+  { id: 'hangzhou', name: '临安', modern: '浙江省杭州市', pos: [120.2, 30.3], modernPos: [120.2, 30.3], confidence: 'high', herbs: ['浙贝母', '白术', '杭菊花'], timeline: [
+    { era: '南宋（1127-1279）', text: '临安为南宋都城，药材需求庞大，本地药材种植兴盛。' },
+    { era: '元代', text: '杭州仍是江南重要的药材集散中心。' },
+    { era: '现代', text: '杭州周边仍是浙江道地药材主产区。' }
+  ]},
+  { id: 'sichuan', name: '成都府', modern: '四川省成都市', pos: [104.1, 30.7], modernPos: [104.1, 30.7], confidence: 'high', herbs: ['川芎', '川贝母', '附子'], timeline: [
+    { era: '南宋（1127-1279）', text: '四川盆地相对稳定，成为朝廷药材重要来源。' },
+    { era: '元代', text: '四川药材通过茶马古道继续外销。' },
+    { era: '现代', text: '四川仍是全国最大的中药材产区之一。' }
+  ]},
+  { id: 'fujian', name: '泉州', modern: '福建省泉州市', pos: [118.7, 24.9], modernPos: [118.7, 24.9], confidence: 'medium', herbs: ['建泽泻', '太子参', '乌梅'], timeline: [
+    { era: '南宋（1127-1279）', text: '泉州港兴盛，香料药材进口贸易繁荣。' },
+    { era: '明清时期', text: '月港开海，福建药材贸易持续发展。' },
+    { era: '现代', text: '福建中药材种植以特色品种为主。' }
+  ]},
+  { id: 'guangzhou', name: '广州', modern: '广东省广州市', pos: [113.3, 23.1], modernPos: [113.3, 23.1], confidence: 'high', herbs: ['陈皮', '砂仁', '肉桂'], timeline: [
+    { era: '南宋（1127-1129）', text: '广州继续作为海上贸易港口，进口药材集散地。' },
+    { era: '明清时期', text: '广药体系完善，陈皮、老熟地等药材加工闻名。' },
+    { era: '现代', text: '广东中药产业现代化程度居全国前列。' }
+  ]},
+  { id: 'jiangxi', name: '隆兴府', modern: '江西省南昌市', pos: [115.9, 28.7], modernPos: [115.9, 28.7], confidence: 'medium', herbs: ['枳壳', '车前子', '蔓荆子'], timeline: [
+    { era: '南宋（1127-1279）', text: '江西药材种植兴起，枳壳等药材开始形成道地产区。' },
+    { era: '明清时期', text: '江西商帮兴起，药材贸易网络扩展。' },
+    { era: '现代', text: '江西中药材种植面积居全国前列。' }
+  ]}
+];
+
+// 现代产区数据
+const MODERN_LOCATIONS = [
+  { id: 'jilin', name: '吉林长白山', pos: [127.5, 42.3], herbs: ['人参', '鹿茸', '五味子'] },
+  { id: 'sichuan', name: '四川盆地', pos: [104.1, 30.7], herbs: ['川芎', '川贝母', '附子', '麦冬'] },
+  { id: 'zhejiang', name: '浙江磐安', pos: [120.5, 29.1], herbs: ['浙贝母', '白术', '元胡'] },
+  { id: 'guangdong', name: '广东新会', pos: [113.0, 22.5], herbs: ['陈皮', '砂仁', '肉桂'] },
+  { id: 'yunnan', name: '云南文山', pos: [104.2, 23.4], herbs: ['三七', '天麻', '茯苓'] },
+  { id: 'gansu', name: '甘肃岷县', pos: [104.0, 34.4], herbs: ['当归', '黄芪', '党参'] }
+];
+
+// ========== INITIALIZATION ==========
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    if (typeof AMap === 'undefined') {
+      showErrorMessage('高德地图 API 加载失败，请检查网络连接');
+      return;
+    }
+    initMap();
+    setupEventListeners();
+    loadAncientOverlay();
+  } catch (e) {
+    console.error('初始化失败:', e);
+    showErrorMessage('地图初始化失败: ' + e.message);
+  }
+});
+
+function showErrorMessage(msg) {
+  const loading = document.getElementById('loadingScreen');
+  if (loading) {
+    loading.innerHTML = `
+      <div class="loading-content">
+        <div style="font-size:48px;margin-bottom:16px">⚠️</div>
+        <div style="font-size:16px;color:#ff4d4f;margin-bottom:12px">${msg}</div>
+        <div style="font-size:14px;color:var(--txt3)">请刷新页面重试</div>
+      </div>
+    `;
+  }
+}
+
+function initMap() {
+  try {
+    // 主地图 - 现代底图
+    map = new AMap.Map('map', {
+      zoom: 5,
+      center: [112.0, 35.0],
+      viewMode: '2D',
+      mapStyle: 'amap://styles/whitesmoke',
+      features: ['bg', 'building', 'point']
+    });
+
+    // 左侧地图（卷帘模式）
+    mapLeft = new AMap.Map('mapLeft', {
+      zoom: 5,
+      center: [112.0, 35.0],
+      viewMode: '2D',
+      mapStyle: 'amap://styles/whitesmoke'
+    });
+
+    // 同步两个地图
+    syncMaps();
+
+    // 加载古地图叠加层
+    setTimeout(() => {
+      try {
+        loadAncientOverlay();
+        const img = document.getElementById('ancientMapImg');
+        if (img) img.style.opacity = '0.7';
+        addMarkers();
+        addRoutes();
+
+        // 初始化底部时间轴状态
+        document.querySelectorAll('.timeline-period').forEach(period => {
+          period.classList.toggle('active', period.dataset.period === 'northern');
+        });
+      } catch (e) {
+        console.error('加载叠加层失败:', e);
+      }
+    }, 500);
+
+    // 隐藏加载层
+    setTimeout(() => {
+      const loading = document.getElementById('loadingScreen');
+      if (loading) loading.classList.add('hidden');
+    }, 1000);
+
+  } catch (e) {
+    console.error('地图初始化失败:', e);
+    throw e;
+  }
+}
+
+function syncMaps() {
+  // 同步地图移动和缩放
+  if (!map || !mapLeft) {
+    console.warn('地图未初始化，跳过同步');
+    return;
+  }
+
+  map.on('moveend', () => {
+    if (compareMode === 'curtain' && mapLeft) {
+      try {
+        const center = map.getCenter();
+        const zoom = map.getZoom();
+        mapLeft.setZoomAndCenter(zoom, [center.lng, center.lat]);
+      } catch (e) {
+        console.error('同步地图移动失败:', e);
+      }
+    }
+  });
+
+  map.on('zoomend', () => {
+    if (compareMode === 'curtain' && mapLeft) {
+      try {
+        const center = map.getCenter();
+        const zoom = map.getZoom();
+        mapLeft.setZoomAndCenter(zoom, [center.lng, center.lat]);
+      } catch (e) {
+        console.error('同步地图缩放失败:', e);
+      }
+    }
+  });
+}
+
+// ========== ANCIENT MAP OVERLAY ==========
+let ancientImageOverlay = null;
+
+function loadAncientOverlay() {
+  // 获取当前朝代对应的古地图图片
+  const imgUrl = currentDynasty === 'northern' ? '北宋地图.jpg' : '南宋地图.jpg';
+  const bounds = ANCIENT_MAP_BOUNDS[currentDynasty];
+
+  // 使用图片叠加层 - 在透明度模式下显示在地图上方
+  const img = document.getElementById('ancientMapImg');
+  img.src = imgUrl;
+
+  // 创建高德地图图片图层 (ImageLayer)
+  try {
+    // 移除旧图层
+    if (ancientImageOverlay) {
+      try {
+        map.remove(ancientImageOverlay);
+      } catch (e) {
+        console.log('移除旧图层失败:', e);
+      }
+      ancientImageOverlay = null;
+    }
+
+    // 获取西南角和东北角的坐标
+    const southWest = new AMap.LngLat(bounds.southwest[0], bounds.southwest[1]);
+    const northEast = new AMap.LngLat(bounds.northeast[0], bounds.northeast[1]);
+    const imageBounds = new AMap.Bounds(southWest, northEast);
+
+    // 创建图片图层 - 使用 options 对象形式
+    ancientImageOverlay = new AMap.ImageLayer({
+      url: imgUrl,
+      bounds: imageBounds,
+      opacity: 0.7,
+      zooms: [3, 18],
+      visible: true
+    });
+
+    // 添加到地图
+    ancientImageOverlay.setMap(map);
+
+    console.log('古地图叠加层已加载:', imgUrl);
+  } catch (e) {
+    console.error('加载高德地图图片图层失败:', e);
+    // 失败时仅使用 DOM 图片叠加
+  }
+
+  // 更新卷帘模式的古地图图片
+  document.getElementById('curtainAncientImg').src = imgUrl;
+}
+
+function updateAncientOverlay() {
+  loadAncientOverlay();
+}
+
+// ========== DYNASTY SWITCHING ==========
+function switchDynasty(dynasty) {
+  if (currentDynasty === dynasty) return;
+
+  currentDynasty = dynasty;
+
+  // 更新顶部按钮状态
+  document.querySelectorAll('.dynasty-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.dynasty === dynasty);
+  });
+
+  // 更新底部时间轴状态
+  document.querySelectorAll('.timeline-period').forEach(period => {
+    period.classList.toggle('active', period.dataset.period === dynasty);
+  });
+
+  try {
+    // 更新古地图叠加层
+    updateAncientOverlay();
+
+    // 更新标记
+    clearMarkers();
+    addMarkers();
+    addRoutes();
+
+    // 调整地图视图
+    if (map) {
+      if (dynasty === 'southern') {
+        map.setCenter([115.0, 30.0]);
+        map.setZoom(6);
+      } else {
+        map.setCenter([112.0, 35.0]);
+        map.setZoom(5);
+      }
+    }
+
+    showToast(`已切换至${dynasty === 'northern' ? '北宋' : '南宋'}地图`, 'success');
+  } catch (e) {
+    console.error('切换朝代失败:', e);
+    showToast('切换地图失败，请刷新页面重试', 'error');
+  }
+}
+
+// ========== COMPARE MODE ==========
+function switchCompareMode(mode) {
+  if (compareMode === mode) return;
+
+  compareMode = mode;
+
+  // 更新标签状态
+  document.querySelectorAll('.compare-tab').forEach(tab => {
+    tab.classList.toggle('active', tab.dataset.mode === mode);
+  });
+
+  const mapContainer = document.getElementById('mapContainer');
+  const curtainContainer = document.getElementById('curtainContainer');
+  const opacitySliderContainer = document.getElementById('opacitySliderContainer');
+
+  if (mode === 'curtain') {
+    // 切换到卷帘模式
+    mapContainer.style.display = 'none';
+    document.getElementById('ancientOverlay').style.display = 'none'; // 隐藏透明度模式的叠加层
+    curtainContainer.classList.add('active');
+    opacitySliderContainer.style.display = 'none';
+
+    // 同步地图位置
+    const center = map.getCenter();
+    const zoom = map.getZoom();
+    mapLeft.setZoomAndCenter(zoom, [center.lng, center.lat]);
+  } else {
+    // 切换到透明度模式
+    mapContainer.style.display = 'block';
+    document.getElementById('ancientOverlay').style.display = 'block'; // 显示叠加层
+    curtainContainer.classList.remove('active');
+    opacitySliderContainer.style.display = 'block';
+  }
+
+  showToast(`已切换至${mode === 'curtain' ? '卷帘对比' : '透明度混合'}模式`, 'success');
+}
+
+// 卷帘拖动
+function setupCurtainDrag() {
+  const divider = document.getElementById('curtainDivider');
+  const container = document.getElementById('curtainContainer');
+  const modern = document.getElementById('curtainModern');
+  const ancient = document.getElementById('curtainAncient');
+
+  if (!divider || !container) return;
+
+  let isDragging = false;
+
+  divider.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    e.preventDefault();
+    divider.style.cursor = 'col-resize';
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+
+    const rect = container.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    let percentage = (x / rect.width) * 100;
+
+    // 限制范围 20% - 80%
+    percentage = Math.max(20, Math.min(80, percentage));
+
+    curtainPosition = percentage;
+
+    // 更新分割位置
+    modern.style.flex = `0 0 ${percentage}%`;
+    ancient.style.flex = `0 0 ${100 - percentage}%`;
+    divider.style.left = `${percentage}%`;
+  });
+
+  document.addEventListener('mouseup', () => {
+    isDragging = false;
+    if (divider) divider.style.cursor = 'ew-resize';
+  });
+
+  // 触摸支持
+  divider.addEventListener('touchstart', (e) => {
+    isDragging = true;
+    e.preventDefault();
+  });
+
+  document.addEventListener('touchmove', (e) => {
+    if (!isDragging) return;
+
+    const rect = container.getBoundingClientRect();
+    const touch = e.touches[0];
+    const x = touch.clientX - rect.left;
+    let percentage = (x / rect.width) * 100;
+    percentage = Math.max(20, Math.min(80, percentage));
+
+    curtainPosition = percentage;
+    modern.style.flex = `0 0 ${percentage}%`;
+    ancient.style.flex = `0 0 ${100 - percentage}%`;
+    divider.style.left = `${percentage}%`;
+  });
+
+  document.addEventListener('touchend', () => {
+    isDragging = false;
+  });
+}
+
+// ========== MARKERS & ROUTES ==========
+function addMarkers() {
+  if (!map) return;
+
+  const locations = currentDynasty === 'northern'
+    ? NORTHERN_SONG_LOCATIONS
+    : SOUTHERN_SONG_LOCATIONS;
+
+  // 古代标记（药囊图标）
+  if (layerStates.ancient) {
+    locations.forEach(loc => {
+      try {
+        const marker = new AMap.Marker({
+          position: loc.pos,
+          title: loc.name,
+          icon: new AMap.Icon({
+            size: new AMap.Size(32, 32),
+            image: createAncientMarkerIcon(),
+            imageSize: new AMap.Size(32, 32)
+          }),
+          offset: new AMap.Pixel(-16, -16),
+          extData: { type: 'ancient', data: loc }
+        });
+
+        marker.on('click', () => showLocationInfo(loc, 'ancient'));
+        map.add(marker);
+        markers.ancient.push(marker);
+      } catch (e) {
+        console.error('添加古代标记失败:', e);
+      }
+    });
+  }
+
+  // 现代标记（圆点图标）
+  if (layerStates.modern) {
+    MODERN_LOCATIONS.forEach(loc => {
+      try {
+        const marker = new AMap.Marker({
+          position: loc.pos,
+          title: loc.name,
+          icon: new AMap.Icon({
+            size: new AMap.Size(20, 20),
+            image: createModernMarkerIcon(),
+            imageSize: new AMap.Size(20, 20)
+          }),
+          offset: new AMap.Pixel(-10, -10),
+          extData: { type: 'modern', data: loc }
+        });
+
+        marker.on('click', () => showLocationInfo(loc, 'modern'));
+        map.add(marker);
+        markers.modern.push(marker);
+
+        // 同步添加到左侧地图
+        if (compareMode === 'curtain' && mapLeft) {
+          const leftMarker = marker.clone();
+          mapLeft.add(leftMarker);
+        }
+      } catch (e) {
+        console.error('添加现代标记失败:', e);
+      }
+    });
+  }
+}
+
+function clearMarkers() {
+  if (!map) return;
+  markers.ancient.forEach(m => { try { map.remove(m); } catch(e) {} });
+  markers.modern.forEach(m => { try { map.remove(m); } catch(e) {} });
+  markers.ancient = [];
+  markers.modern = [];
+}
+
+function addRoutes() {
+  if (!map || !layerStates.routes) return;
+
+  const locations = currentDynasty === 'northern'
+    ? NORTHERN_SONG_LOCATIONS
+    : SOUTHERN_SONG_LOCATIONS;
+
+  // 绘制古今产地变迁连线
+  locations.forEach(ancient => {
+    try {
+      const modern = MODERN_LOCATIONS.find(m =>
+        ancient.herbs.some(h => m.herbs.includes(h))
+      );
+
+      if (modern && ancient.pos && modern.pos) {
+        const polyline = new AMap.Polyline({
+          path: [ancient.pos, modern.pos],
+          strokeColor: '#00d4aa',
+          strokeWeight: 2,
+          strokeStyle: 'dashed',
+          strokeDasharray: [8, 4],
+          extData: { ancient: ancient.name, modern: modern.name }
+        });
+
+        polyline.on('click', () => {
+          showToast(`${ancient.name} → ${modern.name}`, 'info');
+        });
+
+        map.add(polyline);
+        polylines.push(polyline);
+      }
+    } catch (e) {
+      console.error('绘制连线失败:', e);
+    }
+  });
+}
+
+function clearRoutes() {
+  if (!map) return;
+  polylines.forEach(p => { try { map.remove(p); } catch(e) {} });
+  polylines = [];
+}
+
+// ========== ICONS ==========
+function createAncientMarkerIcon() {
+  // 创建药囊SVG图标
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+    <defs>
+      <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+        <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <circle cx="16" cy="16" r="14" fill="#c9b037" filter="url(#glow)"/>
+    <circle cx="16" cy="16" r="10" fill="#1a1e28"/>
+    <text x="16" y="20" text-anchor="middle" fill="#c9b037" font-size="12" font-family="Noto Serif SC">药</text>
+  </svg>`;
+  return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+}
+
+function createModernMarkerIcon() {
+  // 创建现代圆点SVG图标
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+    <defs>
+      <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
+        <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <circle cx="10" cy="10" r="8" fill="#00d4aa" filter="url(#glow)"/>
+    <circle cx="10" cy="10" r="4" fill="#fff"/>
+  </svg>`;
+  return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+}
+
+// ========== INFO PANEL ==========
+function showLocationInfo(loc, type) {
+  const panel = document.getElementById('infoPanel');
+
+  document.getElementById('infoTitle').textContent = type === 'ancient' ? loc.name : loc.name;
+  document.getElementById('infoSubtitle').textContent = type === 'ancient' ? `今${loc.modern}` : '现代道地药材产区';
+
+  // 置信度
+  const confidenceEl = document.getElementById('infoConfidence');
+  if (type === 'ancient' && loc.confidence) {
+    confidenceEl.style.display = 'inline-flex';
+    confidenceEl.className = `confidence-badge ${loc.confidence}`;
+    confidenceEl.innerHTML = `<span>${loc.confidence === 'high' ? '✓' : loc.confidence === 'medium' ? '∼' : '?'}</span>
+      ${loc.confidence === 'high' ? '高' : loc.confidence === 'medium' ? '中' : '低'}置信度定位`;
+  } else {
+    confidenceEl.style.display = 'none';
+  }
+
+  // 坐标
+  document.getElementById('coordLng').textContent = loc.pos[0].toFixed(2) + '°E';
+  document.getElementById('coordLat').textContent = loc.pos[1].toFixed(2) + '°N';
+
+  // 时间轴
+  const timelineEl = document.getElementById('infoTimeline');
+  if (loc.timeline) {
+    timelineEl.innerHTML = loc.timeline.map(t => `
+      <div class="timeline-item">
+        <div class="timeline-era">${t.era}</div>
+        <div class="timeline-text">${t.text}</div>
+      </div>
+    `).join('');
+  }
+
+  // 相关药材
+  const herbsEl = document.getElementById('infoHerbs');
+  if (loc.herbs && loc.herbs.length > 0) {
+    herbsEl.innerHTML = `
+      <div class="herbs-title">📚 相关药物（${loc.herbs.length}）</div>
+      <div class="herb-tags">
+        ${loc.herbs.map(h => `<span class="herb-tag" onclick="location.href='duizhao-detail.html?herb=${h}'">${h}</span>`).join('')}
+      </div>
+    `;
+  }
+
+  panel.classList.add('show');
+
+  // 飞行动画
+  if (map && loc.pos) {
+    map.setZoomAndCenter(8, loc.pos, true, 1000);
+  }
+}
+
+function closeInfoPanel() {
+  document.getElementById('infoPanel').classList.remove('show');
+}
+
+// ========== EVENT LISTENERS ==========
+function setupEventListeners() {
+  // 透明度滑块
+  const opacitySlider = document.getElementById('opacitySlider');
+  const sliderValue = document.getElementById('sliderValue');
+
+  opacitySlider.addEventListener('input', (e) => {
+    const value = e.target.value;
+    const opacity = value / 100;
+
+    // 控制 DOM 图片叠加层的透明度（主要方式）
+    const img = document.getElementById('ancientMapImg');
+    if (img) {
+      img.style.opacity = opacity;
+    }
+
+    // 尝试控制高德地图 ImageLayer 的透明度（如果支持）
+    if (ancientImageOverlay) {
+      try {
+        if (typeof ancientImageOverlay.setOpacity === 'function') {
+          ancientImageOverlay.setOpacity(opacity);
+        } else if (ancientImageOverlay.setOptions) {
+          // 通过 setOptions 更新透明度
+          ancientImageOverlay.setOptions({ opacity: opacity });
+        }
+      } catch (e) {
+        // 忽略错误，DOM 方式已经足够
+      }
+    }
+
+    document.getElementById('labelModern').classList.toggle('active', value < 30);
+    document.getElementById('labelAncient').classList.toggle('active', value > 50);
+    sliderValue.textContent = `古地图透明度 ${value}%`;
+  });
+
+  // 图层切换
+  document.querySelectorAll('.layer-toggle').forEach(toggle => {
+    toggle.addEventListener('click', function() {
+      this.classList.toggle('active');
+      const layer = this.dataset.layer;
+      const isActive = this.classList.contains('active');
+      layerStates[layer] = isActive;
+
+      if (layer === 'heatmap') {
+        toggleHeatmap(isActive);
+      } else {
+        clearMarkers();
+        clearRoutes();
+        addMarkers();
+        addRoutes();
+      }
+    });
+  });
+
+  // 卷帘拖动
+  setupCurtainDrag();
+
+  // 缩放控制
+  document.getElementById('zoomIn').addEventListener('click', () => {
+    map.zoomIn();
+  });
+  document.getElementById('zoomOut').addEventListener('click', () => {
+    map.zoomOut();
+  });
+
+  // 搜索
+  setupSearch();
+}
+
+// ========== SEARCH ==========
+function setupSearch() {
+  const searchInput = document.getElementById('searchInput');
+  const suggestions = document.getElementById('searchSuggestions');
+
+  searchInput.addEventListener('input', (e) => {
+    const query = e.target.value.trim().toLowerCase();
+    if (query.length === 0) {
+      suggestions.classList.remove('show');
+      return;
+    }
+
+    const locations = currentDynasty === 'northern'
+      ? NORTHERN_SONG_LOCATIONS
+      : SOUTHERN_SONG_LOCATIONS;
+
+    const results = locations.filter(loc =>
+      loc.name.includes(query) ||
+      loc.modern.includes(query) ||
+      loc.herbs.some(h => h.includes(query))
+    );
+
+    if (results.length > 0) {
+      suggestions.innerHTML = results.map(loc => `
+        <div class="suggestion-item" onclick="selectLocation('${loc.id}')">
+          <div class="suggestion-icon">📍</div>
+          <div class="suggestion-info">
+            <div class="suggestion-name">${loc.name}</div>
+            <div class="suggestion-desc">${loc.modern} · ${loc.herbs.join('、')}</div>
+          </div>
+        </div>
+      `).join('');
+      suggestions.classList.add('show');
+    } else {
+      suggestions.innerHTML = '<div style="padding:12px;color:var(--txt3);text-align:center">未找到相关结果</div>';
+      suggestions.classList.add('show');
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-panel')) {
+      suggestions.classList.remove('show');
+    }
+  });
+}
+
+function selectLocation(id) {
+  const locations = currentDynasty === 'northern'
+    ? NORTHERN_SONG_LOCATIONS
+    : SOUTHERN_SONG_LOCATIONS;
+
+  const loc = locations.find(l => l.id === id);
+  if (loc) {
+    document.getElementById('searchInput').value = loc.name;
+    document.getElementById('searchSuggestions').classList.remove('show');
+    showLocationInfo(loc, 'ancient');
+  }
+}
+
+// ========== UTILITIES ==========
+
+// ========== BASEMAP SWITCHING ==========
+let currentBasemap = 'whitesmoke';
+
+function switchBasemap(basemap) {
+  currentBasemap = basemap;
+
+  // 更新按钮样式
+  document.querySelectorAll('.basemap-btn').forEach(btn => {
+    const isActive = btn.dataset.basemap === basemap;
+    btn.classList.toggle('active', isActive);
+    btn.style.background = isActive ? 'rgba(0,212,170,0.1)' : 'transparent';
+    btn.style.borderColor = isActive ? 'var(--cyan)' : 'transparent';
+    btn.style.color = isActive ? 'var(--cyan)' : 'var(--txt2)';
+  });
+
+  // 切换地图样式
+  if (map) {
+    switch(basemap) {
+      case 'satellite':
+        map.setMapStyle('amap://styles/satellite');
+        if (mapLeft) mapLeft.setMapStyle('amap://styles/satellite');
+        showToast('已切换至卫星图', 'success');
+        break;
+      case 'normal':
+        map.setMapStyle('amap://styles/normal');
+        if (mapLeft) mapLeft.setMapStyle('amap://styles/normal');
+        showToast('已切换至道路图', 'success');
+        break;
+      case 'whitesmoke':
+      default:
+        map.setMapStyle('amap://styles/whitesmoke');
+        if (mapLeft) mapLeft.setMapStyle('amap://styles/whitesmoke');
+        showToast('已切换至水墨风格', 'success');
+        break;
+    }
+  }
+}
+
+// ========== FULLSCREEN MODE ==========
+let isFullscreen = false;
+
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().then(() => {
+      isFullscreen = true;
+      document.body.classList.add('fullscreen');
+      showToast('已进入全屏模式，按ESC退出', 'success');
+    }).catch(err => {
+      console.error('全屏模式失败:', err);
+    });
+  } else {
+    document.exitFullscreen().then(() => {
+      isFullscreen = false;
+      document.body.classList.remove('fullscreen');
+    });
+  }
+}
+
+// 监听全屏变化
+document.addEventListener('fullscreenchange', () => {
+  if (!document.fullscreenElement) {
+    isFullscreen = false;
+    document.body.classList.remove('fullscreen');
+  }
+});
+
+// ========== HEATMAP ==========
+function toggleHeatmap(show) {
+  if (!map) return;
+
+  if (show) {
+    // 加载热力图数据
+    const locations = currentDynasty === 'northern'
+      ? NORTHERN_SONG_LOCATIONS
+      : SOUTHERN_SONG_LOCATIONS;
+
+    // 构建热力图数据点
+    const heatmapData = locations.map(loc => ({
+      lng: loc.pos[0],
+      lat: loc.pos[1],
+      count: loc.herbs.length * 10 // 根据药材数量加权
+    }));
+
+    // 使用高德热力图插件
+    if (typeof AMap.HeatMap !== 'undefined') {
+      if (!heatmapLayer) {
+        heatmapLayer = new AMap.HeatMap(map, {
+          radius: 25,
+          opacity: [0, 0.8],
+          gradient: {
+            0.5: 'blue',
+            0.65: 'rgb(117,211,248)',
+            0.7: 'rgb(0, 255, 0)',
+            0.9: '#ffea00',
+            1.0: 'red'
+          }
+        });
+      }
+      heatmapLayer.setDataSet({ data: heatmapData, max: 30 });
+      heatmapLayer.show();
+      showToast('热力图已开启', 'success');
+    } else {
+      // 如果没有热力图插件，使用圆形覆盖物模拟
+      showSimpleHeatmap(heatmapData);
+    }
+  } else {
+    if (heatmapLayer) {
+      heatmapLayer.hide();
+    }
+    hideSimpleHeatmap();
+  }
+}
+
+// 简化版热力图（使用圆形覆盖物）
+let simpleHeatmapCircles = [];
+
+function showSimpleHeatmap(data) {
+  hideSimpleHeatmap();
+
+  data.forEach(point => {
+    const circle = new AMap.Circle({
+      center: [point.lng, point.lat],
+      radius: 50000 + point.count * 5000, // 半径根据权重调整
+      fillColor: '#ff4d4f',
+      fillOpacity: 0.3,
+      strokeColor: '#ff7875',
+      strokeWeight: 1,
+      strokeOpacity: 0.5
+    });
+    map.add(circle);
+    simpleHeatmapCircles.push(circle);
+  });
+}
+
+function hideSimpleHeatmap() {
+  simpleHeatmapCircles.forEach(circle => map.remove(circle));
+  simpleHeatmapCircles = [];
+}
+
+// ========== DRUG-SPECIFIC HEATMAP ==========
+function showDrugHeatmap(drugName) {
+  if (!map) return;
+
+  // 查找该药物的所有产地
+  const locations = currentDynasty === 'northern'
+    ? NORTHERN_SONG_LOCATIONS
+    : SOUTHERN_SONG_LOCATIONS;
+
+  const drugLocations = locations.filter(loc =>
+    loc.herbs.some(h => h.includes(drugName))
+  );
+
+  if (drugLocations.length === 0) {
+    showToast(`未找到${drugName}的产地数据`, 'error');
+    return;
+  }
+
+  // 构建热力图数据
+  const heatmapData = drugLocations.map(loc => ({
+    lng: loc.pos[0],
+    lat: loc.pos[1],
+    count: 20
+  }));
+
+  // 高亮显示这些产地
+  drugLocations.forEach(loc => {
+    const marker = new AMap.CircleMarker({
+      center: loc.pos,
+      radius: 15,
+      fillColor: '#ff4d4f',
+      fillOpacity: 0.8,
+      strokeColor: '#fff',
+      strokeWeight: 2
+    });
+    map.add(marker);
+
+    // 3秒后移除高亮
+    setTimeout(() => map.remove(marker), 3000);
+  });
+
+  // 自适应视野
+  map.setFitView();
+
+  showToast(`${drugName}产地分布已高亮`, 'success');
+}
+
+function resetView() {
+  if (!map) {
+    showToast('地图尚未加载完成', 'error');
+    return;
+  }
+  map.setZoomAndCenter(5, [112.0, 35.0]);
+  closeInfoPanel();
+  showToast('视图已重置', 'success');
+}
+
+function showToast(message, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.remove();
+  }, 3000);
+}
+
+// ========== User Menu ==========
+function initUserMenu() {
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
+  const loginBtn = document.getElementById('loginBtn');
+  const userAvatar = document.getElementById('userAvatar');
+  const navUserAvatar = document.getElementById('navUserAvatar');
+
+  if (isLoggedIn === 'true') {
+    const user = JSON.parse(localStorage.getItem('benCaoUser') || '{}');
+    if (loginBtn) loginBtn.style.display = 'none';
+    if (userAvatar) {
+      userAvatar.style.display = 'flex';
+      if (navUserAvatar) navUserAvatar.src = user.avatar || '';
+    }
+  } else {
+    if (loginBtn) loginBtn.style.display = 'block';
+    if (userAvatar) userAvatar.style.display = 'none';
+  }
+}
+
+function goToProfile() { window.location.href = 'profile.html'; }
+function goToLogin() { window.location.href = 'login.html'; }
+
+function toggleUserDropdown() {
+  const dd = document.getElementById('userDropdown');
+  if (dd) dd.classList.toggle('show');
+}
+
+function logout() {
+  localStorage.removeItem('isLoggedIn');
+  localStorage.removeItem('benCaoUser');
+  window.location.reload();
+}
+
+// 点击外部关闭下拉
+window.addEventListener('click', function(e) {
+  const avatar = document.getElementById('userAvatar');
+  const dd = document.getElementById('userDropdown');
+  if (dd && avatar && !avatar.contains(e.target) && !dd.contains(e.target)) {
+    dd.classList.remove('show');
+  }
+});
+
+// 页面加载时初始化用户菜单
+initUserMenu();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "name": "中药知识图谱",
+  "version": 2,
+  "routes": [
+    { "src": "/", "dest": "/前台.html" },
+    { "src": "/index.html", "dest": "/前台.html" },
+    { "src": "/login", "dest": "/login.html" },
+    { "src": "/profile", "dest": "/profile.html" },
+    { "src": "/ditu", "dest": "/ditu2.html" },
+    { "src": "/duizhao", "dest": "/duizhao.html" },
+    { "src": "/duizhao-list", "dest": "/duizhao-list.html" },
+    { "src": "/duizhao-detail", "dest": "/duizhao-detail.html" },
+    { "src": "/wanxiang", "dest": "/wanxiang.html" },
+    { "src": "/wenwu", "dest": "/wenwu.html" },
+    { "src": "/admin", "dest": "/后台系统.html" },
+    { "handle": "filesystem" }
+  ],
+  "github": {
+    "silent": true
+  }
+}

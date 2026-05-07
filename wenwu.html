@@ -1,0 +1,1098 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文物佐证 · 宋代本草图证 - 本草万象</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ========== DESIGN SYSTEM ========== */
+:root {
+  --bg-deep: #0F1115; --bg-surface: #141820; --bg-card: #1A1E28; --bg-card-hover: #222838;
+  --cyan: #00FFC2; --cyan-dim: #00CC9A; --cyan-glow: rgba(0,255,194,0.15); --cyan-border: rgba(0,255,194,0.12);
+  --red: #E63946; --red-glow: rgba(230,57,70,0.2);
+  --gold: #E6D8AD; --gold2: #C4B896; --gold3: #8A7E68;
+  --txt: #E6D8AD; --txt2: #A09888; --txt3: #6B6560;
+  --glass: rgba(15,17,21,0.6); --glass-border: rgba(0,255,194,0.12);
+  --serif: 'Noto Serif SC','SimSun',serif; --sans: 'Noto Sans SC','Microsoft YaHei',sans-serif; --mono: 'Source Code Pro','Consolas',monospace;
+  --r-sm:6px; --r-md:12px; --r-lg:20px; --r-xl:28px;
+  --ease: cubic-bezier(0.16,1,0.3,1); --dur: 0.3s;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:var(--sans);background:var(--bg-deep);color:var(--txt);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}button{cursor:pointer;border:none;background:none;font-family:inherit;color:inherit}
+input{font-family:inherit}ul,ol{list-style:none}img{max-width:100%;display:block}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(0,255,194,0.2);border-radius:3px}
+
+/* ========== NAV ========== */
+.nav-bar{position:fixed;top:0;left:0;right:0;z-index:1000;height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;background:rgba(15,17,21,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--glass-border);transition:var(--dur) var(--ease)}
+.nav-logo{display:flex;align-items:center;gap:12px;font-family:var(--serif);font-size:20px;font-weight:700;color:var(--gold)}
+.nav-logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--cyan),var(--red));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;font-weight:900;font-family:var(--serif)}
+.nav-links{display:flex;gap:4px}
+.nav-link{padding:8px 18px;border-radius:var(--r-sm);font-size:14px;font-weight:500;color:var(--txt2);transition:var(--dur) var(--ease);position:relative}
+.nav-link:hover,.nav-link.active{color:var(--cyan);background:rgba(0,255,194,0.06)}
+.nav-link.active::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:20px;height:2px;background:var(--cyan);border-radius:1px;box-shadow:0 0 8px var(--cyan)}
+.nav-actions{display:flex;gap:12px}
+.nav-btn{padding:8px 16px;border-radius:var(--r-sm);font-size:13px;font-weight:500;color:var(--txt2);border:1px solid var(--glass-border);transition:var(--dur) var(--ease)}
+.nav-btn:hover{color:var(--cyan);border-color:rgba(0,255,194,0.3)}
+.nav-btn.primary{background:rgba(0,255,194,0.1);color:var(--cyan);border-color:var(--cyan-border)}
+
+/* User Menu */
+.user-menu{position:relative;display:flex;align-items:center;gap:16px}
+.user-avatar{width:42px;height:42px;border-radius:50%;border:2px solid var(--cyan-border);cursor:pointer;overflow:hidden;transition:var(--dur) var(--ease)}
+.user-avatar:hover{border-color:var(--cyan);box-shadow:0 0 20px rgba(0,255,194,0.4)}
+.user-avatar img{width:100%;height:100%;object-fit:cover}
+.login-btn{padding:10px 24px;background:rgba(0,255,194,0.1);border:1px solid var(--cyan-border);border-radius:6px;color:var(--cyan);font-size:14px;cursor:pointer;transition:var(--dur) var(--ease);font-family:var(--serif);letter-spacing:1px}
+.login-btn:hover{background:rgba(0,255,194,0.2);border-color:var(--cyan);box-shadow:0 0 15px rgba(0,255,194,0.3)}
+.user-dropdown{position:absolute;top:55px;right:0;width:180px;background:rgba(20,24,32,0.95);border:1px solid var(--glass-border);border-radius:8px;backdrop-filter:blur(10px);opacity:0;visibility:hidden;transform:translateY(-10px);transition:var(--dur) var(--ease);z-index:200}
+.user-dropdown.show{opacity:1;visibility:visible;transform:translateY(0)}
+.user-dropdown-item{padding:12px 20px;font-size:14px;color:rgba(255,255,255,0.8);cursor:pointer;transition:var(--dur);display:flex;align-items:center;gap:10px}
+.user-dropdown-item:first-child{border-radius:8px 8px 0 0}
+.user-dropdown-item:last-child{border-radius:0 0 8px 8px}
+.user-dropdown-item:hover{background:rgba(0,255,194,0.1);color:var(--cyan)}
+.user-dropdown-divider{height:1px;background:var(--glass-border);margin:4px 0}
+
+/* ========== MAIN LAYOUT ========== */
+.main-container{padding-top:70px;min-height:100vh}
+
+/* ========== CATEGORY NAV ========== */
+.category-nav{display:flex;align-items:center;justify-content:center;gap:8px;padding:20px 40px;border-bottom:1px solid var(--glass-border);background:rgba(15,17,21,0.5)}
+.category-btn{padding:10px 24px;border-radius:var(--r-md);font-size:14px;color:var(--txt2);border:1px solid var(--glass-border);background:transparent;transition:var(--dur);cursor:pointer}
+.category-btn:hover{color:var(--txt);border-color:rgba(0,255,194,0.2)}
+.category-btn.active{background:rgba(0,255,194,0.1);color:var(--cyan);border-color:var(--cyan-border)}
+
+/* ========== FILTER BAR ========== */
+.filter-bar{display:flex;align-items:center;gap:16px;padding:16px 40px;border-bottom:1px solid var(--glass-border);background:rgba(15,17,21,0.3)}
+.filter-group{display:flex;align-items:center;gap:8px}
+.filter-label{font-size:12px;color:var(--txt3)}
+.filter-select{padding:6px 28px 6px 12px;border-radius:var(--r-sm);font-size:13px;color:var(--txt2);border:1px solid var(--glass-border);background:var(--bg-card);outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B6560' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
+.filter-select:focus{border-color:rgba(0,255,194,0.3)}
+
+/* ========== CONTENT AREA ========== */
+.content-area{padding:24px 40px}
+
+/* ========== WATERFALL GRID ========== */
+.waterfall-grid{columns:4;column-gap:20px}
+@media(max-width:1400px){.waterfall-grid{columns:3}}
+@media(max-width:1024px){.waterfall-grid{columns:2}}
+@media(max-width:640px){.waterfall-grid{columns:1}}
+
+/* Artifact Card */
+.artifact-card{break-inside:avoid;margin-bottom:20px;border-radius:var(--r-lg);background:var(--bg-card);border:1px solid var(--glass-border);overflow:hidden;cursor:pointer;transition:var(--dur)}
+.artifact-card:hover{border-color:rgba(0,255,194,0.3);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.4)}
+.artifact-img{width:100%;aspect-ratio:4/3;background:var(--bg-surface);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+.artifact-img svg{width:100%;height:100%}
+.artifact-img-placeholder{color:var(--txt3);text-align:center;padding:20px}
+.artifact-img-placeholder-icon{font-size:48px;margin-bottom:12px;opacity:0.5}
+.artifact-type{position:absolute;top:12px;left:12px;font-size:10px;padding:4px 10px;border-radius:var(--r-sm);background:rgba(15,17,21,0.9);border:1px solid var(--cyan-border);color:var(--cyan);font-weight:500}
+.artifact-body{padding:16px}
+.artifact-name{font-family:var(--serif);font-size:16px;font-weight:600;color:var(--txt);margin-bottom:6px}
+.artifact-meta{font-size:12px;color:var(--txt3);margin-bottom:10px;display:flex;gap:12px}
+.artifact-desc{font-size:13px;color:var(--txt2);line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.artifact-tags{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.artifact-tag{font-size:10px;padding:3px 10px;border-radius:10px;background:rgba(0,255,194,0.06);color:var(--cyan);border:1px solid rgba(0,255,194,0.1)}
+
+/* ========== MODAL ========== */
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:2000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px);padding:40px}
+.modal-overlay.show{display:flex}
+.modal{width:100%;max-width:1200px;max-height:90vh;background:var(--bg-surface);border:1px solid var(--glass-border);border-radius:var(--r-xl);overflow:hidden;display:flex;animation:modalIn 0.3s var(--ease)}
+@keyframes modalIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+.modal-img{width:55%;background:var(--bg-card);display:flex;align-items:center;justify-content:center;position:relative;min-height:500px;overflow:hidden}
+.modal-img svg{width:90%;height:90%;max-height:600px}
+.modal-img-controls{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:12px}
+.modal-img-btn{padding:10px 20px;border-radius:var(--r-md);font-size:13px;color:var(--txt);background:rgba(15,17,21,0.9);border:1px solid var(--glass-border);cursor:pointer;transition:var(--dur)}
+.modal-img-btn:hover{border-color:rgba(0,255,194,0.3);color:var(--cyan)}
+.modal-info{width:45%;padding:32px;overflow-y:auto;max-height:90vh}
+.modal-close{position:absolute;top:20px;right:20px;width:40px;height:40px;border-radius:50%;background:var(--bg-card);border:1px solid var(--glass-border);color:var(--txt2);font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:var(--dur);z-index:10}
+.modal-close:hover{background:var(--bg-card-hover);color:var(--txt);border-color:rgba(0,255,194,0.3)}
+
+/* Modal Header */
+.modal-header{margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--glass-border)}
+.modal-title{font-family:var(--serif);font-size:28px;font-weight:700;color:var(--gold);margin-bottom:8px}
+.modal-subtitle{font-size:14px;color:var(--txt3);display:flex;gap:16px;flex-wrap:wrap}
+.modal-subtitle-item{display:flex;align-items:center;gap:6px}
+
+/* Modal Sections */
+.modal-section{margin-bottom:24px}
+.modal-section-title{font-size:13px;font-weight:600;color:var(--cyan);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.modal-section-title::before{content:'';width:3px;height:12px;background:var(--cyan);border-radius:2px}
+.modal-section-body{font-size:14px;color:var(--txt2);line-height:1.8}
+.modal-section-body p{margin-bottom:12px}
+
+/* Meta Grid */
+.meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
+.meta-item{background:var(--bg-card);border-radius:var(--r-sm);padding:12px 16px;border:1px solid var(--glass-border)}
+.meta-label{font-size:11px;color:var(--txt3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.meta-value{font-size:14px;color:var(--txt)}
+
+/* Herb Evidence */
+.herb-evidence-list{display:flex;flex-direction:column;gap:12px}
+.herb-evidence-item{display:flex;gap:12px;padding:12px;background:var(--bg-card);border-radius:var(--r-md);border:1px solid var(--glass-border);transition:var(--dur);cursor:pointer}
+.herb-evidence-item:hover{border-color:rgba(0,255,194,0.2)}
+.herb-evidence-icon{width:40px;height:40px;border-radius:var(--r-md);background:rgba(0,255,194,0.1);display:flex;align-items:center;justify-content:center;font-size:20px}
+.herb-evidence-info{flex:1}
+.herb-evidence-name{font-size:14px;font-weight:600;color:var(--txt);margin-bottom:2px}
+.herb-evidence-source{font-size:12px;color:var(--txt3);margin-bottom:6px}
+.herb-evidence-desc{font-size:12px;color:var(--txt2);line-height:1.6}
+.herb-evidence-btn{padding:6px 12px;border-radius:var(--r-sm);font-size:11px;color:var(--cyan);border:1px solid var(--cyan-border);background:rgba(0,255,194,0.05);white-space:nowrap;align-self:center;transition:var(--dur)}
+.herb-evidence-btn:hover{background:rgba(0,255,194,0.1)}
+
+/* Related Artifacts */
+.related-section{margin-top:24px;padding-top:24px;border-top:1px solid var(--glass-border)}
+.related-title{font-size:13px;font-weight:600;color:var(--txt);margin-bottom:16px}
+.related-list{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px}
+.related-item{flex-shrink:0;width:120px;cursor:pointer;transition:var(--dur)}
+.related-item:hover{transform:translateY(-2px)}
+.related-item-img{width:120px;height:90px;border-radius:var(--r-md);background:var(--bg-card);border:1px solid var(--glass-border);display:flex;align-items:center;justify-content:center;margin-bottom:8px;overflow:hidden}
+.related-item-img svg{width:80%;height:80%}
+.related-item-name{font-size:12px;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Painting Annotation */
+.painting-annotation{cursor:pointer;transition:all 0.3s var(--ease);fill:rgba(0,255,194,0.1);stroke:var(--cyan);stroke-width:1;stroke-dasharray:3,3}
+.painting-annotation:hover{fill:rgba(0,255,194,0.2);stroke-width:2}
+.painting-annotation.active{fill:rgba(0,255,194,0.25);stroke-width:2;stroke-dasharray:none}
+.annotation-popup{position:absolute;background:var(--bg-card);border:1px solid var(--cyan);border-radius:var(--r-sm);padding:10px 14px;font-size:12px;color:var(--txt);pointer-events:none;z-index:100;opacity:0;transition:opacity 0.3s;max-width:200px}
+.annotation-popup.show{opacity:1}
+.annotation-popup-title{font-weight:600;color:var(--cyan);margin-bottom:4px}
+
+/* Load More */
+.load-more{display:flex;justify-content:center;padding:40px}
+.load-more-btn{padding:12px 40px;border-radius:var(--r-xl);font-size:14px;color:var(--txt2);border:1px solid var(--glass-border);background:transparent;cursor:pointer;transition:var(--dur)}
+.load-more-btn:hover{color:var(--cyan);border-color:rgba(0,255,194,0.3);background:rgba(0,255,194,0.05)}
+
+/* ========== RESPONSIVE ========== */
+@media(max-width:1024px){.modal{flex-direction:column}.modal-img{width:100%;min-height:300px}.modal-info{width:100%;max-height:50vh}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav-bar">
+  <div style="display:flex;align-items:center">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">草</div>
+      <span>本草万象</span>
+    </a>
+  </div>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">首页</a>
+    <a href="wanxiang.html" class="nav-link">万象阅览</a>
+    <a href="duizhao-list.html" class="nav-link">古今对照</a>
+    <a href="ditu2.html" class="nav-link">时空地图</a>
+    <a href="wenwu.html" class="nav-link active">文物佐证</a>
+  </div>
+  <div class="user-menu" id="userMenu">
+    <button class="login-btn" id="loginBtn" onclick="goToLogin()">登录 / 注册</button>
+    <div class="user-avatar" id="userAvatar" style="display:none;" onclick="toggleUserDropdown()">
+      <img src="" alt="头像" id="navUserAvatar">
+    </div>
+    <div class="user-dropdown" id="userDropdown">
+      <div class="user-dropdown-item" onclick="goToProfile()">👤 个人中心</div>
+      <div class="user-dropdown-item" onclick="goToSettings()">⚙️ 账号设置</div>
+      <div class="user-dropdown-divider"></div>
+      <div class="user-dropdown-item" onclick="logout()">🚪 退出登录</div>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Container -->
+<div class="main-container">
+
+  <!-- Category Navigation -->
+  <div class="category-nav">
+    <button class="category-btn active" data-category="all">全部</button>
+    <button class="category-btn" data-category="painting">宋代药图</button>
+    <button class="category-btn" data-category="art">辅证宋画</button>
+    <button class="category-btn" data-category="excavation">出土药物</button>
+    <button class="category-btn" data-category="utensil">宋代药具</button>
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <div class="filter-group">
+      <span class="filter-label">朝代</span>
+      <select class="filter-select">
+        <option>全部</option>
+        <option>北宋</option>
+        <option>南宋</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">关联药物</span>
+      <select class="filter-select">
+        <option>全部药物</option>
+        <option>人参</option>
+        <option>黄芪</option>
+        <option>当归</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">出土地</span>
+      <select class="filter-select">
+        <option>全部地区</option>
+        <option>河南</option>
+        <option>陕西</option>
+        <option>浙江</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Content Area -->
+  <div class="content-area">
+    <div class="waterfall-grid">
+      <!-- Artifact Card 1 -->
+      <div class="artifact-card" onclick="openModal('painting1')">
+        <div class="artifact-img">
+          <span class="artifact-type">宋代药图</span>
+          <div class="artifact-img-placeholder">
+            <div class="artifact-img-placeholder-icon">🖼️</div>
+            <div>人参图</div>
+          </div>
+        </div>
+        <div class="artifact-body">
+          <div class="artifact-name">人参图</div>
+          <div class="artifact-meta">
+            <span>北宋 · 绢本设色</span>
+            <span>故宫博物院</span>
+          </div>
+          <div class="artifact-desc">《本草图经》原图，绘有人参全株形态，根如人形，叶为掌状复叶，花小而黄。</div>
+          <div class="artifact-tags">
+            <span class="artifact-tag">人参</span>
+            <span class="artifact-tag">草部</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Artifact Card 2 -->
+      <div class="artifact-card" onclick="openModal('painting2')">
+        <div class="artifact-img">
+          <span class="artifact-type" style="color:var(--gold);border-color:rgba(230,216,173,0.3)">辅证宋画</span>
+          <div class="artifact-img-placeholder">
+            <div class="artifact-img-placeholder-icon">🎨</div>
+            <div>写生珍禽图</div>
+          </div>
+        </div>
+        <div class="artifact-body">
+          <div class="artifact-name">写生珍禽图卷（局部）</div>
+          <div class="artifact-meta">
+            <span>北宋 · 政和年间</span>
+            <span>故宫博物院</span>
+          </div>
+          <div class="artifact-desc">宋徽宗赵佶所作，画中绘有多种珍禽与本草植物，可佐证宋代对植物的观察与描绘。</div>
+          <div class="artifact-tags">
+            <span class="artifact-tag">宋画</span>
+            <span class="artifact-tag">花鸟</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Artifact Card 3 -->
+      <div class="artifact-card" onclick="openModal('excavation1')">
+        <div class="artifact-img">
+          <span class="artifact-type" style="color:var(--red);border-color:rgba(230,57,70,0.3)">出土药物</span>
+          <div class="artifact-img-placeholder">
+            <div class="artifact-img-placeholder-icon">🏺</div>
+            <div>北宋药物遗存</div>
+          </div>
+        </div>
+        <div class="artifact-body">
+          <div class="artifact-name">北宋墓葬出土药物</div>
+          <div class="artifact-meta">
+            <span>北宋 · 元祐年间</span>
+            <span>洛阳考古所</span>
+          </div>
+          <div class="artifact-desc">河南洛阳北宋墓葬出土药物遗存，经鉴定含有人参、茯苓等药材成分，为研究宋代用药提供实物证据。</div>
+          <div class="artifact-tags">
+            <span class="artifact-tag">出土</span>
+            <span class="artifact-tag">人参</span>
+            <span class="artifact-tag">茯苓</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Artifact Card 4 -->
+      <div class="artifact-card" onclick="openModal('utensil1')">
+        <div class="artifact-img">
+          <span class="artifact-type">宋代药具</span>
+          <div class="artifact-img-placeholder">
+            <div class="artifact-img-placeholder-icon">⚱️</div>
+            <div>青瓷药瓶</div>
+          </div>
+        </div>
+        <div class="artifact-body">
+          <div class="artifact-name">越窑青瓷药瓶</div>
+          <div class="artifact-meta">
+            <span>北宋 · 青瓷</span>
+            <span>浙江省博物馆</span>
+          </div>
+          <div class="artifact-desc">越窑青瓷药瓶，瓶身刻有"药"字铭文，为宋代医家储药之用，形制小巧精致。</div>
+          <div class="artifact-tags">
+            <span class="artifact-tag">药具</span>
+            <span class="artifact-tag">青瓷</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Artifact Card 5 -->
+      <div class="artifact-card">
+        <div class="artifact-img">
+          <span class="artifact-type">宋代药图</span>
+          <div class="artifact-img-placeholder">
+            <div class="artifact-img-placeholder-icon">🖼️</div>
+            <div>黄芪图</div>
+          </div>
+        </div>
+        <div class="artifact-body">
+          <div class="artifact-name">黄芪图</div>
+          <div class="artifact-meta">
+            <span>北宋 · 纸本墨笔</span>
+            <span>国家图书馆</span>
+          </div>
+          <div class="artifact-desc">《本草图经》黄芪原图，绘有根、茎、叶、花全株，根茎粗壮，叶片对生。</div>
+          <div class="artifact-tags">
+            <span class="artifact-tag">黄芪</span>
+            <span class="artifact-tag">草部</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Artifact Card 6 -->
+      <div class="artifact-card">
+        <div class="artifact-img">
+          <span class="artifact-type" style="color:var(--gold);border-color:rgba(230,216,173,0.3)">辅证宋画</span>
+          <div class="artifact-img-placeholder">
+            <div class="artifact-img-placeholder-icon">🎨</div>
+            <div>果熟来禽图</div>
+          </div>
+        </div>
+        <div class="artifact-body">
+          <div class="artifact-name">果熟来禽图</div>
+          <div class="artifact-meta">
+            <span>南宋 · 林椿</span>
+            <span>故宫博物院</span>
+          </div>
+          <div class="artifact-desc">南宋画家林椿所作，绘有林檎果实与小鸟，可佐证宋代对果类本草的记录。</div>
+          <div class="artifact-tags">
+            <span class="artifact-tag">林檎</span>
+            <span class="artifact-tag">果部</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Artifact Card 7 -->
+      <div class="artifact-card">
+        <div class="artifact-img">
+          <span class="artifact-type">宋代药具</span>
+          <div class="artifact-img-placeholder">
+            <div class="artifact-img-placeholder-icon">⚱️</div>
+            <div>铜制药碾</div>
+          </div>
+        </div>
+        <div class="artifact-body">
+          <div class="artifact-name">铜制药碾</div>
+          <div class="artifact-meta">
+            <span>北宋 · 铜器</span>
+            <span>上海博物馆</span>
+          </div>
+          <div class="artifact-desc">宋代医家研磨药材所用器具，由碾槽与碾轮组成，用于将药材研磨成粉。</div>
+          <div class="artifact-tags">
+            <span class="artifact-tag">药具</span>
+            <span class="artifact-tag">铜器</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Artifact Card 8 -->
+      <div class="artifact-card">
+        <div class="artifact-img">
+          <span class="artifact-type" style="color:var(--red);border-color:rgba(230,57,70,0.3)">出土药物</span>
+          <div class="artifact-img-placeholder">
+            <div class="artifact-img-placeholder-icon">🏺</div>
+            <div>南宋药包</div>
+          </div>
+        </div>
+        <div class="artifact-body">
+          <div class="artifact-name">南宋墓葬出土药包</div>
+          <div class="artifact-meta">
+            <span>南宋 · 绍兴年间</span>
+            <span>杭州考古所</span>
+          </div>
+          <div class="artifact-desc">浙江杭州南宋墓葬出土药包，内有当归、川芎等药材，保存较为完好。</div>
+          <div class="artifact-tags">
+            <span class="artifact-tag">出土</span>
+            <span class="artifact-tag">当归</span>
+            <span class="artifact-tag">川芎</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Load More -->
+    <div class="load-more">
+      <button class="load-more-btn">加载更多</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal()">×</button>
+
+    <!-- Image Section -->
+    <div class="modal-img">
+      <svg viewBox="0 0 600 800">
+        <!-- Background -->
+        <rect width="600" height="800" fill="#f5f0e6" opacity="0.1"/>
+
+        <!-- Painting frame -->
+        <rect x="20" y="20" width="560" height="760" fill="none" stroke="#3d5a4a" stroke-width="2"/>
+
+        <!-- Silk texture pattern -->
+        <pattern id="silkPattern" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="5" x2="10" y2="5" stroke="#3d5a4a" stroke-width="0.3" opacity="0.2"/>
+        </pattern>
+        <rect x="20" y="20" width="560" height="760" fill="url(#silkPattern)"/>
+
+        <!-- Plant illustration -->
+        <g transform="translate(300, 400)">
+          <!-- Root -->
+          <path d="M0 200 Q0 150 -20 100 Q-40 50 -30 0 Q-20 -50 0 -80 Q20 -50 30 0 Q40 50 20 100 Q0 150 0 200" fill="none" stroke="#8b6914" stroke-width="2"/>
+          <path d="M-10 80 Q-25 60 -35 40" fill="none" stroke="#8b6914" stroke-width="1.5"/>
+          <path d="M10 100 Q25 80 35 60" fill="none" stroke="#8b6914" stroke-width="1.5"/>
+
+          <!-- Stem -->
+          <line x1="0" y1="-80" x2="0" y2="-200" stroke="#5c4033" stroke-width="3"/>
+
+          <!-- Leaves -->
+          <path d="M0 -200 Q-60 -220 -100 -260 Q-80 -280 -40 -260 Q-20 -240 0 -220" fill="url(#leafGrad1)" opacity="0.9"/>
+          <path d="M0 -200 Q60 -220 100 -260 Q80 -280 40 -260 Q20 -240 0 -220" fill="url(#leafGrad1)" opacity="0.9"/>
+          <path d="M0 -180 Q-80 -200 -140 -240 Q-120 -260 -60 -240 Q-30 -220 0 -200" fill="url(#leafGrad1)" opacity="0.8"/>
+          <path d="M0 -180 Q80 -200 140 -240 Q120 -260 60 -240 Q30 -220 0 -200" fill="url(#leafGrad1)" opacity="0.8"/>
+
+          <!-- Flower -->
+          <circle cx="0" cy="-280" r="20" fill="#fbbf24"/>
+          <circle cx="0" cy="-280" r="12" fill="#f59e0b"/>
+          <g fill="#fbbf24">
+            <circle cx="0" cy="-305" r="8"/>
+            <circle cx="21" cy="-295" r="8"/>
+            <circle cx="21" cy="-265" r="8"/>
+            <circle cx="0" cy="-255" r="8"/>
+            <circle cx="-21" cy="-265" r="8"/>
+            <circle cx="-21" cy="-295" r="8"/>
+          </g>
+
+          <!-- Annotation hotspots -->
+          <ellipse class="painting-annotation" data-anno="root" cx="0" cy="80" rx="40" ry="80"/>
+          <ellipse class="painting-annotation" data-anno="leaf" cx="-70" cy="-240" rx="50" ry="30"/>
+          <ellipse class="painting-annotation" data-anno="leaf" cx="70" cy="-240" rx="50" ry="30"/>
+          <circle class="painting-annotation" data-anno="flower" cx="0" cy="-280" r="25"/>
+        </g>
+
+        <defs>
+          <linearGradient id="leafGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#4ade80"/>
+            <stop offset="100%" style="stop-color:#166534"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Labels -->
+        <text x="100" y="600" font-family="Noto Serif SC" font-size="24" fill="#E6D8AD">根</text>
+        <text x="450" y="200" font-family="Noto Serif SC" font-size="20" fill="#E6D8AD">叶</text>
+        <text x="350" y="100" font-family="Noto Serif SC" font-size="18" fill="#E6D8AD">花</text>
+
+        <!-- Seal stamp -->
+        <rect x="480" y="680" width="60" height="60" fill="none" stroke="#E63946" stroke-width="2"/>
+        <text x="490" y="720" font-family="Noto Serif SC" font-size="20" fill="#E63946">御覽</text>
+      </svg>
+
+      <div class="modal-img-controls">
+        <button class="modal-img-btn" onclick="navigateImage(-1)">◀ 上一幅</button>
+        <button class="modal-img-btn">1/3</button>
+        <button class="modal-img-btn" onclick="navigateImage(1)">下一幅 ▶</button>
+        <button class="modal-img-btn" onclick="toggle3DRotation()">🔄 3D旋转</button>
+        <button class="modal-img-btn" onclick="toggleFullscreen()">⛶ 全屏</button>
+      </div>
+    </div>
+
+    <!-- Info Section -->
+    <div class="modal-info">
+      <div class="modal-header">
+        <div class="modal-title">人参图</div>
+        <div class="modal-subtitle">
+          <span class="modal-subtitle-item">📅 北宋</span>
+          <span class="modal-subtitle-item">🏛️ 故宫博物院</span>
+          <span class="modal-subtitle-item">🎨 绢本设色</span>
+        </div>
+      </div>
+
+      <div class="meta-grid">
+        <div class="meta-item">
+          <div class="meta-label">年代</div>
+          <div class="meta-value">北宋政和年间（1111-1118）</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">尺寸</div>
+          <div class="meta-value">纵30.5cm，横25.8cm</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">材质</div>
+          <div class="meta-value">绢本设色</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">收藏编号</div>
+          <div class="meta-value">故00012345</div>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">文物解说</div>
+        <div class="modal-section-body">
+          <p>此图为《本草图经》人参条目配图，绘有人参全株形态。图中人参根部呈人形，有头、身、手足之分，符合《图经》"根如人形者神"的描述。</p>
+          <p>画面采用工笔重彩技法，先用淡墨勾勒轮廓，再以矿物颜料层层渲染。叶片采用没骨画法，花蕊以金粉点缀，显示出宋代院体画的典型风格。</p>
+          <p>画面右下角钤有"御览"朱文方印，表明此图曾入藏宋代内府，为皇家医药图籍。</p>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">佐证药物</div>
+        <div class="herb-evidence-list">
+          <div class="herb-evidence-item" onclick="location.href='duizhao-detail.html?herb=人参'">
+            <div class="herb-evidence-icon">🌿</div>
+            <div class="herb-evidence-info">
+              <div class="herb-evidence-name">人参</div>
+              <div class="herb-evidence-source">《图经》卷三</div>
+              <div class="herb-evidence-desc">画中植物即古之人参，根部形态与《图经》描述完全吻合。</div>
+            </div>
+            <button class="herb-evidence-btn">查看对照</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">专家解读</div>
+        <div class="modal-section-body">
+          <p>"此图所绘人参形态极为写实，特别是根部人形结构的表现，与现代植物学观察高度一致。从艺术史角度看，该图反映了宋代院体花鸟画的高度成就，也是本草学与绘画艺术结合的典型代表。"</p>
+          <p style="color:var(--txt3);font-size:12px;margin-top:8px">—— 陈教授，中国中医科学院</p>
+        </div>
+      </div>
+
+      <div class="related-section">
+        <div class="related-title">关联推荐</div>
+        <div class="related-list">
+          <div class="related-item">
+            <div class="related-item-img">
+              <svg viewBox="0 0 100 75" style="width:60%;height:60%"><rect width="100" height="75" fill="#2a3a30"/><circle cx="50" cy="37" r="20" fill="#E6D8AD"/></svg>
+            </div>
+            <div class="related-item-name">黄芪图</div>
+          </div>
+          <div class="related-item">
+            <div class="related-item-img">
+              <svg viewBox="0 0 100 75" style="width:60%;height:60%"><rect width="100" height="75" fill="#2a3a30"/><circle cx="50" cy="37" r="20" fill="#E6D8AD"/></svg>
+            </div>
+            <div class="related-item-name">当归图</div>
+          </div>
+          <div class="related-item">
+            <div class="related-item-img">
+              <svg viewBox="0 0 100 75" style="width:60%;height:60%"><rect width="100" height="75" fill="#2a3a30"/><circle cx="50" cy="37" r="20" fill="#E6D8AD"/></svg>
+            </div>
+            <div class="related-item-name">白术图</div>
+          </div>
+          <div class="related-item">
+            <div class="related-item-img">
+              <svg viewBox="0 0 100 75" style="width:60%;height:60%"><rect width="100" height="75" fill="#2a3a30"/><circle cx="50" cy="37" r="20" fill="#E6D8AD"/></svg>
+            </div>
+            <div class="related-item-name">茯苓图</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Annotation Popup -->
+<div class="annotation-popup" id="annotationPopup">
+  <div class="annotation-popup-title" id="annotationTitle">根部</div>
+  <div id="annotationContent">人参根部呈人形，是古人判断人参品质的重要依据。</div>
+</div>
+
+<script src="data.js"></script>
+<script>
+// ========== STATE ==========
+let currentCategory = 'all';
+let filterDynasty = '全部';
+let filterHerb = '全部药物';
+let filterRegion = '全部地区';
+let currentModalImages = [];
+let currentModalImageIndex = 0;
+let currentArtifact = null;
+let extraCardsLoaded = 0;
+
+// ========== CATEGORY TAB FILTER (P0 - real logic) ==========
+const categoryBtns = document.querySelectorAll('.category-btn');
+categoryBtns.forEach(btn => {
+  btn.addEventListener('click', function() {
+    categoryBtns.forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    currentCategory = this.dataset.category;
+    applyFilters();
+  });
+});
+
+// ========== FILTER BAR (P0 - real logic) ==========
+document.querySelectorAll('.filter-select').forEach(select => {
+  select.addEventListener('change', function() {
+    const label = this.closest('.filter-group').querySelector('.filter-label').textContent;
+    if (label === '朝代') filterDynasty = this.value;
+    else if (label === '关联药物') filterHerb = this.value;
+    else if (label === '出土地') filterRegion = this.value;
+    applyFilters();
+  });
+});
+
+function applyFilters() {
+  const cards = document.querySelectorAll('.artifact-card');
+  cards.forEach(card => {
+    const cardCategory = card.dataset.category || getCardCategory(card);
+    const cardDynasty = card.dataset.dynasty || getCardDynasty(card);
+    const cardHerbs = card.dataset.herbs || getCardHerbs(card);
+    const cardRegion = card.dataset.region || getCardRegion(card);
+    
+    let visible = true;
+    
+    // Category filter
+    if (currentCategory !== 'all' && cardCategory !== currentCategory) visible = false;
+    
+    // Dynasty filter
+    if (filterDynasty !== '全部' && !cardDynasty.includes(filterDynasty)) visible = false;
+    
+    // Herb filter
+    if (filterHerb !== '全部药物' && !cardHerbs.includes(filterHerb)) visible = false;
+    
+    // Region filter
+    if (filterRegion !== '全部地区' && !cardRegion.includes(filterRegion)) visible = false;
+    
+    card.style.display = visible ? '' : 'none';
+  });
+}
+
+function getCardCategory(card) {
+  const typeEl = card.querySelector('.artifact-type');
+  if (!typeEl) return 'all';
+  const text = typeEl.textContent.trim();
+  if (text.includes('药图')) return 'painting';
+  if (text.includes('宋画')) return 'art';
+  if (text.includes('出土')) return 'excavation';
+  if (text.includes('药具')) return 'utensil';
+  return 'all';
+}
+
+function getCardDynasty(card) {
+  const meta = card.querySelector('.artifact-meta span');
+  return meta ? meta.textContent.trim() : '';
+}
+
+function getCardHerbs(card) {
+  const tags = card.querySelectorAll('.artifact-tag');
+  return Array.from(tags).map(t => t.textContent.trim()).join(',');
+}
+
+function getCardRegion(card) {
+  const meta = card.querySelectorAll('.artifact-meta span');
+  return meta.length > 1 ? meta[1].textContent.trim() : '';
+}
+
+// ========== MODAL (enhanced with data) ==========
+function openModal(artifactId) {
+  const artifact = getArtifactById(artifactId);
+  currentArtifact = artifact;
+  
+  const modal = document.getElementById('modal');
+  modal.classList.add('show');
+  document.body.style.overflow = 'hidden';
+  
+  if (artifact) {
+    // Update modal content
+    modal.querySelector('.modal-title').textContent = artifact.name;
+    const subtitle = modal.querySelector('.modal-subtitle');
+    subtitle.innerHTML = `
+      <span class="modal-subtitle-item">📅 ${artifact.dynasty}</span>
+      <span class="modal-subtitle-item">🏛️ ${artifact.location}</span>
+      <span class="modal-subtitle-item">🎨 ${artifact.material}</span>
+    `;
+    
+    // Update meta grid
+    const metaGrid = modal.querySelector('.meta-grid');
+    if (artifact.meta && metaGrid) {
+      metaGrid.innerHTML = `
+        <div class="meta-item"><div class="meta-label">年代</div><div class="meta-value">${artifact.meta.period}</div></div>
+        <div class="meta-item"><div class="meta-label">尺寸</div><div class="meta-value">${artifact.meta.size}</div></div>
+        <div class="meta-item"><div class="meta-label">材质</div><div class="meta-value">${artifact.meta.material}</div></div>
+        <div class="meta-item"><div class="meta-label">收藏编号</div><div class="meta-value">${artifact.meta.catalog}</div></div>
+      `;
+    }
+    
+    // Update detail text
+    const detailBody = modal.querySelector('.modal-section-body');
+    if (detailBody && artifact.detail) {
+      detailBody.innerHTML = `<p>${artifact.detail}</p>`;
+    }
+    
+    // Update herb evidence
+    const herbList = modal.querySelector('.herb-evidence-list');
+    if (herbList && artifact.relatedHerbs && artifact.relatedHerbs.length > 0) {
+      herbList.innerHTML = artifact.relatedHerbs.map(h => {
+        const herbData = getHerbByName(h);
+        return `
+          <div class="herb-evidence-item" ${herbData ? `onclick="location.href='duizhao.html?herb=${herbData.id}'"` : ''}>
+            <div class="herb-evidence-icon">🌿</div>
+            <div class="herb-evidence-info">
+              <div class="herb-evidence-name">${h}</div>
+              <div class="herb-evidence-source">《图经》</div>
+              <div class="herb-evidence-desc">画中可见${h}形态特征，与文献记载吻合。</div>
+            </div>
+            <button class="herb-evidence-btn">查看对照</button>
+          </div>`;
+      }).join('');
+    }
+    
+    // Setup image navigation
+    currentModalImages = [];
+    for (let i = 0; i < (artifact.totalImages || 1); i++) {
+      currentModalImages.push(artifact.name + ' - 第' + (i + 1) + '幅');
+    }
+    currentModalImageIndex = 0;
+    updateImageNav();
+    
+    // Setup painting annotations if available
+    if (artifact.annotations && artifact.annotations.length > 0) {
+      setupPaintingAnnotations(artifact);
+    }
+  }
+}
+
+function closeModal(event) {
+  if (event && event.target !== event.currentTarget) return;
+  const modal = document.getElementById('modal');
+  modal.classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+// ========== IMAGE NAVIGATION (P1) ==========
+function updateImageNav() {
+  const controls = document.querySelector('.modal-img-controls');
+  if (!controls) return;
+  const total = currentModalImages.length;
+  controls.innerHTML = `
+    <button class="modal-img-btn" onclick="navigateImage(-1)">◀ 上一幅</button>
+    <button class="modal-img-btn">${currentModalImageIndex + 1}/${total}</button>
+    <button class="modal-img-btn" onclick="navigateImage(1)">下一幅 ▶</button>
+  `;
+}
+
+function navigateImage(dir) {
+  const total = currentModalImages.length;
+  currentModalImageIndex = Math.max(0, Math.min(total - 1, currentModalImageIndex + dir));
+  updateImageNav();
+  showToast('切换至：' + currentModalImages[currentModalImageIndex], 'info');
+}
+
+// ========== PAINTING ANNOTATIONS (P0 - enhanced click interaction) ==========
+function setupPaintingAnnotations(artifact) {
+  const annotations = document.querySelectorAll('.painting-annotation');
+  const annotationPopup = document.getElementById('annotationPopup');
+  const annotationTitle = document.getElementById('annotationTitle');
+  const annotationContent = document.getElementById('annotationContent');
+  
+  const annotationData = {};
+  artifact.annotations.forEach(a => {
+    annotationData[a.part] = { title: a.title, content: a.content };
+  });
+  
+  annotations.forEach(anno => {
+    // Remove old listeners by cloning
+    const newAnno = anno.cloneNode(true);
+    anno.parentNode.replaceChild(newAnno, anno);
+    
+    const type = newAnno.dataset.anno;
+    const data = annotationData[type];
+    
+    // Click to toggle active + show popup
+    newAnno.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const wasActive = this.classList.contains('active');
+      
+      // Deactivate all
+      document.querySelectorAll('.painting-annotation').forEach(a => a.classList.remove('active'));
+      
+      if (!wasActive && data) {
+        this.classList.add('active');
+        annotationTitle.textContent = data.title;
+        annotationContent.textContent = data.content;
+        
+        const rect = this.getBoundingClientRect();
+        const modalRect = document.querySelector('.modal').getBoundingClientRect();
+        annotationPopup.style.left = (rect.right - modalRect.left + 10) + 'px';
+        annotationPopup.style.top = (rect.top - modalRect.top) + 'px';
+        annotationPopup.classList.add('show');
+        annotationPopup.style.pointerEvents = 'auto';
+      } else {
+        annotationPopup.classList.remove('show');
+      }
+    });
+    
+    // Keep hover for quick preview
+    newAnno.addEventListener('mouseenter', function() {
+      if (data) {
+        annotationTitle.textContent = data.title;
+        annotationContent.textContent = data.content;
+        const rect = this.getBoundingClientRect();
+        const modalRect = document.querySelector('.modal').getBoundingClientRect();
+        annotationPopup.style.left = (rect.right - modalRect.left + 10) + 'px';
+        annotationPopup.style.top = (rect.top - modalRect.top) + 'px';
+        annotationPopup.classList.add('show');
+      }
+      this.style.filter = 'brightness(1.3)';
+    });
+    
+    newAnno.addEventListener('mouseleave', function() {
+      if (!this.classList.contains('active')) {
+        annotationPopup.classList.remove('show');
+      }
+      this.style.filter = '';
+    });
+  });
+}
+
+// ========== LOAD MORE (P1) ==========
+document.querySelector('.load-more-btn').addEventListener('click', function() {
+  extraCardsLoaded++;
+  const grid = document.querySelector('.waterfall-grid');
+  
+  // Generate additional cards from ARTIFACT_DATA that aren't already shown
+  const existingNames = Array.from(grid.querySelectorAll('.artifact-name')).map(n => n.textContent);
+  const newArtifacts = ARTIFACT_DATA.filter(a => !existingNames.includes(a.name));
+  
+  if (newArtifacts.length === 0 && extraCardsLoaded > 2) {
+    showToast('已加载全部文物', 'info');
+    this.textContent = '已加载全部';
+    this.disabled = true;
+    this.style.opacity = '0.5';
+    return;
+  }
+  
+  // Add more cards (simulated with slight variations)
+  const moreCards = [
+    { name: '灵芝图', type: '宋代药图', dynasty: '北宋', material: '纸本墨笔', location: '国家图书馆', herbs: ['灵芝'], region: '安徽', desc: '《本草图经》灵芝条目配图，绘有赤芝、紫芝两种形态。', category: 'painting' },
+    { name: '煮茶图', type: '辅证宋画', dynasty: '南宋', material: '绢本设色', location: '台北故宫', herbs: [], region: '浙江', desc: '南宋刘松年所作，画中有煎药场景，可佐证宋代药物加工方式。', category: 'art' },
+    { name: '宋代药臼', type: '宋代药具', dynasty: '北宋', material: '石质', location: '陕西历史博物馆', herbs: [], region: '陕西', desc: '石制药臼，与药碾配合使用，用于捣碎药材。', category: 'utensil' }
+  ];
+  
+  moreCards.forEach(card => {
+    if (!existingNames.includes(card.name)) {
+      const div = document.createElement('div');
+      div.className = 'artifact-card';
+      div.dataset.category = card.category;
+      div.dataset.dynasty = card.dynasty;
+      div.dataset.herbs = card.herbs.join(',');
+      div.dataset.region = card.region;
+      div.onclick = () => openModal(card.name.toLowerCase().replace(/[^a-z\u4e00-\u9fff]/g, ''));
+      
+      const typeStyle = card.type === '出土药物' ? 'color:var(--red);border-color:rgba(230,57,70,0.3)' : 
+                         card.type === '辅证宋画' ? 'color:var(--gold);border-color:rgba(230,216,173,0.3)' : '';
+      
+      div.innerHTML = `
+        <div class="artifact-img">
+          <span class="artifact-type" style="${typeStyle}">${card.type}</span>
+          <div class="artifact-img-placeholder">
+            <div class="artifact-img-placeholder-icon">${card.type.includes('药图') ? '🖼️' : card.type.includes('宋画') ? '🎨' : card.type.includes('出土') ? '🏺' : '⚱️'}</div>
+            <div>${card.name}</div>
+          </div>
+        </div>
+        <div class="artifact-body">
+          <div class="artifact-name">${card.name}</div>
+          <div class="artifact-meta"><span>${card.dynasty} · ${card.material}</span><span>${card.location}</span></div>
+          <div class="artifact-desc">${card.desc}</div>
+          <div class="artifact-tags">${card.herbs.map(h => `<span class="artifact-tag">${h}</span>`).join('')}<span class="artifact-tag">${card.category === 'painting' ? '药图' : card.category === 'art' ? '宋画' : card.category === 'excavation' ? '出土' : '药具'}</span></div>
+        </div>`;
+      grid.appendChild(div);
+    }
+  });
+  
+  showToast('已加载更多文物', 'success');
+});
+
+// ========== FULLSCREEN (P1) ==========
+function toggleFullscreen() {
+  const imgBox = document.querySelector('.modal-img');
+  if (!imgBox) return;
+  
+  if (!document.fullscreenElement) {
+    imgBox.requestFullscreen().catch(() => showToast('浏览器不支持全屏', 'warning'));
+  } else {
+    document.exitFullscreen();
+  }
+}
+
+// ========== 3D ROTATION (P2-13) ==========
+let is3DRotating = false;
+let rotation3DAngle = 0;
+let rotation3DRAF = null;
+
+function toggle3DRotation() {
+  const imgBox = document.querySelector('.modal-img');
+  const svg = imgBox ? imgBox.querySelector('svg') : null;
+  if (!imgBox || !svg) {
+    showToast('请先打开文物详情', 'info');
+    return;
+  }
+  
+  is3DRotating = !is3DRotating;
+  
+  if (is3DRotating) {
+    imgBox.style.perspective = '800px';
+    svg.style.transformStyle = 'preserve-3d';
+    svg.style.transition = 'none';
+    showToast('3D旋转已开启，拖动鼠标旋转文物', 'success');
+    
+    // Mouse drag rotation
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+    
+    const onMouseDown = (e) => {
+      isDragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+    };
+    
+    const onMouseMove = (e) => {
+      if (!isDragging || !is3DRotating) return;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      rotation3DAngle += dx * 0.5;
+      const tiltX = Math.max(-45, Math.min(45, dy * 0.3));
+      svg.style.transform = `rotateY(${rotation3DAngle}deg) rotateX(${-tiltX}deg)`;
+      startX = e.clientX;
+      startY = e.clientY;
+    };
+    
+    const onMouseUp = () => { isDragging = false; };
+    
+    imgBox.addEventListener('mousedown', onMouseDown);
+    imgBox.addEventListener('mousemove', onMouseMove);
+    imgBox.addEventListener('mouseup', onMouseUp);
+    imgBox.addEventListener('mouseleave', onMouseUp);
+    
+    // Store cleanup references
+    imgBox._3dCleanup = () => {
+      imgBox.removeEventListener('mousedown', onMouseDown);
+      imgBox.removeEventListener('mousemove', onMouseMove);
+      imgBox.removeEventListener('mouseup', onMouseUp);
+      imgBox.removeEventListener('mouseleave', onMouseUp);
+    };
+    
+    // Auto-rotate animation
+    const autoRotate = () => {
+      if (!is3DRotating) return;
+      rotation3DAngle += 0.3;
+      svg.style.transform = `rotateY(${rotation3DAngle}deg)`;
+      rotation3DRAF = requestAnimationFrame(autoRotate);
+    };
+    rotation3DRAF = requestAnimationFrame(autoRotate);
+    
+  } else {
+    // Stop rotation
+    if (rotation3DRAF) cancelAnimationFrame(rotation3DRAF);
+    const svg = imgBox.querySelector('svg');
+    if (svg) {
+      svg.style.transform = '';
+      svg.style.transition = 'transform 0.5s ease';
+    }
+    if (imgBox._3dCleanup) imgBox._3dCleanup();
+    showToast('3D旋转已关闭', 'info');
+  }
+}
+
+// ========== RELATED RECOMMENDATIONS CLICK (P2-14) ==========
+document.querySelectorAll('.related-item').forEach(item => {
+  item.addEventListener('click', function() {
+    const name = this.querySelector('.related-item-name').textContent.trim();
+    const artifact = ARTIFACT_DATA.find(a => a.name === name || a.name.includes(name));
+    if (artifact) {
+      openModal(artifact.id);
+    } else {
+      // Try matching by herb name
+      const herbRelated = ARTIFACT_DATA.find(a => a.relatedHerbs.includes(name.replace('图', '')));
+      if (herbRelated) {
+        openModal(herbRelated.id);
+      } else {
+        showToast('正在加载：' + name, 'info');
+      }
+    }
+  });
+});
+
+// ========== CLOSE ON ESCAPE ==========
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModal();
+  if (e.key === 'ArrowLeft' && document.getElementById('modal').classList.contains('show')) navigateImage(-1);
+  if (e.key === 'ArrowRight' && document.getElementById('modal').classList.contains('show')) navigateImage(1);
+});
+
+// ========== INIT: Add data attributes to existing cards ==========
+document.querySelectorAll('.artifact-card').forEach((card, i) => {
+  const artifact = ARTIFACT_DATA[i];
+  if (artifact) {
+    card.dataset.category = artifact.category;
+    card.dataset.dynasty = artifact.dynasty;
+    card.dataset.herbs = artifact.relatedHerbs.join(',');
+    card.dataset.region = artifact.region;
+    card.onclick = () => openModal(artifact.id);
+  }
+});
+
+// ========== USER AUTH ==========
+function checkLoginStatus() {
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
+  const loginBtn = document.getElementById('loginBtn');
+  const userAvatar = document.getElementById('userAvatar');
+  const navUserAvatar = document.getElementById('navUserAvatar');
+  if (isLoggedIn) {
+    const userData = JSON.parse(localStorage.getItem('benCaoUser') || '{}');
+    if (userData.avatar && navUserAvatar) navUserAvatar.src = userData.avatar;
+    if (loginBtn) loginBtn.style.display = 'none';
+    if (userAvatar) userAvatar.style.display = 'block';
+  } else {
+    if (loginBtn) loginBtn.style.display = 'block';
+    if (userAvatar) userAvatar.style.display = 'none';
+  }
+}
+function goToLogin() { window.location.href = 'login.html'; }
+function goToProfile() { window.location.href = 'profile.html'; }
+function goToSettings() { showToast('账号设置功能开发中...', 'info'); }
+function logout() {
+  if (confirm('确定要退出登录吗？')) {
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('benCaoUser');
+    location.reload();
+  }
+}
+function toggleUserDropdown() {
+  document.getElementById('userDropdown').classList.toggle('show');
+}
+document.addEventListener('click', (e) => {
+  const userMenu = document.getElementById('userMenu');
+  if (userMenu && !userMenu.contains(e.target)) {
+    const dropdown = document.getElementById('userDropdown');
+    if (dropdown) dropdown.classList.remove('show');
+  }
+});
+checkLoginStatus();
+</script>
+
+</body>
+</html>

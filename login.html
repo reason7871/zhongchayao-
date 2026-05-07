@@ -1,0 +1,515 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>登录 · 本草万象</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ========== RESET ========== */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{height:100%;font-size:16px}
+body{font-family:'Noto Sans SC',sans-serif;height:100%;background:#0a0c0f;color:#fff;overflow:hidden}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+input{font-family:inherit}
+
+/* ========== HERO BACKGROUND ========== */
+.hero-bg{position:fixed;inset:0;z-index:0;background:#0a0c0f}
+.hero-bg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;opacity:0.6}
+.hero-vignette{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 0%,transparent 30%,rgba(10,12,15,0.6) 70%,rgba(10,12,15,0.95) 100%);z-index:1}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,12,15,0.3) 0%,transparent 30%,transparent 70%,rgba(10,12,15,0.5) 100%);z-index:2}
+
+/* ========== NAVIGATION ========== */
+.nav-bar{position:fixed;top:0;left:0;right:0;z-index:100;height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 60px;background:linear-gradient(180deg,rgba(10,12,15,0.8) 0%,transparent 100%)}
+.nav-logo{display:flex;align-items:center;gap:12px;font-family:'Noto Serif SC',serif;font-size:22px;font-weight:700;color:#c9b037;letter-spacing:2px}
+.nav-logo-icon{width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,#00d4aa,#008f6b);display:flex;align-items:center;justify-content:center;font-size:18px}
+
+/* ========== LOGIN CONTAINER ========== */
+.login-container{position:relative;z-index:10;height:100vh;display:flex;align-items:center;justify-content:center}
+.login-wrapper{display:flex;gap:60px;align-items:center;max-width:1200px;width:90%}
+
+/* ========== LEFT SIDE - BRANDING ========== */
+.brand-section{flex:1;max-width:500px}
+.brand-title{font-family:'Noto Serif SC',serif;font-size:48px;font-weight:700;color:#fff;margin-bottom:20px;letter-spacing:4px;text-shadow:0 0 40px rgba(0,212,170,0.3)}
+.brand-title span{color:#00d4aa}
+.brand-desc{font-size:16px;color:rgba(255,255,255,0.6);line-height:1.8;margin-bottom:40px;letter-spacing:1px}
+.brand-features{display:flex;gap:30px}
+.brand-feature{display:flex;align-items:center;gap:10px;font-size:14px;color:rgba(255,255,255,0.7)}
+.brand-feature::before{content:'';width:8px;height:8px;border-radius:50%;background:#00d4aa;box-shadow:0 0 10px #00d4aa}
+
+/* ========== RIGHT SIDE - LOGIN FORM ========== */
+.login-card{width:420px;background:rgba(20,24,32,0.6);border:1px solid rgba(0,212,170,0.3);border-radius:12px;backdrop-filter:blur(20px);padding:40px;position:relative;overflow:hidden}
+.login-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#00d4aa,transparent);opacity:0.5}
+.login-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#00d4aa,transparent);opacity:0.3}
+
+/* 装饰性卷轴图案 */
+.scroll-decoration{position:absolute;top:20px;right:20px;width:60px;height:60px;opacity:0.1;pointer-events:none}
+.scroll-decoration::before{content:'卷';font-family:'Noto Serif SC',serif;font-size:48px;color:#c9b037}
+
+.login-tabs{display:flex;gap:30px;margin-bottom:30px;border-bottom:1px solid rgba(0,212,170,0.2);padding-bottom:15px}
+.login-tab{font-size:16px;color:rgba(255,255,255,0.5);cursor:pointer;transition:all 0.3s;position:relative;font-family:'Noto Serif SC',serif;letter-spacing:2px}
+.login-tab.active{color:#00d4aa}
+.login-tab.active::after{content:'';position:absolute;bottom:-16px;left:0;right:0;height:2px;background:#00d4aa;box-shadow:0 0 8px #00d4aa}
+.login-tab:hover{color:rgba(255,255,255,0.8)}
+
+/* Form Fields */
+.form-group{margin-bottom:24px;position:relative}
+.form-label{display:block;font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:8px;letter-spacing:1px}
+.form-input{width:100%;height:48px;padding:0 16px;background:rgba(0,0,0,0.3);border:1px solid rgba(0,212,170,0.2);border-radius:6px;color:#fff;font-size:14px;outline:none;transition:all 0.3s}
+.form-input:focus{border-color:#00d4aa;box-shadow:0 0 15px rgba(0,212,170,0.2)}
+.form-input::placeholder{color:rgba(255,255,255,0.3)}
+.form-icon{position:absolute;right:16px;top:38px;color:rgba(0,212,170,0.6);font-size:16px}
+
+/* Remember & Forgot */
+.form-options{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;font-size:13px}
+.remember-me{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,0.6);cursor:pointer}
+.remember-me input{width:16px;height:16px;accent-color:#00d4aa}
+.forgot-link{color:#00d4aa;transition:all 0.3s}
+.forgot-link:hover{color:#00f5c4;text-shadow:0 0 10px rgba(0,212,170,0.5)}
+
+/* Login Button */
+.login-btn{width:100%;height:48px;background:linear-gradient(135deg,#00d4aa,#008f6b);border:none;border-radius:6px;color:#000;font-size:16px;font-weight:600;font-family:'Noto Serif SC',serif;letter-spacing:3px;transition:all 0.3s;position:relative;overflow:hidden}
+.login-btn:hover{box-shadow:0 0 30px rgba(0,212,170,0.4);transform:translateY(-2px)}
+.login-btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent);transition:left 0.6s}
+.login-btn:hover::before{left:100%}
+
+/* Social Login */
+.social-login{margin-top:30px;padding-top:24px;border-top:1px solid rgba(0,212,170,0.1)}
+.social-title{text-align:center;font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:20px;position:relative}
+.social-title::before,.social-title::after{content:'';position:absolute;top:50%;width:60px;height:1px;background:rgba(0,212,170,0.2)}
+.social-title::before{left:0}
+.social-title::after{right:0}
+.social-buttons{display:flex;gap:16px;justify-content:center}
+.social-btn{width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,0.3);border:1px solid rgba(0,212,170,0.2);display:flex;align-items:center;justify-content:center;font-size:18px;color:rgba(255,255,255,0.7);transition:all 0.3s;cursor:pointer}
+.social-btn:hover{border-color:#00d4aa;color:#00d4aa;box-shadow:0 0 15px rgba(0,212,170,0.3)}
+
+/* Register Link */
+.register-link{text-align:center;margin-top:24px;font-size:14px;color:rgba(255,255,255,0.5)}
+.register-link a{color:#00d4aa;margin-left:5px;transition:all 0.3s}
+.register-link a:hover{color:#00f5c4;text-decoration:underline}
+
+/* Register Form Extra Fields */
+.verification-group{display:flex;gap:12px}
+.verification-group .form-input{flex:1}
+.verify-btn{height:48px;padding:0 20px;background:rgba(0,212,170,0.1);border:1px solid rgba(0,212,170,0.3);border-radius:6px;color:#00d4aa;font-size:13px;white-space:nowrap;transition:all 0.3s;cursor:pointer}
+.verify-btn:hover{background:rgba(0,212,170,0.2);border-color:#00d4aa}
+
+/* ========== PARTICLES ========== */
+.particles-container{position:fixed;inset:0;pointer-events:none;z-index:5;overflow:hidden}
+.particle{position:absolute;width:2px;height:2px;background:#00d4aa;border-radius:50%;opacity:0.6;animation:particle linear infinite}
+.particle:nth-child(1){left:10%;animation-duration:15s;animation-delay:0s}
+.particle:nth-child(2){left:20%;animation-duration:18s;animation-delay:2s;width:3px;height:3px}
+.particle:nth-child(3){left:30%;animation-duration:12s;animation-delay:1s}
+.particle:nth-child(4){left:40%;animation-duration:20s;animation-delay:3s;width:1px;height:1px}
+.particle:nth-child(5){left:50%;animation-duration:16s;animation-delay:0s}
+.particle:nth-child(6){left:60%;animation-duration:14s;animation-delay:4s;width:2px;height:2px;opacity:0.4}
+.particle:nth-child(7){left:70%;animation-duration:22s;animation-delay:1s}
+.particle:nth-child(8){left:80%;animation-duration:17s;animation-delay:2s;width:3px;height:3px;opacity:0.3}
+.particle:nth-child(9){left:90%;animation-duration:19s;animation-delay:5s}
+.particle:nth-child(10){left:15%;animation-duration:13s;animation-delay:3s;width:1px;height:1px;opacity:0.5}
+
+/* ========== ANIMATIONS ========== */
+@keyframes pulse{0%,100%{opacity:0.5}50%{opacity:1}}
+@keyframes particle{0%{transform:translateY(100vh) translateX(0);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-100vh) translateX(50px);opacity:0}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes scan{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+
+/* Card shine effect */
+.login-card:hover{box-shadow:0 0 40px rgba(0,212,170,0.1)}
+
+/* Tab content animation */
+.tab-content{display:none;opacity:0;transform:translateY(10px);transition:all 0.3s}
+.tab-content.active{display:block;opacity:1;transform:translateY(0)}
+
+/* ========== MOUSE GLOW ========== */
+.mouse-glow{position:fixed;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(0,212,170,0.15) 0%,transparent 70%);pointer-events:none;z-index:3;transform:translate(-50%,-50%);transition:opacity 0.3s}
+
+/* User Menu Styles */
+.user-menu{position:relative;display:flex;align-items:center;gap:16px}
+.user-avatar{width:42px;height:42px;border-radius:50%;border:2px solid rgba(0,212,170,0.4);cursor:pointer;overflow:hidden;transition:all 0.3s}
+.user-avatar:hover{border-color:#00d4aa;box-shadow:0 0 20px rgba(0,212,170,0.4)}
+.user-avatar img{width:100%;height:100%;object-fit:cover}
+.login-btn{padding:10px 24px;background:rgba(0,212,170,0.1);border:1px solid rgba(0,212,170,0.3);border-radius:6px;color:#00d4aa;font-size:14px;cursor:pointer;transition:all 0.3s;font-family:'Noto Serif SC',serif;letter-spacing:1px}
+.login-btn:hover{background:rgba(0,212,170,0.2);border-color:#00d4aa;box-shadow:0 0 15px rgba(0,212,170,0.3)}
+.user-dropdown{position:absolute;top:55px;right:0;width:180px;background:rgba(20,24,32,0.95);border:1px solid rgba(0,212,170,0.2);border-radius:8px;backdrop-filter:blur(10px);opacity:0;visibility:hidden;transform:translateY(-10px);transition:all 0.3s;z-index:200}
+.user-dropdown.show{opacity:1;visibility:visible;transform:translateY(0)}
+.user-dropdown-item{padding:12px 20px;font-size:14px;color:rgba(255,255,255,0.8);cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:10px}
+.user-dropdown-item:first-child{border-radius:8px 8px 0 0}
+.user-dropdown-item:last-child{border-radius:0 0 8px 8px}
+.user-dropdown-item:hover{background:rgba(0,212,170,0.1);color:#00d4aa}
+.user-dropdown-divider{height:1px;background:rgba(0,212,170,0.1);margin:4px 0}
+
+/* ========== RESPONSIVE ========== */
+@media(max-width:768px){
+.login-wrapper{flex-direction:column;gap:40px;padding:20px}
+.brand-section{text-align:center}
+.brand-title{font-size:32px}
+.brand-features{justify-content:center}
+.login-card{width:100%;max-width:400px;padding:30px 20px}
+}
+</style>
+</head>
+<body>
+
+<!-- Background -->
+<div class="hero-bg">
+  <img src="ca73dfc0f179bd23d8e9c1007420a3cf.png" alt="本草背景">
+  <div class="hero-vignette"></div>
+  <div class="hero-overlay"></div>
+</div>
+
+<!-- Mouse Glow -->
+<div class="mouse-glow" id="mouseGlow"></div>
+
+<!-- Particles -->
+<div class="particles-container">
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+</div>
+
+<!-- Navigation -->
+<nav class="nav-bar">
+  <div class="nav-logo">
+    <div class="nav-logo-icon">🌿</div>
+    <span>本草万象</span>
+  </div>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">首页</a>
+    <a href="wanxiang.html" class="nav-link">万象阅览</a>
+    <a href="duizhao-list.html" class="nav-link">古今对照</a>
+    <a href="ditu2.html" class="nav-link">时空地图</a>
+    <a href="wenwu.html" class="nav-link">文物佐证</a>
+  </div>
+  <div class="user-menu" id="userMenu">
+    <button class="login-btn" id="loginBtn" onclick="goToLogin()">登录 / 注册</button>
+    <div class="user-avatar" id="userAvatar" style="display:none;" onclick="toggleUserDropdown()">
+      <img src="" alt="头像" id="navUserAvatar">
+    </div>
+    <div class="user-dropdown" id="userDropdown">
+      <div class="user-dropdown-item" onclick="goToProfile()">👤 个人中心</div>
+      <div class="user-dropdown-item" onclick="goToSettings()">⚙️ 账号设置</div>
+      <div class="user-dropdown-divider"></div>
+      <div class="user-dropdown-item" onclick="logout()">🚪 退出登录</div>
+    </div>
+  </div>
+</nav>
+
+<!-- Login Container -->
+<div class="login-container">
+  <div class="login-wrapper">
+    <!-- Left Side - Branding -->
+    <div class="brand-section">
+      <h1 class="brand-title">本草<span>万象</span></h1>
+      <p class="brand-desc">传承千年本草智慧，构建古今桥梁。在这里探索中医药文化的博大精深，记录您的学术发现，与志同道合者共研古籍。</p>
+      <div class="brand-features">
+        <span class="brand-feature">学者认证</span>
+        <span class="brand-feature">数据互通</span>
+        <span class="brand-feature">知识共享</span>
+      </div>
+    </div>
+
+    <!-- Right Side - Login Form -->
+    <div class="login-card">
+      <div class="scroll-decoration"></div>
+
+      <!-- Tabs -->
+      <div class="login-tabs">
+        <div class="login-tab active" data-tab="login">账号登录</div>
+        <div class="login-tab" data-tab="register">注册账号</div>
+      </div>
+
+      <!-- Login Form -->
+      <div class="tab-content active" id="loginForm">
+        <div class="form-group">
+          <label class="form-label">用户名 / 邮箱 / 手机号</label>
+          <input type="text" class="form-input" placeholder="请输入账号" id="loginAccount">
+          <span class="form-icon">👤</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label">密码</label>
+          <input type="password" class="form-input" placeholder="请输入密码" id="loginPassword">
+          <span class="form-icon">🔒</span>
+        </div>
+        <div class="form-options">
+          <label class="remember-me">
+            <input type="checkbox" checked>
+            <span>记住我</span>
+          </label>
+          <a href="#" class="forgot-link">忘记密码？</a>
+        </div>
+        <div style="margin-bottom:16px;padding:10px 14px;background:rgba(0,212,170,0.08);border:1px solid rgba(0,212,170,0.2);border-radius:6px;font-size:12px;color:rgba(255,255,255,0.6);line-height:1.6">
+          💡 测试账号：<span style="color:#00d4aa;font-weight:500">admin</span> &nbsp;密码：<span style="color:#00d4aa;font-weight:500">123456</span>
+        </div>
+        <button class="login-btn" onclick="handleLogin()">登 录</button>
+
+        <div class="social-login">
+          <div class="social-title">第三方登录</div>
+          <div class="social-buttons">
+            <button class="social-btn" title="微信登录">💬</button>
+            <button class="social-btn" title="QQ登录">🐧</button>
+            <button class="social-btn" title="微博登录">📱</button>
+          </div>
+        </div>
+
+        <div class="register-link">
+          还没有账号？<a href="#" onclick="switchTab('register')">立即注册</a>
+        </div>
+      </div>
+
+      <!-- Register Form -->
+      <div class="tab-content" id="registerForm">
+        <div class="form-group">
+          <label class="form-label">用户名</label>
+          <input type="text" class="form-input" placeholder="2-20位字符，支持字母数字" id="regUsername">
+        </div>
+        <div class="form-group">
+          <label class="form-label">邮箱</label>
+          <input type="email" class="form-input" placeholder="请输入邮箱地址" id="regEmail">
+        </div>
+        <div class="form-group">
+          <label class="form-label">验证码</label>
+          <div class="verification-group">
+            <input type="text" class="form-input" placeholder="请输入验证码" id="regCode">
+            <button class="verify-btn" onclick="sendCode()">获取验证码</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">密码</label>
+          <input type="password" class="form-input" placeholder="6-20位，需包含字母和数字" id="regPassword">
+        </div>
+        <div class="form-group">
+          <label class="form-label">确认密码</label>
+          <input type="password" class="form-input" placeholder="请再次输入密码" id="regConfirmPassword">
+        </div>
+        <button class="login-btn" onclick="handleRegister()">注 册</button>
+
+        <div class="register-link">
+          已有账号？<a href="#" onclick="switchTab('login')">立即登录</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ========== MOUSE GLOW FOLLOW ==========
+const mouseGlow = document.getElementById('mouseGlow');
+let mouseX = 0, mouseY = 0;
+let glowX = 0, glowY = 0;
+
+const hasFinePointer = window.matchMedia('(pointer: fine)').matches;
+
+if (hasFinePointer) {
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    mouseGlow.style.opacity = '1';
+  });
+
+  document.addEventListener('mouseleave', () => {
+    mouseGlow.style.opacity = '0';
+  });
+
+  function animateGlow() {
+    glowX += (mouseX - glowX) * 0.1;
+    glowY += (mouseY - glowY) * 0.1;
+    mouseGlow.style.left = glowX + 'px';
+    mouseGlow.style.top = glowY + 'px';
+    requestAnimationFrame(animateGlow);
+  }
+  animateGlow();
+} else {
+  mouseGlow.style.display = 'none';
+}
+
+// ========== TAB SWITCHING ==========
+const tabs = document.querySelectorAll('.login-tab');
+const contents = document.querySelectorAll('.tab-content');
+
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    const tabName = tab.dataset.tab;
+    switchTab(tabName);
+  });
+});
+
+function switchTab(tabName) {
+  tabs.forEach(t => t.classList.remove('active'));
+  contents.forEach(c => c.classList.remove('active'));
+
+  document.querySelector(`.login-tab[data-tab="${tabName}"]`).classList.add('active');
+  document.getElementById(tabName + 'Form').classList.add('active');
+}
+
+// ========== LOGIN HANDLER ==========
+function handleLogin() {
+  const account = document.getElementById('loginAccount').value.trim();
+  const password = document.getElementById('loginPassword').value;
+
+  if (!account || !password) {
+    showLoginError('请填写完整的登录信息');
+    return;
+  }
+
+  // 预设账号验证
+  if (account === 'admin' && password === '123456') {
+    const userData = {
+      id: 'user_admin',
+      nickname: '本草学者',
+      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=admin',
+      level: '认证学者',
+      bio: '宋代本草考据爱好者',
+      follow_count: 128,
+      fan_count: 256,
+      like_count: 1024
+    };
+    localStorage.setItem('benCaoUser', JSON.stringify(userData));
+    localStorage.setItem('isLoggedIn', 'true');
+    window.location.href = 'index.html';
+  } else {
+    showLoginError('账号或密码错误，请使用测试账号 admin / 123456');
+  }
+}
+
+function showLoginError(msg) {
+  // 移除已有提示
+  const old = document.getElementById('loginError');
+  if (old) old.remove();
+  // 创建内联错误提示
+  const errDiv = document.createElement('div');
+  errDiv.id = 'loginError';
+  errDiv.style.cssText = 'margin-bottom:16px;padding:10px 14px;background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.3);border-radius:6px;font-size:13px;color:#ff6b6b;text-align:center';
+  errDiv.textContent = msg;
+  const loginBtn = document.querySelector('#loginForm .login-btn');
+  loginBtn.parentNode.insertBefore(errDiv, loginBtn);
+  // 3秒后自动消失
+  setTimeout(() => { if (errDiv.parentNode) errDiv.remove(); }, 3000);
+}
+
+// ========== REGISTER HANDLER ==========
+function handleRegister() {
+  const username = document.getElementById('regUsername').value;
+  const email = document.getElementById('regEmail').value;
+  const code = document.getElementById('regCode').value;
+  const password = document.getElementById('regPassword').value;
+  const confirmPassword = document.getElementById('regConfirmPassword').value;
+
+  if (!username || !email || !code || !password || !confirmPassword) {
+    alert('请填写完整的注册信息');
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    alert('两次输入的密码不一致');
+    return;
+  }
+
+  alert('注册成功！请登录');
+  switchTab('login');
+}
+
+// ========== SEND CODE ==========
+let codeTimer = null;
+function sendCode() {
+  const btn = document.querySelector('.verify-btn');
+  const email = document.getElementById('regEmail').value;
+
+  if (!email) {
+    alert('请先输入邮箱地址');
+    return;
+  }
+
+  let seconds = 60;
+  btn.disabled = true;
+  btn.textContent = `${seconds}s`;
+
+  codeTimer = setInterval(() => {
+    seconds--;
+    if (seconds <= 0) {
+      clearInterval(codeTimer);
+      btn.disabled = false;
+      btn.textContent = '获取验证码';
+    } else {
+      btn.textContent = `${seconds}s`;
+    }
+  }, 1000);
+
+  alert('验证码已发送至邮箱（模拟）');
+}
+
+// ========== ENTER KEY LOGIN ==========
+document.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm.classList.contains('active')) {
+      handleLogin();
+    } else {
+      handleRegister();
+    }
+  }
+});
+
+// ========== USER AUTH FUNCTIONS ==========
+function goToLogin() {
+  // 已在登录页，不做跳转
+}
+
+function goToProfile() {
+  window.location.href = 'profile.html';
+}
+
+function goToSettings() {
+  alert('账号设置功能开发中...');
+}
+
+function logout() {
+  if (confirm('确定要退出登录吗？')) {
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('benCaoUser');
+    location.reload();
+  }
+}
+
+function toggleUserDropdown() {
+  const dropdown = document.getElementById('userDropdown');
+  dropdown.classList.toggle('show');
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', (e) => {
+  const userMenu = document.getElementById('userMenu');
+  if (userMenu && !userMenu.contains(e.target)) {
+    const dropdown = document.getElementById('userDropdown');
+    if (dropdown) dropdown.classList.remove('show');
+  }
+});
+
+// Check login status on page load
+(function checkLoginStatus() {
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
+  const loginBtn = document.getElementById('loginBtn');
+  const userAvatar = document.getElementById('userAvatar');
+  const navUserAvatar = document.getElementById('navUserAvatar');
+  if (isLoggedIn) {
+    const userData = JSON.parse(localStorage.getItem('benCaoUser') || '{}');
+    if (userData.avatar && navUserAvatar) navUserAvatar.src = userData.avatar;
+    if (loginBtn) loginBtn.style.display = 'none';
+    if (userAvatar) userAvatar.style.display = 'block';
+  } else {
+    if (loginBtn) loginBtn.style.display = 'block';
+    if (userAvatar) userAvatar.style.display = 'none';
+  }
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1183 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>万象阅览 · 本草典藏 - 本草万象</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ========== DESIGN SYSTEM ========== */
+:root {
+  --bg-deep: #0F1115; --bg-surface: #141820; --bg-card: #1A1E28; --bg-card-hover: #222838;
+  --cyan: #00FFC2; --cyan-dim: #00CC9A; --cyan-glow: rgba(0,255,194,0.15); --cyan-border: rgba(0,255,194,0.12);
+  --red: #E63946; --red-glow: rgba(230,57,70,0.2);
+  --gold: #E6D8AD; --gold2: #C4B896; --gold3: #8A7E68;
+  --txt: #E6D8AD; --txt2: #A09888; --txt3: #6B6560;
+  --glass: rgba(15,17,21,0.6); --glass-border: rgba(0,255,194,0.12);
+  --paper: #f5f0e6; --paper-dark: #e8e0d0;
+  --serif: 'Noto Serif SC','SimSun',serif; --sans: 'Noto Sans SC','Microsoft YaHei',sans-serif; --mono: 'Source Code Pro','Consolas',monospace;
+  --r-sm:6px; --r-md:12px; --r-lg:20px; --r-xl:28px;
+  --ease: cubic-bezier(0.16,1,0.3,1); --dur: 0.3s;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:var(--sans);background:var(--bg-deep);color:var(--txt);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}button{cursor:pointer;border:none;background:none;font-family:inherit;color:inherit}
+input{font-family:inherit}ul,ol{list-style:none}img{max-width:100%;display:block}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(0,255,194,0.2);border-radius:3px}
+
+/* ========== NAV ========== */
+.nav-bar{position:fixed;top:0;left:0;right:0;z-index:1000;height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;background:rgba(15,17,21,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--glass-border);transition:var(--dur) var(--ease)}
+.nav-logo{display:flex;align-items:center;gap:12px;font-family:var(--serif);font-size:20px;font-weight:700;color:var(--gold)}
+.nav-logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--cyan),var(--red));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;font-weight:900;font-family:var(--serif)}
+.nav-links{display:flex;gap:4px}
+.nav-link{padding:8px 18px;border-radius:var(--r-sm);font-size:14px;font-weight:500;color:var(--txt2);transition:var(--dur) var(--ease);position:relative}
+.nav-link:hover,.nav-link.active{color:var(--cyan);background:rgba(0,255,194,0.06)}
+.nav-link.active::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:20px;height:2px;background:var(--cyan);border-radius:1px;box-shadow:0 0 8px var(--cyan)}
+.nav-breadcrumb{margin-left:20px;padding-left:20px;border-left:1px solid var(--glass-border);font-size:13px;color:var(--txt3)}
+.nav-breadcrumb a{color:var(--txt2);transition:var(--dur)}
+.nav-breadcrumb a:hover{color:var(--cyan)}
+.nav-actions{display:flex;gap:12px}
+.nav-btn{padding:8px 16px;border-radius:var(--r-sm);font-size:13px;font-weight:500;color:var(--txt2);border:1px solid var(--glass-border);transition:var(--dur) var(--ease)}
+.nav-btn:hover{color:var(--cyan);border-color:rgba(0,255,194,0.3)}
+.nav-btn.primary{background:rgba(0,255,194,0.1);color:var(--cyan);border-color:var(--cyan-border)}
+
+/* User Menu */
+.user-menu{position:relative;display:flex;align-items:center;gap:16px}
+.user-avatar{width:42px;height:42px;border-radius:50%;border:2px solid var(--cyan-border);cursor:pointer;overflow:hidden;transition:var(--dur) var(--ease)}
+.user-avatar:hover{border-color:var(--cyan);box-shadow:0 0 20px rgba(0,255,194,0.4)}
+.user-avatar img{width:100%;height:100%;object-fit:cover}
+.login-btn{padding:10px 24px;background:rgba(0,255,194,0.1);border:1px solid var(--cyan-border);border-radius:6px;color:var(--cyan);font-size:14px;cursor:pointer;transition:var(--dur) var(--ease);font-family:var(--serif);letter-spacing:1px}
+.login-btn:hover{background:rgba(0,255,194,0.2);border-color:var(--cyan);box-shadow:0 0 15px rgba(0,255,194,0.3)}
+.user-dropdown{position:absolute;top:55px;right:0;width:180px;background:rgba(20,24,32,0.95);border:1px solid var(--glass-border);border-radius:8px;backdrop-filter:blur(10px);opacity:0;visibility:hidden;transform:translateY(-10px);transition:var(--dur) var(--ease);z-index:200}
+.user-dropdown.show{opacity:1;visibility:visible;transform:translateY(0)}
+.user-dropdown-item{padding:12px 20px;font-size:14px;color:rgba(255,255,255,0.8);cursor:pointer;transition:var(--dur);display:flex;align-items:center;gap:10px}
+.user-dropdown-item:first-child{border-radius:8px 8px 0 0}
+.user-dropdown-item:last-child{border-radius:0 0 8px 8px}
+.user-dropdown-item:hover{background:rgba(0,255,194,0.1);color:var(--cyan)}
+.user-dropdown-divider{height:1px;background:var(--glass-border);margin:4px 0}
+
+/* ========== BREADCRUMB BAR ========== */
+.breadcrumb-bar{position:fixed;top:64px;left:0;right:0;z-index:999;height:40px;display:flex;align-items:center;padding:0 40px;background:rgba(15,17,21,0.7);backdrop-filter:blur(10px);border-bottom:1px solid var(--glass-border);font-size:13px}
+.breadcrumb-bar a{color:var(--txt2);transition:var(--dur)}
+.breadcrumb-bar a:hover{color:var(--cyan)}
+.breadcrumb-bar .separator{margin:0 8px;color:var(--txt3)}
+.breadcrumb-bar .current{color:var(--gold)}
+
+/* ========== MAIN LAYOUT ========== */
+.main-container{padding-top:110px;min-height:100vh;display:flex}
+
+/* ========== LEFT SIDEBAR: Volume Navigation ========== */
+.sidebar-left{width:280px;min-width:280px;height:calc(100vh - 104px);border-right:1px solid var(--glass-border);display:flex;flex-direction:column;background:rgba(15,17,21,0.4)}
+.sidebar-header{padding:16px 20px;border-bottom:1px solid var(--glass-border)}
+.sidebar-title{font-size:14px;font-weight:600;color:var(--cyan);display:flex;align-items:center;gap:8px}
+.sidebar-title::before{content:'';width:3px;height:14px;background:var(--cyan);border-radius:2px}
+.search-box{padding:12px 16px;border-bottom:1px solid var(--glass-border)}
+.search-input{width:100%;height:36px;padding:0 12px 0 36px;border-radius:var(--r-sm);border:1px solid var(--glass-border);background:rgba(0,255,194,0.04);color:var(--txt);font-size:13px;outline:none;transition:var(--dur);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236B6560' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:10px center}
+.search-input:focus{border-color:rgba(0,255,194,0.3);background-color:rgba(0,255,194,0.08)}
+.search-input::placeholder{color:var(--txt3)}
+
+/* Volume Tree */
+.volume-tree{flex:1;overflow-y:auto;padding:12px 8px}
+.tree-item{padding:8px 12px;border-radius:var(--r-sm);cursor:pointer;transition:var(--dur);display:flex;align-items:center;gap:8px;font-size:13px;color:var(--txt2);margin-bottom:2px}
+.tree-item:hover{background:rgba(0,255,194,0.06);color:var(--txt)}
+.tree-item.active{background:rgba(0,255,194,0.1);color:var(--cyan)}
+.tree-item.level-1{font-weight:600;color:var(--txt);font-size:14px}
+.tree-item.level-2{padding-left:24px}
+.tree-item.level-3{padding-left:40px;font-size:12px}
+.tree-toggle{width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:var(--txt3);transition:var(--dur)}
+.tree-toggle.expanded{transform:rotate(90deg)}
+.tree-icon{font-size:14px}
+.read-status{width:6px;height:6px;border-radius:50%;background:var(--cyan);margin-left:auto}
+.read-status.unread{background:var(--txt3);opacity:0.3}
+
+/* Progress Bar */
+.sidebar-footer{padding:16px;border-top:1px solid var(--glass-border)}
+.progress-label{display:flex;justify-content:space-between;font-size:11px;color:var(--txt3);margin-bottom:6px}
+.progress-bar{height:4px;border-radius:2px;background:var(--bg-card);overflow:hidden}
+.progress-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--cyan-dim),var(--cyan));transition:width 0.6s var(--ease)}
+
+/* ========== CENTER: Reading Area ========== */
+.reading-area{flex:1;display:flex;flex-direction:column;min-width:0}
+
+/* Toolbar */
+.reading-toolbar{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid var(--glass-border);background:rgba(15,17,21,0.3)}
+.toolbar-left{display:flex;align-items:center;gap:16px}
+.toolbar-right{display:flex;align-items:center;gap:12px}
+.tool-btn{padding:6px 12px;border-radius:var(--r-sm);font-size:12px;color:var(--txt2);border:1px solid var(--glass-border);background:transparent;transition:var(--dur);display:flex;align-items:center;gap:6px}
+.tool-btn:hover{color:var(--cyan);border-color:rgba(0,255,194,0.3)}
+.tool-btn.active{background:rgba(0,255,194,0.1);color:var(--cyan);border-color:var(--cyan-border)}
+.tool-select{padding:6px 28px 6px 12px;border-radius:var(--r-sm);font-size:12px;color:var(--txt2);border:1px solid var(--glass-border);background:var(--bg-card);outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B6560' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
+.tool-select:focus{border-color:rgba(0,255,194,0.3)}
+.toolbar-divider{width:1px;height:20px;background:var(--glass-border)}
+
+/* Dual Column Layout */
+.reading-content{flex:1;display:flex;overflow:hidden}
+
+/* Original Text Column */
+.original-col{width:50%;padding:32px;overflow-y:auto;background:linear-gradient(135deg,rgba(230,216,173,0.03),rgba(230,216,173,0.01));border-right:1px solid var(--glass-border)}
+.col-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--glass-border)}
+.col-title{font-family:var(--serif);font-size:16px;font-weight:600;color:var(--gold);display:flex;align-items:center;gap:8px}
+.col-title::before{content:'◆';color:var(--cyan);font-size:10px}
+.col-actions{display:flex;gap:8px}
+.col-action-btn{width:28px;height:28px;border-radius:var(--r-sm);border:1px solid var(--glass-border);background:transparent;color:var(--txt3);display:flex;align-items:center;justify-content:center;font-size:14px;transition:var(--dur);cursor:pointer}
+.col-action-btn:hover{color:var(--cyan);border-color:rgba(0,255,194,0.3)}
+
+/* Vertical Traditional Text */
+.original-text{writing-mode:vertical-rl;font-family:var(--serif);font-size:18px;line-height:2.4;color:var(--gold);letter-spacing:4px;height:600px;overflow-x:auto;padding:20px 0}
+.original-text::-webkit-scrollbar{height:4px}
+.original-text::-webkit-scrollbar-thumb{background:rgba(230,216,173,0.2);border-radius:2px}
+.original-text .paragraph{margin-left:40px}
+.herb-highlight{color:var(--cyan);cursor:pointer;border-bottom:1px dashed rgba(0,255,194,0.3);padding-bottom:2px;transition:var(--dur)}
+.herb-highlight:hover{background:rgba(0,255,194,0.08);border-bottom-color:var(--cyan)}
+.note-mark{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:rgba(0,255,194,0.2);color:var(--cyan);font-size:10px;margin-right:4px;cursor:pointer;vertical-align:super}
+.note-mark:hover{background:rgba(0,255,194,0.3)}
+
+/* Vernacular Column */
+.vernacular-col{width:50%;padding:32px;overflow-y:auto}
+.vernacular-text{font-size:15px;line-height:2;color:var(--txt2);letter-spacing:0.5px}
+.vernacular-text .paragraph{margin-bottom:24px;text-indent:2em}
+.vernacular-text .key-term{color:var(--cyan);font-weight:500}
+.footnote-ref{vertical-align:super;font-size:11px;color:var(--cyan);cursor:pointer;margin-left:2px}
+.translator-note{margin-top:32px;padding-top:20px;border-top:1px solid var(--glass-border)}
+.translator-note-title{font-size:12px;color:var(--txt3);margin-bottom:12px}
+.translator-note-item{font-size:13px;color:var(--txt2);line-height:1.8;margin-bottom:8px;padding-left:16px;position:relative}
+.translator-note-item::before{content:attr(data-num);position:absolute;left:0;color:var(--cyan)}
+
+/* Bottom Toolbar */
+.reading-footer{height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-top:1px solid var(--glass-border);background:rgba(15,17,21,0.5)}
+.footer-left{display:flex;gap:12px}
+.footer-right{display:flex;align-items:center;gap:16px}
+.footer-btn{padding:8px 16px;border-radius:var(--r-sm);font-size:13px;color:var(--txt2);border:1px solid var(--glass-border);background:transparent;transition:var(--dur);display:flex;align-items:center;gap:6px}
+.footer-btn:hover{color:var(--cyan);border-color:rgba(0,255,194,0.3)}
+.page-indicator{font-size:13px;color:var(--txt3);font-family:var(--mono)}
+.page-indicator .current{color:var(--cyan)}
+.nav-arrows{display:flex;gap:8px}
+.nav-arrow{width:36px;height:36px;border-radius:var(--r-sm);border:1px solid var(--glass-border);background:transparent;color:var(--txt2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:var(--dur)}
+.nav-arrow:hover{color:var(--cyan);border-color:rgba(0,255,194,0.3)}
+.nav-arrow:disabled{opacity:0.3;cursor:not-allowed}
+
+/* ========== RIGHT SIDEBAR: Annotations ========== */
+.sidebar-right{width:300px;min-width:300px;height:calc(100vh - 104px);border-left:1px solid var(--glass-border);display:flex;flex-direction:column;background:rgba(15,17,21,0.4)}
+.annotation-tabs{display:flex;border-bottom:1px solid var(--glass-border)}
+.annotation-tab{flex:1;padding:14px 8px;text-align:center;font-size:13px;color:var(--txt3);cursor:pointer;transition:var(--dur);position:relative}
+.annotation-tab:hover{color:var(--txt)}
+.annotation-tab.active{color:var(--cyan);background:rgba(0,255,194,0.05)}
+.annotation-tab.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--cyan)}
+.annotation-content{flex:1;overflow-y:auto;padding:16px}
+.annotation-empty{text-align:center;padding:40px 20px;color:var(--txt3);font-size:13px}
+.annotation-empty-icon{font-size:32px;margin-bottom:12px;opacity:0.5}
+.annotation-item{padding:12px;border-radius:var(--r-md);border:1px solid var(--glass-border);margin-bottom:12px;background:rgba(0,255,194,0.02)}
+.annotation-item-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.annotation-item-user{font-size:12px;color:var(--cyan);font-weight:500}
+.annotation-item-time{font-size:11px;color:var(--txt3)}
+.annotation-item-text{font-size:13px;color:var(--txt2);line-height:1.6}
+.annotation-item-actions{display:flex;gap:12px;margin-top:10px;padding-top:10px;border-top:1px solid var(--glass-border)}
+.annotation-item-action{font-size:11px;color:var(--txt3);cursor:pointer;transition:var(--dur)}
+.annotation-item-action:hover{color:var(--cyan)}
+
+/* Drug Card Popup */
+.drug-popup{position:fixed;z-index:2000;width:320px;background:var(--bg-card);border:1px solid var(--cyan-border);border-radius:var(--r-lg);padding:16px;box-shadow:0 20px 60px rgba(0,0,0,0.5);display:none}
+.drug-popup.show{display:block;animation:popupIn 0.3s var(--ease)}
+@keyframes popupIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.drug-popup-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.drug-popup-name{font-family:var(--serif);font-size:18px;font-weight:600;color:var(--gold)}
+.drug-popup-fav{width:28px;height:28px;border-radius:50%;border:1px solid var(--glass-border);background:transparent;color:var(--txt3);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:var(--dur)}
+.drug-popup-fav:hover,.drug-popup-fav.active{color:var(--red);border-color:var(--red)}
+.drug-popup-info{font-size:13px;color:var(--txt2);line-height:1.8;margin-bottom:12px}
+.drug-popup-info-item{margin-bottom:6px}
+.drug-popup-info-label{color:var(--txt3);font-size:12px}
+.drug-popup-info-value{color:var(--txt)}
+.drug-popup-images{display:flex;gap:8px;margin-bottom:12px}
+.drug-popup-img{flex:1;height:80px;border-radius:var(--r-sm);background:var(--bg-surface);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--txt3)}
+.drug-popup-actions{display:flex;gap:8px}
+.drug-popup-btn{flex:1;padding:8px 12px;border-radius:var(--r-sm);font-size:12px;text-align:center;transition:var(--dur);cursor:pointer}
+.drug-popup-btn.primary{background:rgba(0,255,194,0.1);color:var(--cyan);border:1px solid var(--cyan-border)}
+.drug-popup-btn.primary:hover{background:rgba(0,255,194,0.2)}
+.drug-popup-btn.secondary{background:transparent;color:var(--txt2);border:1px solid var(--glass-border)}
+.drug-popup-btn.secondary:hover{color:var(--txt);border-color:rgba(0,255,194,0.2)}
+
+/* Settings Panel */
+.settings-panel{position:absolute;top:56px;right:24px;width:280px;background:var(--bg-card);border:1px solid var(--glass-border);border-radius:var(--r-lg);padding:16px;box-shadow:0 20px 60px rgba(0,0,0,0.5);display:none;z-index:100}
+.settings-panel.show{display:block}
+.settings-title{font-size:14px;font-weight:600;color:var(--txt);margin-bottom:16px}
+.settings-item{margin-bottom:16px}
+.settings-label{font-size:12px;color:var(--txt3);margin-bottom:8px}
+.settings-options{display:flex;gap:8px;flex-wrap:wrap}
+.settings-option{padding:6px 12px;border-radius:var(--r-sm);font-size:12px;color:var(--txt2);border:1px solid var(--glass-border);background:transparent;cursor:pointer;transition:var(--dur)}
+.settings-option:hover{border-color:rgba(0,255,194,0.2)}
+.settings-option.active{background:rgba(0,255,194,0.1);color:var(--cyan);border-color:var(--cyan-border)}
+.settings-slider{width:100%;height:4px;border-radius:2px;background:var(--bg-surface);outline:none;-webkit-appearance:none}
+.settings-slider::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--cyan);cursor:pointer;box-shadow:0 0 8px rgba(0,255,194,0.3)}
+
+/* ========== RESPONSIVE ========== */
+@media(max-width:1400px){.sidebar-right{display:none}}
+@media(max-width:1024px){.original-col,.vernacular-col{width:100%}.original-col{border-right:none;border-bottom:1px solid var(--glass-border)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav-bar">
+  <div style="display:flex;align-items:center">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">草</div>
+      <span>本草万象</span>
+    </a>
+    <div class="nav-breadcrumb">
+      <a href="index.html">首页</a> / <a href="#">万象阅览</a> / <span style="color:var(--gold)">《本草图经》</span>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">首页</a>
+    <a href="wanxiang.html" class="nav-link active">万象阅览</a>
+    <a href="duizhao-list.html" class="nav-link">古今对照</a>
+    <a href="ditu2.html" class="nav-link">时空地图</a>
+    <a href="wenwu.html" class="nav-link">文物佐证</a>
+  </div>
+  <div class="user-menu" id="userMenu">
+    <button class="login-btn" id="loginBtn" onclick="goToLogin()">登录 / 注册</button>
+    <div class="user-avatar" id="userAvatar" style="display:none;" onclick="toggleUserDropdown()">
+      <img src="" alt="头像" id="navUserAvatar">
+    </div>
+    <div class="user-dropdown" id="userDropdown">
+      <div class="user-dropdown-item" onclick="goToProfile()">👤 个人中心</div>
+      <div class="user-dropdown-item" onclick="goToSettings()">⚙️ 账号设置</div>
+      <div class="user-dropdown-divider"></div>
+      <div class="user-dropdown-item" onclick="logout()">🚪 退出登录</div>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Container -->
+<div class="main-container">
+
+  <!-- Left Sidebar: Volume Navigation -->
+  <aside class="sidebar-left">
+    <div class="sidebar-header">
+      <div class="sidebar-title">📖 卷目导航</div>
+    </div>
+    <div class="search-box">
+      <input type="text" class="search-input" placeholder="搜索卷名/药物名...">
+    </div>
+    <div class="volume-tree">
+      <div class="tree-item level-1">
+        <span class="tree-toggle expanded">▶</span>
+        <span class="tree-icon">📜</span>
+        <span>卷首</span>
+      </div>
+      <div class="tree-item level-1">
+        <span class="tree-toggle expanded">▶</span>
+        <span class="tree-icon">📜</span>
+        <span>卷一</span>
+        <span class="read-status"></span>
+      </div>
+      <div class="tree-item level-2">
+        <span class="tree-icon">🌿</span>
+        <span>玉石上品</span>
+      </div>
+      <div class="tree-item level-2">
+        <span class="tree-icon">🌿</span>
+        <span>玉石中品</span>
+      </div>
+      <div class="tree-item level-1">
+        <span class="tree-toggle">▶</span>
+        <span class="tree-icon">📜</span>
+        <span>卷二</span>
+        <span class="read-status"></span>
+      </div>
+      <div class="tree-item level-1 active">
+        <span class="tree-toggle expanded">▶</span>
+        <span class="tree-icon">📜</span>
+        <span>卷三</span>
+        <span class="read-status"></span>
+      </div>
+      <div class="tree-item level-2 active">
+        <span class="tree-icon">🌿</span>
+        <span>草部上品</span>
+      </div>
+      <div class="tree-item level-3">
+        <span class="tree-icon">🌱</span>
+        <span class="herb-highlight">人参</span>
+      </div>
+      <div class="tree-item level-3">
+        <span class="tree-icon">🌱</span>
+        <span>丹参</span>
+      </div>
+      <div class="tree-item level-3">
+        <span class="tree-icon">🌱</span>
+        <span>黄芪</span>
+      </div>
+      <div class="tree-item level-1">
+        <span class="tree-toggle">▶</span>
+        <span class="tree-icon">📜</span>
+        <span>卷四</span>
+        <span class="read-status unread"></span>
+      </div>
+      <div class="tree-item level-1">
+        <span class="tree-toggle">▶</span>
+        <span class="tree-icon">📜</span>
+        <span>卷五</span>
+        <span class="read-status unread"></span>
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="progress-label">
+        <span>阅读进度</span>
+        <span>23%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width:23%"></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Center: Reading Area -->
+  <main class="reading-area">
+    <!-- Toolbar -->
+    <div class="reading-toolbar">
+      <div class="toolbar-left">
+        <select class="tool-select">
+          <option>《本草图经》明刊本</option>
+          <option>《本草图经》清刊本（暂无）</option>
+          <option>《本草图经》日本影印本（暂无）</option>
+        </select>
+        <div class="toolbar-divider"></div>
+        <button class="tool-btn active" data-mode="dual">原文+白话</button>
+        <button class="tool-btn" data-mode="original">仅原文</button>
+        <button class="tool-btn" data-mode="modern">仅白话</button>
+      </div>
+      <div class="toolbar-right">
+        <button class="tool-btn" id="settingsBtn">⚙️ 显示设置</button>
+      </div>
+    </div>
+
+    <!-- Settings Panel -->
+    <div class="settings-panel" id="settingsPanel">
+      <div class="settings-title">显示设置</div>
+      <div class="settings-item">
+        <div class="settings-label">背景主题</div>
+        <div class="settings-options">
+          <button class="settings-option active">护眼</button>
+          <button class="settings-option">古籍</button>
+          <button class="settings-option">夜间</button>
+        </div>
+      </div>
+      <div class="settings-item">
+        <div class="settings-label">原文字号</div>
+        <input type="range" class="settings-slider" min="14" max="24" value="18">
+      </div>
+      <div class="settings-item">
+        <div class="settings-label">白话字号</div>
+        <input type="range" class="settings-slider" min="12" max="20" value="15">
+      </div>
+      <div class="settings-item">
+        <div class="settings-label">简繁切换</div>
+        <div class="settings-options">
+          <button class="settings-option active">繁体</button>
+          <button class="settings-option">简体</button>
+        </div>
+      </div>
+      <div class="settings-item">
+        <div class="settings-label">同步滚动</div>
+        <div class="settings-options">
+          <button class="settings-option active">开启</button>
+          <button class="settings-option">关闭</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dual Column Content -->
+    <div class="reading-content">
+      <!-- Original Text Column -->
+      <div class="original-col">
+        <div class="col-header">
+          <div class="col-title">原文（繁体竖排）</div>
+          <div class="col-actions">
+            <button class="col-action-btn" title="字号-">A-</button>
+            <button class="col-action-btn" title="字号+">A+</button>
+            <button class="col-action-btn" title="复制">📋</button>
+          </div>
+        </div>
+        <div class="original-text" id="originalText">
+          <div class="paragraph">
+            <span class="herb-highlight" data-herb="人参">人參</span>，味甘微寒，主補五臟，安精神，定魂魄，止驚悸，除邪氣，明目，開心益智。久服，輕身延年。<span class="note-mark" data-note="1">①</span>
+          </div>
+          <div class="paragraph">
+            生上黨山谷及遼東。春秋採根，竹刀刮去皮，日乾。根如人形者神。
+          </div>
+          <div class="paragraph">
+            《名醫別錄》云：<span class="herb-highlight" data-herb="人参">人參</span>生上黨郡在冀州西南，今魏國遼東及高麗亦有之。<span class="note-mark" data-note="2">②</span>根如人形者善，百徹如人形者最上。
+          </div>
+          <div class="paragraph">
+            陶弘景曰：上黨郡在冀州西南，今魏國遼東及高麗亦有之。根狀如人者善，百徹如人形者最上。
+          </div>
+        </div>
+      </div>
+
+      <!-- Vernacular Column -->
+      <div class="vernacular-col">
+        <div class="col-header">
+          <div class="col-title">白话译文（简体横排）</div>
+          <div class="col-actions">
+            <button class="col-action-btn" title="字号-">A-</button>
+            <button class="col-action-btn" title="字号+">A+</button>
+            <button class="col-action-btn" title="复制">📋</button>
+          </div>
+        </div>
+        <div class="vernacular-text" id="vernacularText">
+          <div class="paragraph">
+            <span class="key-term">人参</span>，味道甘甜，性微寒。主要功效是补益五脏，安定精神，稳定魂魄，止息惊悸，祛除邪气，明亮眼睛，开启心智、增益智慧。长期服用，可以轻健身体、延长寿命。
+          </div>
+          <div class="paragraph">
+            人参生长在上党山谷以及辽东地区。春秋两季采挖根部，用竹刀刮去外皮，晒干。根部形状像人形的最为神奇珍贵。
+          </div>
+          <div class="paragraph">
+            《名医别录》记载：<span class="key-term">人参</span>生长在上党郡，位于冀州西南方向，如今魏国辽东以及高丽地区也有出产。根如人形的品质好，完全像人形的最为上品<a class="footnote-ref" data-footnote="1">[1]</a>。
+          </div>
+          <div class="paragraph">
+            陶弘景说：上党郡在冀州西南，如今魏国辽东及高丽地区也有出产。根部形状像人的品质好，完全像人形的最为上品。
+          </div>
+
+          <div class="translator-note">
+            <div class="translator-note-title">译者注</div>
+            <div class="translator-note-item" data-num="1">上党：今山西省长治市一带，历史上著名的人参产区。</div>
+            <div class="translator-note-item" data-num="2">陶弘景：南朝梁代著名医药学家，著有《本草经集注》。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Toolbar -->
+    <div class="reading-footer">
+      <div class="footer-left">
+        <button class="footer-btn">🔖 添加书签</button>
+        <button class="footer-btn">📝 添加批注</button>
+        <button class="footer-btn">📤 引用</button>
+      </div>
+      <div class="footer-right">
+        <div class="page-indicator">
+          卷三 / 草部上品 / 第 <span class="current">3</span> 页 / 共 12 页
+        </div>
+        <div class="nav-arrows">
+          <button class="nav-arrow">◀</button>
+          <button class="nav-arrow">▶</button>
+        </div>
+        <button class="footer-btn">💾 下载</button>
+        <button class="footer-btn">↗️ 分享</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Right Sidebar: Annotations -->
+  <aside class="sidebar-right">
+    <div class="annotation-tabs">
+      <div class="annotation-tab active">批注</div>
+      <div class="annotation-tab">书签</div>
+      <div class="annotation-tab">笔记</div>
+    </div>
+    <div class="annotation-content">
+      <div class="annotation-item">
+        <div class="annotation-item-header">
+          <span class="annotation-item-user">张研究者</span>
+          <span class="annotation-item-time">2小时前</span>
+        </div>
+        <div class="annotation-item-text">"根如人形者神"这句话值得深入探讨，反映了古人对人参形态与药效关系的认识。</div>
+        <div class="annotation-item-actions">
+          <span class="annotation-item-action">👍 12</span>
+          <span class="annotation-item-action">💬 回复</span>
+        </div>
+      </div>
+      <div class="annotation-item">
+        <div class="annotation-item-header">
+          <span class="annotation-item-user">李药师</span>
+          <span class="annotation-item-time">昨天</span>
+        </div>
+        <div class="annotation-item-text">上党人参在宋代以后逐渐绝迹，现代主产区已转移至东北地区。</div>
+        <div class="annotation-item-actions">
+          <span class="annotation-item-action">👍 28</span>
+          <span class="annotation-item-action">💬 3条回复</span>
+        </div>
+      </div>
+      <div class="annotation-empty" style="display:none">
+        <div class="annotation-empty-icon">📝</div>
+        <p>暂无批注</p>
+        <p style="font-size:12px;margin-top:8px">选中原文添加您的批注</p>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<!-- Drug Popup -->
+<div class="drug-popup" id="drugPopup">
+  <div class="drug-popup-header">
+    <div class="drug-popup-name">人参</div>
+    <button class="drug-popup-fav">★</button>
+  </div>
+  <div class="drug-popup-info">
+    <div class="drug-popup-info-item">
+      <span class="drug-popup-info-label">基原：</span>
+      <span class="drug-popup-info-value">五加科植物人参的干燥根</span>
+    </div>
+    <div class="drug-popup-info-item">
+      <span class="drug-popup-info-label">宋代产地：</span>
+      <span class="drug-popup-info-value">上党、辽东</span>
+    </div>
+  </div>
+  <div class="drug-popup-images">
+    <div class="drug-popup-img">古图</div>
+    <div class="drug-popup-img">今照</div>
+  </div>
+  <div class="drug-popup-actions">
+    <button class="drug-popup-btn primary" onclick="location.href='duizhao-detail.html?herb=人参'">查看详情</button>
+    <button class="drug-popup-btn secondary">加入对比</button>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script>
+// ========== SETTINGS PANEL ==========
+const settingsBtn = document.getElementById('settingsBtn');
+const settingsPanel = document.getElementById('settingsPanel');
+
+settingsBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  settingsPanel.classList.toggle('show');
+});
+
+document.addEventListener('click', (e) => {
+  if (!settingsPanel.contains(e.target) && e.target !== settingsBtn) {
+    settingsPanel.classList.remove('show');
+  }
+});
+
+// ========== SETTINGS OPTIONS (with real logic) ==========
+const settingOptions = document.querySelectorAll('.settings-option');
+settingOptions.forEach(btn => {
+  btn.addEventListener('click', function() {
+    const siblings = this.parentElement.querySelectorAll('.settings-option');
+    siblings.forEach(s => s.classList.remove('active'));
+    this.classList.add('active');
+    const label = this.closest('.settings-item').querySelector('.settings-label').textContent;
+
+    if (label === '背景主题') {
+      const theme = this.textContent.trim();
+      const root = document.documentElement;
+      const body = document.body;
+      const origCol = document.querySelector('.original-col');
+      const verCol = document.querySelector('.vernacular-col');
+      const sideL = document.querySelector('.sidebar-left');
+      const sideR = document.querySelector('.sidebar-right');
+      if (theme === '护眼') {
+        root.style.setProperty('--bg-deep', '#0F1115');
+        root.style.setProperty('--bg-surface', '#141820');
+        root.style.setProperty('--bg-card', '#1A1E28');
+        root.style.setProperty('--txt', '#E6D8AD');
+        root.style.setProperty('--txt2', '#A09888');
+        root.style.setProperty('--glass-border', 'rgba(0,255,194,0.12)');
+        origCol.style.background = 'linear-gradient(135deg,rgba(230,216,173,0.03),rgba(230,216,173,0.01))';
+        verCol.style.background = '';
+        if (sideL) sideL.style.background = 'rgba(15,17,21,0.4)';
+        if (sideR) sideR.style.background = 'rgba(15,17,21,0.4)';
+      } else if (theme === '古籍') {
+        root.style.setProperty('--bg-deep', '#1a1610');
+        root.style.setProperty('--bg-surface', '#221e16');
+        root.style.setProperty('--bg-card', '#2a2418');
+        root.style.setProperty('--txt', '#E6D8AD');
+        root.style.setProperty('--txt2', '#B8A888');
+        root.style.setProperty('--glass-border', 'rgba(230,216,173,0.15)');
+        origCol.style.background = 'linear-gradient(135deg,rgba(245,240,230,0.06),rgba(230,216,173,0.03))';
+        verCol.style.background = 'rgba(245,240,230,0.02)';
+        if (sideL) sideL.style.background = 'rgba(26,22,16,0.6)';
+        if (sideR) sideR.style.background = 'rgba(26,22,16,0.6)';
+      } else if (theme === '夜间') {
+        root.style.setProperty('--bg-deep', '#050608');
+        root.style.setProperty('--bg-surface', '#0a0c10');
+        root.style.setProperty('--bg-card', '#0f1118');
+        root.style.setProperty('--txt', '#8A9BA8');
+        root.style.setProperty('--txt2', '#607080');
+        root.style.setProperty('--glass-border', 'rgba(100,140,180,0.1)');
+        origCol.style.background = 'linear-gradient(135deg,rgba(0,0,0,0.2),rgba(0,0,0,0.1))';
+        verCol.style.background = 'rgba(0,0,0,0.1)';
+        if (sideL) sideL.style.background = 'rgba(5,6,8,0.6)';
+        if (sideR) sideR.style.background = 'rgba(5,6,8,0.6)';
+      }
+      body.style.background = 'var(--bg-deep)';
+      showToast('已切换为' + theme + '主题', 'success');
+    }
+
+    if (label === '简繁切换') {
+      const mode = this.textContent.trim();
+      const origText = document.getElementById('originalText');
+      const verText = document.getElementById('vernacularText');
+      if (mode === '简体') {
+        convertToSimplified(origText);
+        convertToSimplified(verText);
+        origText.style.fontFamily = "var(--sans)";
+        document.querySelector('.col-title').textContent = '原文（简体横排）';
+        showToast('已切换为简体显示', 'success');
+      } else {
+        convertToTraditional(origText);
+        convertToTraditional(verText);
+        origText.style.fontFamily = "var(--serif)";
+        document.querySelector('.col-title').textContent = '原文（繁体竖排）';
+        showToast('已切换为繁体显示', 'success');
+      }
+    }
+
+    if (label === '同步滚动') {
+      syncScrollEnabled = this.textContent.trim() === '开启';
+      showToast(syncScrollEnabled ? '同步滚动已开启' : '同步滚动已关闭', 'success');
+    }
+  });
+});
+
+// ========== FONT SIZE SLIDERS ==========
+const sliders = document.querySelectorAll('.settings-slider');
+sliders.forEach(slider => {
+  slider.addEventListener('input', function() {
+    const label = this.closest('.settings-item').querySelector('.settings-label').textContent;
+    const val = this.value;
+    if (label === '原文字号') {
+      document.getElementById('originalText').style.fontSize = val + 'px';
+    } else if (label === '白话字号') {
+      document.getElementById('vernacularText').style.fontSize = val + 'px';
+    }
+  });
+});
+
+// ========== MODE TOGGLE ==========
+const modeBtns = document.querySelectorAll('.tool-btn[data-mode]');
+modeBtns.forEach(btn => {
+  btn.addEventListener('click', function() {
+    modeBtns.forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    const mode = this.dataset.mode;
+    const originalCol = document.querySelector('.original-col');
+    const vernacularCol = document.querySelector('.vernacular-col');
+
+    if (mode === 'original') {
+      originalCol.style.width = '100%';
+      originalCol.style.display = 'block';
+      vernacularCol.style.display = 'none';
+    } else if (mode === 'modern') {
+      originalCol.style.display = 'none';
+      vernacularCol.style.width = '100%';
+      vernacularCol.style.display = 'block';
+    } else {
+      originalCol.style.display = 'block';
+      vernacularCol.style.display = 'block';
+      originalCol.style.width = '50%';
+      vernacularCol.style.width = '50%';
+    }
+  });
+});
+
+// ========== VOLUME SEARCH (P0-1) ==========
+const searchInput = document.querySelector('.search-input');
+searchInput.addEventListener('input', function() {
+  const query = this.value.trim().toLowerCase();
+  const treeItems = document.querySelectorAll('.volume-tree .tree-item');
+  treeItems.forEach(item => {
+    const text = item.textContent.trim().toLowerCase();
+    if (query === '' || text.includes(query)) {
+      item.style.display = '';
+    } else {
+      item.style.display = 'none';
+    }
+  });
+});
+
+// ========== HERB HIGHLIGHT POPUP ==========
+const herbHighlights = document.querySelectorAll('.herb-highlight');
+const drugPopup = document.getElementById('drugPopup');
+
+herbHighlights.forEach(herb => {
+  herb.addEventListener('mouseenter', function(e) {
+    const herbName = this.dataset.herb || this.textContent.trim();
+    const herbData = getHerbByName(herbName);
+    if (herbData) {
+      drugPopup.querySelector('.drug-popup-name').textContent = herbData.name;
+      drugPopup.querySelector('.drug-popup-info').innerHTML = `
+        <div class="drug-popup-info-item"><span class="drug-popup-info-label">基原：</span><span class="drug-popup-info-value">${herbData.origin}</span></div>
+        <div class="drug-popup-info-item"><span class="drug-popup-info-label">宋代产地：</span><span class="drug-popup-info-value">${herbData.songLocations.join('、')}</span></div>
+      `;
+      drugPopup.querySelector('.drug-popup-btn.primary').onclick = () => location.href = 'duizhao.html?herb=' + herbData.id;
+    }
+    const rect = this.getBoundingClientRect();
+    drugPopup.style.left = Math.min(rect.right + 10, window.innerWidth - 340) + 'px';
+    drugPopup.style.top = Math.min(rect.top, window.innerHeight - 250) + 'px';
+    drugPopup.classList.add('show');
+  });
+
+  herb.addEventListener('mouseleave', function() {
+    setTimeout(() => {
+      if (!drugPopup.matches(':hover')) {
+        drugPopup.classList.remove('show');
+      }
+    }, 300);
+  });
+});
+
+drugPopup.addEventListener('mouseleave', () => {
+  drugPopup.classList.remove('show');
+});
+
+// ========== TREE NAVIGATION ==========
+const treeItems = document.querySelectorAll('.tree-item');
+treeItems.forEach(item => {
+  item.addEventListener('click', function(e) {
+    if (e.target.classList.contains('tree-toggle')) {
+      e.stopPropagation();
+      e.target.classList.toggle('expanded');
+      return;
+    }
+    treeItems.forEach(i => i.classList.remove('active'));
+    this.classList.add('active');
+    // If this item has a herb, update reading content
+    const herbLink = this.querySelector('.herb-highlight');
+    if (herbLink) {
+      const herbName = herbLink.dataset.herb || herbLink.textContent.trim();
+      const herbData = getHerbByName(herbName);
+      if (herbData) {
+        showToast('已导航至：' + herbData.name, 'info');
+      }
+    }
+  });
+});
+
+// ========== SYNC SCROLL (with toggle) ==========
+let syncScrollEnabled = true;
+const originalText = document.getElementById('originalText');
+const vernacularText = document.getElementById('vernacularText');
+let isSyncing = false;
+
+originalText.addEventListener('scroll', () => {
+  if (!isSyncing && syncScrollEnabled) {
+    isSyncing = true;
+    const ratio = originalText.scrollLeft / (originalText.scrollWidth - originalText.clientWidth);
+    vernacularText.scrollTop = ratio * (vernacularText.scrollHeight - vernacularText.clientHeight);
+    isSyncing = false;
+  }
+});
+
+vernacularText.addEventListener('scroll', () => {
+  if (!isSyncing && syncScrollEnabled) {
+    isSyncing = true;
+    const ratio = vernacularText.scrollTop / (vernacularText.scrollHeight - vernacularText.clientHeight);
+    originalText.scrollLeft = ratio * (originalText.scrollWidth - originalText.clientWidth);
+    isSyncing = false;
+  }
+});
+
+// ========== ANNOTATION TABS (with content switching) ==========
+const annoTabs = document.querySelectorAll('.annotation-tab');
+const annoContents = {
+  '批注': document.querySelector('.annotation-content'),
+  '书签': null,
+  '笔记': null
+};
+
+annoTabs.forEach(tab => {
+  tab.addEventListener('click', function() {
+    annoTabs.forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+    const tabName = this.textContent.trim();
+    const content = document.querySelector('.annotation-content');
+    
+    if (tabName === '批注') {
+      renderAnnotations(content);
+    } else if (tabName === '书签') {
+      renderBookmarks(content);
+    } else if (tabName === '笔记') {
+      renderNotes(content);
+    }
+  });
+});
+
+function renderAnnotations(container) {
+  container.innerHTML = `
+    <div class="annotation-item">
+      <div class="annotation-item-header">
+        <span class="annotation-item-user">张研究者</span>
+        <span class="annotation-item-time">2小时前</span>
+      </div>
+      <div class="annotation-item-text">"根如人形者神"这句话值得深入探讨，反映了古人对人参形态与药效关系的认识。</div>
+      <div class="annotation-item-actions">
+        <span class="annotation-item-action" onclick="showToast('已点赞','success')">👍 12</span>
+        <span class="annotation-item-action">💬 回复</span>
+      </div>
+    </div>
+    <div class="annotation-item">
+      <div class="annotation-item-header">
+        <span class="annotation-item-user">李药师</span>
+        <span class="annotation-item-time">昨天</span>
+      </div>
+      <div class="annotation-item-text">上党人参在宋代以后逐渐绝迹，现代主产区已转移至东北地区。</div>
+      <div class="annotation-item-actions">
+        <span class="annotation-item-action" onclick="showToast('已点赞','success')">👍 28</span>
+        <span class="annotation-item-action">💬 3条回复</span>
+      </div>
+    </div>`;
+}
+
+function renderBookmarks(container) {
+  const bookmarks = JSON.parse(localStorage.getItem('benCaoBookmarks') || '[]');
+  if (bookmarks.length === 0) {
+    container.innerHTML = `<div class="annotation-empty"><div class="annotation-empty-icon">🔖</div><p>暂无书签</p><p style="font-size:12px;margin-top:8px">点击底部"添加书签"收藏当前页面</p></div>`;
+  } else {
+    container.innerHTML = bookmarks.map(b => `
+      <div class="annotation-item" style="cursor:pointer" onclick="showToast('跳转至：${b.page}','info')">
+        <div class="annotation-item-header">
+          <span class="annotation-item-user">🔖 ${b.page}</span>
+          <span class="annotation-item-time">${b.time}</span>
+        </div>
+        <div class="annotation-item-text">${b.note || '无备注'}</div>
+      </div>
+    `).join('');
+  }
+}
+
+function renderNotes(container) {
+  const notes = JSON.parse(localStorage.getItem('benCaoNotes') || '[]');
+  if (notes.length === 0) {
+    container.innerHTML = `<div class="annotation-empty"><div class="annotation-empty-icon">📝</div><p>暂无笔记</p><p style="font-size:12px;margin-top:8px">点击底部"添加批注"记录您的想法</p></div>`;
+  } else {
+    container.innerHTML = notes.map(n => `
+      <div class="annotation-item">
+        <div class="annotation-item-header">
+          <span class="annotation-item-user">📝 笔记</span>
+          <span class="annotation-item-time">${n.time}</span>
+        </div>
+        <div class="annotation-item-text">${n.text}</div>
+        <div class="annotation-item-actions">
+          <span class="annotation-item-action" onclick="deleteNote(${n.id})">🗑 删除</span>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+// ========== NOTE MARKERS (card popup instead of alert) ==========
+const noteData = {
+  '1': '上党：今山西省长治市一带，历史上著名的人参产区。《本草图经》多处提及此处。',
+  '2': '陶弘景：南朝梁代著名医药学家（456-536年），著有《本草经集注》，对《神农本草经》做了重要补充和注释。'
+};
+
+const noteMarks = document.querySelectorAll('.note-mark');
+noteMarks.forEach(mark => {
+  mark.addEventListener('click', function(e) {
+    e.stopPropagation();
+    const noteNum = this.dataset.note;
+    const noteText = noteData[noteNum] || '此处为古代注释内容示例';
+    
+    // Remove existing note popup
+    const existing = document.getElementById('notePopup');
+    if (existing) existing.remove();
+
+    const popup = document.createElement('div');
+    popup.id = 'notePopup';
+    popup.style.cssText = 'position:fixed;z-index:2000;width:300px;background:linear-gradient(135deg,#1A1E28,#222838);border:1px solid rgba(0,255,194,0.25);border-radius:16px;padding:20px;box-shadow:0 24px 80px rgba(0,0,0,0.6),0 0 40px rgba(0,255,194,0.08);font-size:13px;color:#A09888;line-height:1.9;animation:noteCardIn 0.4s cubic-bezier(0.16,1,0.3,1)';
+    popup.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid rgba(0,255,194,0.1)">
+        <div style="width:28px;height:28px;border-radius:8px;background:rgba(0,255,194,0.12);display:flex;align-items:center;justify-content:center;font-size:12px;color:#00FFC2;font-weight:700">${noteNum}</div>
+        <div style="font-weight:600;color:#00FFC2;font-size:13px;letter-spacing:1px">古注笺疏</div>
+        <button onclick="this.closest('#notePopup').remove()" style="margin-left:auto;width:24px;height:24px;border-radius:6px;border:1px solid rgba(0,255,194,0.15);background:transparent;color:#6B6560;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+      </div>
+      <div style="font-family:var(--serif);font-size:15px;color:#E6D8AD;line-height:2;margin-bottom:14px">${noteText}</div>
+      <div style="display:flex;gap:8px">
+        <button onclick="copyToClipboard('${noteText.replace(/'/g, "\\'")}');showToast('注释已复制','success')" style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(0,255,194,0.15);background:rgba(0,255,194,0.05);color:#00FFC2;font-size:12px;cursor:pointer;transition:all 0.2s">📋 复制</button>
+        <button onclick="showToast('注释已收藏','success');this.closest('#notePopup').remove()" style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(0,255,194,0.15);background:transparent;color:#A09888;font-size:12px;cursor:pointer;transition:all 0.2s">🔖 收藏</button>
+      </div>`;
+    
+    const rect = this.getBoundingClientRect();
+    popup.style.left = Math.min(rect.left, window.innerWidth - 320) + 'px';
+    popup.style.top = Math.min(rect.bottom + 12, window.innerHeight - 300) + 'px';
+    document.body.appendChild(popup);
+    
+    // Add style for animation
+    if (!document.getElementById('noteCardStyle')) {
+      const style = document.createElement('style');
+      style.id = 'noteCardStyle';
+      style.textContent = '@keyframes noteCardIn{from{opacity:0;transform:translateY(12px) scale(0.96)}to{opacity:1;transform:translateY(0) scale(1)}}';
+      document.head.appendChild(style);
+    }
+    
+    setTimeout(() => {
+      document.addEventListener('click', function closePopup(e) {
+        if (!popup.contains(e.target)) {
+          popup.remove();
+          document.removeEventListener('click', closePopup);
+        }
+      });
+    }, 50);
+  });
+});
+
+// ========== BOTTOM TOOLBAR ACTIONS ==========
+// Add Bookmark
+document.querySelector('.footer-btn:nth-child(1)').addEventListener('click', function() {
+  const bookmarks = JSON.parse(localStorage.getItem('benCaoBookmarks') || '[]');
+  const page = '卷三 / 草部上品 / 人参';
+  const note = prompt('添加书签备注（可选）：', '') || '';
+  bookmarks.unshift({ page, note, time: new Date().toLocaleString() });
+  localStorage.setItem('benCaoBookmarks', JSON.stringify(bookmarks));
+  showToast('书签已添加', 'success');
+});
+
+// Add Annotation
+document.querySelector('.footer-btn:nth-child(2)').addEventListener('click', function() {
+  const text = prompt('请输入批注内容：');
+  if (text) {
+    const notes = JSON.parse(localStorage.getItem('benCaoNotes') || '[]');
+    notes.unshift({ id: Date.now(), text, time: new Date().toLocaleString() });
+    localStorage.setItem('benCaoNotes', JSON.stringify(notes));
+    showToast('批注已保存', 'success');
+    // Refresh right sidebar if on notes tab
+    const activeTab = document.querySelector('.annotation-tab.active');
+    if (activeTab && activeTab.textContent.trim() === '笔记') {
+      renderNotes(document.querySelector('.annotation-content'));
+    }
+  }
+});
+
+// Citation
+document.querySelector('.footer-btn:nth-child(3)').addEventListener('click', function() {
+  const citation = '《本草图经》卷三，草部上品，人参条。苏颂编撰，北宋嘉祐年间（1061年）。';
+  copyToClipboard(citation);
+});
+
+// Page Navigation
+let currentPage = 3;
+const totalPages = 12;
+const navArrows = document.querySelectorAll('.nav-arrow');
+const pageIndicator = document.querySelector('.page-indicator .current');
+
+navArrows[0].addEventListener('click', function() {
+  if (currentPage > 1) {
+    currentPage--;
+    pageIndicator.textContent = currentPage;
+    showToast('已翻至第 ' + currentPage + ' 页', 'info');
+  }
+});
+
+navArrows[1].addEventListener('click', function() {
+  if (currentPage < totalPages) {
+    currentPage++;
+    pageIndicator.textContent = currentPage;
+    showToast('已翻至第 ' + currentPage + ' 页', 'info');
+  }
+});
+
+// Copy Original Text
+document.querySelectorAll('.col-action-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const title = this.getAttribute('title');
+    if (title === '复制') {
+      const col = this.closest('.original-col, .vernacular-col');
+      const text = col.querySelector('.original-text, .vernacular-text').textContent;
+      copyToClipboard(text);
+    } else if (title === '字号+' || title === '字号-') {
+      const col = this.closest('.original-col, .vernacular-col');
+      const textEl = col.querySelector('.original-text, .vernacular-text');
+      const currentSize = parseInt(window.getComputedStyle(textEl).fontSize);
+      const delta = title === '字号+' ? 2 : -2;
+      textEl.style.fontSize = Math.max(12, Math.min(28, currentSize + delta)) + 'px';
+    }
+  });
+});
+
+// Download PDF (P2-5 - simulated generation)
+document.querySelectorAll('.footer-btn').forEach(btn => {
+  if (btn.textContent.includes('下载')) {
+    btn.addEventListener('click', function() {
+      const isLoggedIn = localStorage.getItem('isLoggedIn');
+      if (!isLoggedIn) {
+        showToast('请先登录后下载', 'warning');
+        return;
+      }
+      // Simulate PDF generation
+      showToast('正在生成PDF...', 'info');
+      setTimeout(() => {
+        const text = document.getElementById('originalText').textContent;
+        const vernText = document.getElementById('vernacularText').textContent;
+        const page = '卷三 / 草部上品 / 人参';
+        const pdfContent = `本草万象 · 典籍阅读\n${'═'.repeat(30)}\n\n${page}\n\n【原文】\n${text}\n\n【白话译文】\n${vernText}\n\n${'─'.repeat(30)}\n下载时间：${new Date().toLocaleString()}\n来源：本草万象知识库`;
+        const blob = new Blob([pdfContent], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = '本草图经_卷三_人参.txt';
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast('文件已下载（纯文本格式，PDF功能开发中）', 'success');
+      }, 1200);
+    });
+  }
+  if (btn.textContent.includes('分享')) {
+    btn.addEventListener('click', function() {
+      showSharePanel();
+    });
+  }
+});
+
+// Share Panel (P2-6)
+function showSharePanel() {
+  const existing = document.getElementById('sharePanel');
+  if (existing) { existing.remove(); return; }
+  
+  const url = window.location.href;
+  const title = '本草万象 · 万象阅览 — 《本草图经》卷三';
+  
+  const panel = document.createElement('div');
+  panel.id = 'sharePanel';
+  panel.style.cssText = 'position:fixed;z-index:2000;width:340px;background:linear-gradient(135deg,#1A1E28,#222838);border:1px solid rgba(0,255,194,0.25);border-radius:16px;padding:24px;box-shadow:0 24px 80px rgba(0,0,0,0.6);animation:noteCardIn 0.4s cubic-bezier(0.16,1,0.3,1);left:50%;top:50%;transform:translate(-50%,-50%)';
+  panel.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div style="font-size:16px;font-weight:600;color:#E6D8AD;font-family:var(--serif)">分享此页</div>
+      <button onclick="this.closest('#sharePanel').remove()" style="width:28px;height:28px;border-radius:8px;border:1px solid rgba(0,255,194,0.15);background:transparent;color:#6B6560;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+    <div style="margin-bottom:16px;padding:12px;background:rgba(0,0,0,0.2);border-radius:8px;border:1px solid rgba(0,255,194,0.1)">
+      <div style="font-size:11px;color:#6B6560;margin-bottom:6px">页面链接</div>
+      <div style="font-size:12px;color:#A09888;word-break:break-all;line-height:1.6">${url}</div>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:16px">
+      <button onclick="copyToClipboard('${url}');showToast('链接已复制','success')" style="flex:1;padding:10px;border-radius:10px;border:1px solid rgba(0,255,194,0.2);background:rgba(0,255,194,0.08);color:#00FFC2;font-size:13px;cursor:pointer">📋 复制链接</button>
+      <button onclick="copyToClipboard('${title} ${url}');showToast('已复制标题+链接','success')" style="flex:1;padding:10px;border-radius:10px;border:1px solid rgba(0,255,194,0.15);background:transparent;color:#A09888;font-size:13px;cursor:pointer">📝 标题+链接</button>
+    </div>
+    <div style="text-align:center">
+      <div style="font-size:11px;color:#6B6560;margin-bottom:10px">扫码分享</div>
+      <canvas id="qrCanvas" width="140" height="140" style="background:#fff;border-radius:8px;padding:6px"></canvas>
+    </div>
+    <div style="text-align:center;margin-top:12px;font-size:11px;color:#6B6560">微信扫一扫或长按识别</div>
+  `;
+  document.body.appendChild(panel);
+  
+  // Draw simple QR-like pattern (decorative, not scannable)
+  const canvas = document.getElementById('qrCanvas');
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    const size = 128;
+    const cellSize = 4;
+    const cells = Math.floor(size / cellSize);
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, 140, 140);
+    ctx.fillStyle = '#000';
+    // Position markers
+    const drawMarker = (x, y) => {
+      ctx.fillRect(x, y, 7*cellSize, 7*cellSize);
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(x+cellSize, y+cellSize, 5*cellSize, 5*cellSize);
+      ctx.fillStyle = '#000';
+      ctx.fillRect(x+2*cellSize, y+2*cellSize, 3*cellSize, 3*cellSize);
+    };
+    drawMarker(6, 6);
+    drawMarker(size - 7*cellSize - 2, 6);
+    drawMarker(6, size - 7*cellSize - 2);
+    // Random data cells
+    for (let i = 0; i < cells; i++) {
+      for (let j = 0; j < cells; j++) {
+        if (Math.random() > 0.55) {
+          ctx.fillStyle = '#000';
+          ctx.fillRect(6 + i*cellSize, 6 + j*cellSize, cellSize-1, cellSize-1);
+        }
+      }
+    }
+  }
+  
+  setTimeout(() => {
+    document.addEventListener('click', function closeShare(e) {
+      if (!panel.contains(e.target)) {
+        panel.remove();
+        document.removeEventListener('click', closeShare);
+      }
+    });
+  }, 50);
+}
+
+// Version Select (P2-3)
+document.querySelector('.tool-select').addEventListener('change', function() {
+  const version = this.value;
+  if (version.includes('清刊本')) {
+    showToast('清刊本正在数字化中，预计2026年Q3上线', 'info');
+  } else if (version.includes('日本')) {
+    showToast('日本影印本正在校对中，预计2026年Q4上线', 'info');
+  } else {
+    showToast('当前为明刊本，已加载', 'success');
+  }
+});
+
+function deleteNote(id) {
+  let notes = JSON.parse(localStorage.getItem('benCaoNotes') || '[]');
+  notes = notes.filter(n => n.id !== id);
+  localStorage.setItem('benCaoNotes', JSON.stringify(notes));
+  renderNotes(document.querySelector('.annotation-content'));
+  showToast('笔记已删除', 'success');
+}
+
+// ========== TRADITIONAL <-> SIMPLIFIED CONVERSION (P2-2) ==========
+const TRAD_TO_SIMP = {'參':'参','薓':'参','臟':'脏','驚':'惊','悸':'悸','氣':'气','開':'开','樂':'乐','輕':'轻','延':'延','黨':'党','遼':'辽','東':'东','颱':'台','採':'采','颳':'刮','乾':'干','徹':'彻','醫':'医','錄':'录','藥':'药','產':'产','灣':'湾','種':'种','長':'长','華':'华','國':'国','學':'学','經':'经','論':'论','說':'说','記':'记','傳':'传','書':'书','畫':'画','圖':'图','點':'点','問':'问','體':'体','義':'义','變':'变','養':'养','歷':'历','發':'发','觀':'观','質':'质','實':'实','據':'据','節':'节','區':'区','專':'专','業':'业','導':'导','環':'环','現':'现','總':'总','統':'统','選':'选','結':'结','構':'构','機':'机','歲':'岁','網':'网','農':'农','運':'运','廠':'厂','響':'响','憂':'忧','醫':'医','診':'诊','療':'疗','證':'证','補':'补','營':'营','養':'养','歸':'归','參':'参','術':'术','芪':'芪','陳':'陈','條':'条','時':'时','條':'条','樣':'样','關':'关','聞':'闻','問':'问','過':'过','還':'还','進':'进','開':'开','與':'与','無':'无','爾':'尔','說':'说','從':'从','來':'来','個':'个','為':'为','對':'对','於':'于','點':'点','萬':'万','東':'东','兩':'两','八':'八','滿':'满','龍':'龙','鳳':'凤','風':'风','雲':'云','電':'电','鳥':'鸟','馬':'马','魚':'鱼','黃':'黄','葉':'叶','花':'花','根':'根','莖':'茎','果':'果','皮':'皮','圓':'圆','紅':'红','綠':'绿','藍':'蓝','白':'白','黑':'黑','紫':'紫','藥':'药','草':'草','木':'木','水':'水','火':'火','土':'土','金':'金','銀':'银','鐵':'铁','銅':'铜','錫':'锡','鉛':'铅','絲':'丝','綿':'绵','綢':'绸','緞':'缎','紗':'纱','織':'织','繡':'绣','畫':'画','書':'书','筆':'笔','墨':'墨','紙':'纸','硯':'砚','印':'印','章':'章','畫':'画','裝':'装','飾':'饰','景':'景','龍':'龙','鳳':'凤','鶴':'鹤','鹿':'鹿','虎':'虎','豹':'豹','獅':'狮','象':'象','龜':'龟','蛇':'蛇','蟲':'虫','魚':'鱼','鳥':'鸟','燕':'燕','鵲':'鹊','鶯':'莺','鷗':'鸥','鷹':'鹰','雁':'雁','鵝':'鹅','鴨':'鸭','雞':'鸡','豬':'猪','牛':'牛','羊':'羊','馬':'马','驢':'驴','騾':'骡','貓':'猫','犬':'犬','兔':'兔','鼠':'鼠','豕':'豕','黽':'黾','龜':'龟','貝':'贝','角':'角','毛':'毛','羽':'羽','鱗':'鳞','甲':'甲','殼':'壳','骨':'骨','血':'血','肉':'肉','筋':'筋','脈':'脉','膽':'胆','腸':'肠','胃':'胃','腎':'肾','肺':'肺','肝':'肝','心':'心','脾':'脾','腦':'脑','齒':'齿','舌':'舌','耳':'耳','目':'目','鼻':'鼻','口':'口','頸':'颈','肩':'肩','臂':'臂','肘':'肘','腕':'腕','指':'指','掌':'掌','腰':'腰','髖':'髋','腿':'腿','膝':'膝','踝':'踝','足':'足','踵':'踵','蹠':'跖','趾':'趾','顏':'颜','額':'额','頰':'颊','頷':'颔','頤':'颐','鬚':'须','髮':'发','鬢':'鬓','髯':'髯','鬍':'胡'};
+const SIMP_TO_TRAD = {};
+Object.entries(TRAD_TO_SIMP).forEach(([t, s]) => { SIMP_TO_TRAD[s] = t; });
+
+function convertToSimplified(el) {
+  if (!el._originalHTML) el._originalHTML = el.innerHTML;
+  const chars = Object.keys(TRAD_TO_SIMP);
+  const regex = new RegExp(chars.join('|'), 'g');
+  el.innerHTML = el.innerHTML.replace(regex, m => TRAD_TO_SIMP[m] || m);
+}
+
+function convertToTraditional(el) {
+  if (el._originalHTML) {
+    el.innerHTML = el._originalHTML;
+    delete el._originalHTML;
+  } else {
+    const chars = Object.keys(SIMP_TO_TRAD);
+    const regex = new RegExp(chars.join('|'), 'g');
+    el.innerHTML = el.innerHTML.replace(regex, m => SIMP_TO_TRAD[m] || m);
+  }
+}
+
+// ========== USER AUTH ==========
+function checkLoginStatus() {
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
+  const loginBtn = document.getElementById('loginBtn');
+  const userAvatar = document.getElementById('userAvatar');
+  const navUserAvatar = document.getElementById('navUserAvatar');
+  if (isLoggedIn) {
+    const userData = JSON.parse(localStorage.getItem('benCaoUser') || '{}');
+    if (userData.avatar && navUserAvatar) navUserAvatar.src = userData.avatar;
+    if (loginBtn) loginBtn.style.display = 'none';
+    if (userAvatar) userAvatar.style.display = 'block';
+  } else {
+    if (loginBtn) loginBtn.style.display = 'block';
+    if (userAvatar) userAvatar.style.display = 'none';
+  }
+}
+function goToLogin() { window.location.href = 'login.html'; }
+function goToProfile() { window.location.href = 'profile.html'; }
+function goToSettings() { showToast('账号设置功能开发中...', 'info'); }
+function logout() {
+  if (confirm('确定要退出登录吗？')) {
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('benCaoUser');
+    location.reload();
+  }
+}
+function toggleUserDropdown() {
+  document.getElementById('userDropdown').classList.toggle('show');
+}
+document.addEventListener('click', (e) => {
+  const userMenu = document.getElementById('userMenu');
+  if (userMenu && !userMenu.contains(e.target)) {
+    const dropdown = document.getElementById('userDropdown');
+    if (dropdown) dropdown.classList.remove('show');
+  }
+});
+checkLoginStatus();
+</script>
+
+</body>
+</html>
