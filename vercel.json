@@ -1,5 +1,4 @@
 {
-  "name": "中药知识图谱",
   "version": 2,
   "routes": [
     { "src": "/", "dest": "/前台.html" },
